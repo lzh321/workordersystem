@@ -14,26 +14,40 @@
         <li class="header_nav_item">退出</li>
       </ul>
     </header>
-    <Main></Main>
+    <div class="content">
+      <Side @titleFn="titleFn"></Side>
+      <Main :title="titleText"></Main>
+    </div>
+    
   </div>
 </template>
 
 <script>
 import Main from '@/components/main'
+import Side from '@/components/side'
+
 export default {
-  name: "HelloWorld",
+  name: "Home",
   data() {
     return {
-      isLogin: true
+      isLogin: true,
+      titleText: "工作台"
     };
   },
   components: {
-    Main
+    Main,
+    Side
+  },
+  methods: {
+    titleFn: function(data) {
+      this.titleText = data
+    }
   },
   created(){
     if(!sessionStorage.getItem('isLogin')){
       this.isLogin = false
     }
+    
   }
 };
 </script>
@@ -80,11 +94,19 @@ header {
   font-size: 12px;
   overflow: hidden;
 }
+.header_nav_item p{
+  width: 100%;
+  height: 100%;
+  line-height: 60px;
+  text-align: center;
+  background: #fff;
+  z-index: 9999;
+}
 .header_nav_item .userOperate {
   position: absolute;
   bottom: -75px;
   width: 100%;
-  z-index: 9999;
+  z-index: 9998;
   background: #fff;
   box-shadow: 2px 2px 5px -2px #ccc;
   font-size: 12px;
@@ -107,5 +129,10 @@ header {
   /* opacity: 1; */
 }
 
+.content{
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
 
 </style>
