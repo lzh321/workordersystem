@@ -5,6 +5,7 @@ import App from './App'
 import router from './router'
 import ECharts from 'vue-echarts/components/ECharts'
 
+
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)
 /* eslint-disable no-new */

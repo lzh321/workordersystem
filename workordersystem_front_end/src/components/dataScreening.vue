@@ -84,7 +84,7 @@ export default {
   border: none;
   border-radius: 2px;
   width: 70px;
-    height: 30px;
+  height: 30px;
   background: #0079FE;
   color: #fff;
   font-size: 13px;
@@ -93,6 +93,6 @@ export default {
 .data_screening_search p button:nth-child(2){
   background: #fff;
   border: 1px solid #eee;
-  color: #ccc;
+  color: #444;
 }
 </style>

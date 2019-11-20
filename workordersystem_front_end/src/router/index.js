@@ -12,6 +12,7 @@ import messageModule from '@/components/systemManagement/messageModule'
 import messagePushList from '@/components/systemManagement/messagePushList'
 import equipmentList from '@/components/equipmentManagement/equipmentList'
 import equipmentType from '@/components/equipmentManagement/equipmentType'
+import workOrderCreate from '@/components/workOrderManagement/workOrderCreate'
 
 Vue.use(Router)
 
@@ -77,6 +78,11 @@ export default new Router({
           path: '/equipmentType',
           name: equipmentType,
           component: equipmentType
+        },
+        {
+          path: '/workOrderCreate',
+          name: workOrderCreate,
+          component: workOrderCreate
         },
       ]
     },
