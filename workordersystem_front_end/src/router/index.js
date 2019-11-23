@@ -31,57 +31,57 @@ export default new Router({
       children: [
         {
           path: '/workTable',
-          name: workTable,
+          name: 'workTable',
           component: workTable
         },
         {
           path: '/workOrderManagement',
-          name: workOrderManagement,
+          name: 'workOrderManagement',
           component: workOrderManagement
         },
         {
           path: '/synergyManagement',
-          name: synergyManagement,
+          name: 'synergyManagement',
           component: synergyManagement
         },
         {
           path: '/staffManagement',
-          name: staffManagement,
+          name: 'staffManagement',
           component: staffManagement
         },
         {
           path: '/EnterpriseNetwork',
-          name: EnterpriseNetwork,
+          name: 'EnterpriseNetwork',
           component: EnterpriseNetwork
         },
         {
           path: '/businessEnterprise',
-          name: businessEnterprise,
+          name: 'businessEnterprise',
           component: businessEnterprise
         },
         {
           path: '/messageModule',
-          name: messageModule,
+          name: 'messageModule',
           component: messageModule
         },
         {
           path: '/messagePushList',
-          name: messagePushList,
+          name: 'messagePushList',
           component: messagePushList
         },
         {
           path: '/equipmentList',
-          name: equipmentList,
+          name: 'equipmentList',
           component: equipmentList
         },
         {
           path: '/equipmentType',
-          name: equipmentType,
+          name: 'equipmentType',
           component: equipmentType
         },
         {
           path: '/workOrderCreate',
-          name: workOrderCreate,
+          name: 'workOrderCreate',
           component: workOrderCreate
         },
       ]

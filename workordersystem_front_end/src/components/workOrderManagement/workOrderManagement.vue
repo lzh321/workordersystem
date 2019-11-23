@@ -68,16 +68,16 @@ export default {
         cols: [
           [
             //表头
-            { field: "workOrderId", title: "工单编号", width: 110, sort: true, fixed: "left",align: "center" },
-            { field: "workOrderStatus", title: "工单状态", width: 110 , sort: true,align: "center"},
-            { field: "bankName", title: "银行名称", width: 110, sort: true,align: "center" },
-            { field: "subBranchName", title: "支行名称", width: 100,align: "center" },
-            { field: "PriorityDescription", title: "紧急程度", width: 100,align: "center" },
-            { field: "currentTotalTime", title: "当前总耗时（min）", width: 170, sort: true,align: "center" },
-            { field: "workOrderTime", title: "工单总耗时（min）", width: 170, sort: true,align: "center" },
-            { field: "creator", title: "创建人", width: 100,align: "center" },
-            { field: "creationTime", title: "创建时间", width: 110, sort: true,align: "center" },
-            { field: "operation", title: "操作", width: 215,align: "center" }
+            { field: "workOrderId", title: "工单编号",  sort: true, fixed: "left",align: "center" },
+            { field: "workOrderStatus", title: "工单状态",  sort: true,align: "center"},
+            { field: "bankName", title: "银行名称",  sort: true,align: "center" },
+            { field: "subBranchName", title: "支行名称", align: "center" },
+            { field: "PriorityDescription", title: "紧急程度", align: "center" },
+            { field: "currentTotalTime", title: "当前总耗时（min）",  sort: true,align: "center" },
+            { field: "workOrderTime", title: "工单总耗时（min）", sort: true,align: "center" },
+            { field: "creator", title: "创建人", align: "center" },
+            { field: "creationTime", title: "创建时间", sort: true,align: "center" },
+            { field: "operation", title: "操作", align: "center" }
           ]
         ]
       });
