@@ -55,8 +55,20 @@
           <div>支持格式 .png .jpg .jpeg。单个图片不超过2MB</div>
         </div>
       </div>
+      <div class="assign">
+        <label for="">指派给</label>
+        <div>
+          <select name="" id="">
+            <option value=""></option>
+          </select>
+        </div>
+      </div>
+      <div class="remark">
+        <label for="">备注</label>
+        <textarea name="" id="" cols="30" rows="10"></textarea>
+      </div>
     </div>
-    <div>
+    <div class="btnSet">
       <button>发单</button>
       <button>关单</button>
       <button>取消</button>
@@ -129,7 +141,9 @@ h2{
   height: 30px;
   width: 50%
 }
-.faultMessage{}
+.faultMessage label{
+  margin-right: 15px;
+}
 
 .problem_description{
   display: flex;
@@ -153,19 +167,53 @@ h2{
   margin-right: 15px;
 }
 
+.assign{
+  display: flex;
+  margin-bottom: 15px;
+}
+.assign label{
+  width: 56px;
+  text-align: right;
+  margin-right: 15px;
+}
+.assign div{
+  height: 30px;
+  width: 290px;
+}
+.assign div select{
+  width: 100%;
+  height: 100%;
+}
+.remark{
+  display: flex;
+  margin-bottom: 15px;
+}
+.remark label{
+  width: 56px;
+  text-align: right;
+  margin-right: 15px;
+}
+.remark textarea{
+  width: 82.6%;
+  padding: 5px;
+}
 
 
 
 
 
 
+
+.btnSet{
+  padding: 63px;
+}
 button{
 border: none;
-  border-radius: 2px;
-  width: 70px;
-  height: 30px;
+  border-radius: 4px;
+  width: 130px;
+  height: 40px;
   color: #444;
-  font-size: 13px;
+  font-size: 15px;
   margin: 0 10px;
 }
 button:nth-child(1) {
