@@ -11,7 +11,7 @@
       >
         <span @click="active(index,nav_item.nav_title,nav)">{{nav_item.nav_title}}</span>
         <div v-if="nav_item.children ? true : false" class="children_item" :class="{active:index === num}">
-          <router-link tag="p" @click="actives(item.name)"  v-for="(item,index)  in nav_item.children" :key="index" :to="item.path ? item.path : ''">{{item.title}}</router-link>
+          <router-link tag="p" v-for="(item,index)  in nav_item.children" :key="index" :to="item.path ? item.path : ''"><span @click="actives(item.title)">{{item.title}}</span></router-link>
         </div>
       </router-link>
     </ul>
@@ -27,9 +27,9 @@ export default {
         { nav_title: "工作台" , path: '/workTable?type=workTable'},
         { nav_title: "工单管理", path: '/workOrderManagement?type=workOrderManagement'},
         { nav_title: "协同管理", path: '/synergyManagement?type=synergyManagement' },
-        { nav_title: "用户管理", children:[{title: '员工管理', path: '/staffManagement?type=staffManagement'}, {title: '合作行网点管理', path: '/EnterpriseNetwork?type=EnterpriseNetwork'}]},
-        { nav_title: "系统管理", children:[{title: '企业机构管理', path: '/businessEnterprise?type=businessEnterprise'}, {title: '消息模块管理',path: '/messageModule?type=messageModule'},{title: '消息推送列表',path: '/messagePushList?type=messagePushList'}] },
-        { nav_title: "设备管理", children:[{title: '设备列表', path: '/equipmentList?type=equipmentList'}, {title: '设备类型管理', path: '/equipmentType?type=equipmentType'}] }
+        { nav_title: "用户管理", path: '/staffManagement?type=staffManagement', children:[{title: '员工管理', path: '/staffManagement?type=staffManagement'}, {title: '合作行网点管理', path: '/EnterpriseNetwork?type=EnterpriseNetwork'}]},
+        { nav_title: "系统管理", path: '/businessEnterprise?type=businessEnterprise', children:[{title: '企业机构管理', path: '/businessEnterprise?type=businessEnterprise'}, {title: '消息模块管理',path: '/messageModule?type=messageModule'},{title: '消息推送列表',path: '/messagePushList?type=messagePushList'}] },
+        { nav_title: "设备管理", path: '/equipmentList?type=equipmentList', children:[{title: '设备列表', path: '/equipmentList?type=equipmentList'}, {title: '设备类型管理', path: '/equipmentType?type=equipmentType'}] }
       ],
       queryType: ''
     };
@@ -40,7 +40,10 @@ export default {
       this.$emit("titleFn", title)
       // console.log(title)
     },
-    
+    actives: function(title){
+      this.$emit("titleFn", title)
+      console.log(title)
+    }
   },
   created() {
     if(this.$route.query.type !== 'workTable'){

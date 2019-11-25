@@ -15,6 +15,8 @@ import equipmentType from '@/components/equipmentManagement/equipmentType'
 import workOrderCreate from '@/components/workOrderManagement/workOrderCreate'
 import addUser from '@/components/userManagement/addUser'
 import addNetwork from '@/components/userManagement/addNetwork'
+import addInstitution from '@/components/systemManagement/addInstitution'
+import addMessage from '@/components/systemManagement/addMessage'
 
 Vue.use(Router)
 
@@ -95,6 +97,16 @@ export default new Router({
           path: '/addNetwork',
           name: 'addNetwork',
           component: addNetwork
+        },
+        {
+          path: '/addInstitution',
+          name: 'addInstitution',
+          component: addInstitution
+        },
+        {
+          path: '/addMessage',
+          name: 'addMessage',
+          component: addMessage
         },
       ]
     },

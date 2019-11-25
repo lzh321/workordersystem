@@ -66,9 +66,23 @@
           <input type="text">
         </p>
       </div>
-      <p>
-        <button>查询</button>
-        <button>重置</button>
+      <div class="search_input" v-show="messageModule">
+        <p v-show="messagePushList">
+          <label for="">接收手机</label>
+          <input type="text">
+        </p>
+        <p>
+          <label for="">模板编号</label>
+          <input type="text">
+        </p>
+        <p>
+          <label for="">模板名称：</label>
+          <input type="text">
+        </p>
+      </div>
+      <p class="layui-btn-container">
+        <button class="layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon">&#xe615;</i>查询</button>
+        <button class="layui-btn layui-btn-primary layui-btn-sm"><i class="layui-icon">&#xe669;</i>重置</button>
       </p>
     </div>
   </div>
@@ -82,12 +96,15 @@ export default {
     return {
       staffManagement: '',
       workOrderManagement: '',
-      EnterpriseNetwork: ''
+      EnterpriseNetwork: '',
+      businessEnterprise: '',
+      messageModule: '',
+      messagePushList: '',
     }
   },
   created(){
     console.log(this.type)
-    if(this.type == 'staffManagement'){
+    if(this.type == 'staffManagement' || this.type == 'businessEnterprise'){
       this.staffManagement = this.type
     }
     if(this.type == 'workOrderManagement'){
@@ -95,6 +112,13 @@ export default {
     }
     if(this.type == 'EnterpriseNetwork'){
       this.EnterpriseNetwork = this.type
+    }
+    if(this.type == 'messageModule'){
+      this.messageModule = this.type
+    }
+    if(this.type == 'messagePushList'){
+      this.messagePushList = this.type
+      this.messageModule = true
     }
   }
 }
@@ -143,6 +167,9 @@ export default {
   border-radius: 2px;
 }
 .data_screening_search p button{
+  margin-bottom: 0;
+}
+/* .data_screening_search p button{
   border: none;
   border-radius: 2px;
   width: 70px;
@@ -151,10 +178,10 @@ export default {
   color: #fff;
   font-size: 13px;
   margin: 0 10px;
-}
-.data_screening_search p button:nth-child(2){
+} */
+/* .data_screening_search p button:nth-child(2){
   background: #fff;
   border: 1px solid #eee;
   color: #444;
-}
+} */
 </style>
