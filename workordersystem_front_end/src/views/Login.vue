@@ -21,9 +21,6 @@
         </div>
       </div>
     </div>
-    <popupModal :show="show" :title="title" @hideModal="hideModal" @submit="submit">
-      <p>{{content}}</p>
-    </popupModal>
   </div>
 </template>
 
@@ -46,24 +43,33 @@ export default {
   methods: {
     login: function() {
       if (this.userId == "") {
-        this.show = true;
-        this.content = "账号不能为空，请重新输入";
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          layer.open({
+            title: '登录失败'
+            ,content: '账号不能为空，请重新输入'
+          });
+        });
       } else if (this.password == "") {
-        this.show = true;
-        this.content = "密码不能为空，请重新输入";
+        layui.use('layer', function(){
+          var layer = layui.layer;
+          layer.open({
+            title: '登录失败'
+            ,content: '密码不能为空，请重新输入'
+          });
+        });
       }else{
+        // let data = {
+        //     "userId": "admin",
+        //     "userPassword": "123456"
+        //   };
+        // this.Axios.post('http://192.168.110.158:8089/api/gd/gd_api/getUserCheckInfo',data).then((response) => {
+        //     console.log("post:"+response.data);
+        // })
         sessionStorage.setItem('isLogin', this.userId)
         this.$router.push('/Home')
       }
       console.log(this.userId, this.password);
-    },
-    hideModal() {
-      // 取消弹窗回调
-      this.show = false;
-    },
-    submit() {
-      // 确认弹窗回调
-      this.show = false;
     }
   }
 };

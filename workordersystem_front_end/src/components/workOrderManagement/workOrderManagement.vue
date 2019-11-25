@@ -13,7 +13,7 @@
         </li>
       </ul>
     </div>
-    <data-screening></data-screening>
+    <data-screening  :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
@@ -24,6 +24,16 @@
       </div>
       <div class="dataList_table" >
         <table id="demo" lay-filter="test"></table>
+        <div id="barDemo" style="display:none">
+          <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a href='' class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a>
+          <a href='' class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a>
+          <a href='' class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>
+          <a href='' class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
+        </div>
+        <div id="barInput" style="display:none">
+          <input type='checkbox' name='' lay-skin='primary'>
+        </div>
       </div>
     </div>
   </div>
@@ -44,7 +54,8 @@ export default {
         { title: "处理中", num: 2 },
         { title: "待回访", num: 2 },
         { title: "已关单", num: 2 }
-      ]
+      ],
+      type: ''
     };
   },
   components: {
@@ -68,20 +79,25 @@ export default {
         cols: [
           [
             //表头
-            { field: "workOrderId", title: "工单编号",  sort: true, fixed: "left",align: "center" },
-            { field: "workOrderStatus", title: "工单状态",  sort: true,align: "center"},
-            { field: "bankName", title: "银行名称",  sort: true,align: "center" },
-            { field: "subBranchName", title: "支行名称", align: "center" },
-            { field: "PriorityDescription", title: "紧急程度", align: "center" },
-            { field: "currentTotalTime", title: "当前总耗时（min）",  sort: true,align: "center" },
-            { field: "workOrderTime", title: "工单总耗时（min）", sort: true,align: "center" },
-            { field: "creator", title: "创建人", align: "center" },
-            { field: "creationTime", title: "创建时间", sort: true,align: "center" },
-            { field: "operation", title: "操作", align: "center" }
+            {field: "workOrderId", width:80, title: "<input type='checkbox' name='' lay-skin='primary'>", fixed: "left",align: "center",toolbar: '#barInput'},
+            { field: "workOrderId", title: "工单编号", sort: true,width:160,align: "center" },
+            { field: "workOrderStatus", title: "工单状态", width:120, sort: true,align: "center"},
+            { field: "bankName", title: "银行名称", width:160, sort: true,align: "center" },
+            { field: "subBranchName", title: "支行名称", width:160, align: "center" },
+            { field: "PriorityDescription", title: "紧急程度",width:100, align: "center" },
+            { field: "currentTotalTime", title: "当前总耗时（min）", width:180, sort: true,align: "center" },
+            { field: "workOrderTime", title: "工单总耗时（min）",width:180, sort: true,align: "center" },
+            { field: "creator", title: "创建人",width:100, align: "center" },
+            { field: "creationTime", title: "创建时间",width:160, sort: true,align: "center" },
+            { field: "operation", title: "操作", align: "center", toolbar: '#barDemo'}
           ]
         ]
       });
     });
+    
+  },
+  created(){
+    this.type = this.$route.query.type
   }
 };
 </script>
@@ -155,4 +171,5 @@ export default {
   font-size: 13px !important;
   color: blue !important;
 }
+
 </style>

@@ -4,10 +4,14 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ECharts from 'vue-echarts/components/ECharts'
+import Axios from 'axios'
+import qs from 'qs'
 
 
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)
+Vue.prototype.Axios = Axios
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -21,7 +21,7 @@ export default {
   props: ['title'],
   data() {
     return {
-      // title: ""
+      // title: "",
     };
   },
 };

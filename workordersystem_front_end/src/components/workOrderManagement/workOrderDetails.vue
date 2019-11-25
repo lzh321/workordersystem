@@ -99,7 +99,7 @@ h2{
    font-size: 17px;
   font-weight: 600;
 }
-/* .customerInfo{} */
+.customerInfo{}
 .information{
   display: flex;
   flex-wrap: wrap;
@@ -197,10 +197,6 @@ h2{
   width: 82.6%;
   padding: 5px;
 }
-
-
-
-
 
 
 

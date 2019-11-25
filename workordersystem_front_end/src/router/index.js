@@ -13,6 +13,8 @@ import messagePushList from '@/components/systemManagement/messagePushList'
 import equipmentList from '@/components/equipmentManagement/equipmentList'
 import equipmentType from '@/components/equipmentManagement/equipmentType'
 import workOrderCreate from '@/components/workOrderManagement/workOrderCreate'
+import addUser from '@/components/userManagement/addUser'
+import addNetwork from '@/components/userManagement/addNetwork'
 
 Vue.use(Router)
 
@@ -83,6 +85,16 @@ export default new Router({
           path: '/workOrderCreate',
           name: 'workOrderCreate',
           component: workOrderCreate
+        },
+        {
+          path: '/addUser',
+          name: 'addUser',
+          component: addUser
+        },
+        {
+          path: '/addNetwork',
+          name: 'addNetwork',
+          component: addNetwork
         },
       ]
     },

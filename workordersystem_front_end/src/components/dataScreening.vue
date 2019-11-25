@@ -2,29 +2,70 @@
   <div class="data_screening">
     <div class="data_screening_top">
       <h2>数据筛选</h2>
-      <span>高级搜索</span>
     </div>
     <div class="data_screening_search">
-      <p>
-        <label for="">工单编号：</label>
-        <input type="text" value="" placeholder="">
-      </p>
-      <p>
-        <label for="">工单状态：</label>
-        <select name="" id="">
-          <option value="">全部</option>
-          <option value="">待发单</option>
-          <option value="">待派单</option>
-          <option value="">待受理</option>
-          <option value="">处理中</option>
-          <option value="">待回访</option>
-          <option value="">已关单</option>
-        </select>
-      </p>
-      <p>
-        <label for="">创建时间：</label>
-        <input type="text">
-      </p>
+      <div class="search_input" v-show="workOrderManagement">
+        <p>
+          <label for="">工单编号：</label>
+          <input type="text" value="" placeholder="">
+        </p>
+        <p>
+          <label for="">工单状态：</label>
+          <select name="" id="">
+            <option value="">全部</option>
+            <option value="">待发单</option>
+            <option value="">待派单</option>
+            <option value="">待受理</option>
+            <option value="">处理中</option>
+            <option value="">待回访</option>
+            <option value="">已关单</option>
+          </select>
+        </p>
+        <p>
+          <label for="">创建时间：</label>
+          <input type="text">
+        </p>
+      </div>
+      <div class="search_input" v-show="staffManagement">
+        <p>
+          <label for="">输入查询：</label>
+          <input type="text" value="" placeholder="">
+        </p>
+        <p>
+          <label for="">员工职务：</label>
+            <select name="" >
+              <option value="">请选择</option>
+              <option value="0">java工程师</option>
+              <option value="1">前端工程师</option>
+              <option value="2">php工程师</option>
+              <option value="3">测试工程师</option>
+            </select>
+        </p>
+        <p>
+          <label for="">所属部门：</label>
+          <select name="" id="">
+            <option value="">全部</option>
+            <option value="">测试</option>
+            <option value="">开发</option>
+          </select>
+        </p>
+      </div>
+      <div class="search_input" v-show="EnterpriseNetwork">
+        <p>
+          <label for="">银行名称：</label>
+          <select name="" id="">
+            <option value="">全部</option>
+            <option value="">php开发工程师</option>
+            <option value="">前端开发工程师</option>
+            <option value="">java开发工程师</option>
+
+          </select>
+        </p>
+        <p>
+          <label for="">网点名称：</label>
+          <input type="text">
+        </p>
+      </div>
       <p>
         <button>查询</button>
         <button>重置</button>
@@ -35,7 +76,27 @@
 
 <script>
 export default {
-  
+  name: 'dataScreening',
+  props: ['type'],
+  data() {
+    return {
+      staffManagement: '',
+      workOrderManagement: '',
+      EnterpriseNetwork: ''
+    }
+  },
+  created(){
+    console.log(this.type)
+    if(this.type == 'staffManagement'){
+      this.staffManagement = this.type
+    }
+    if(this.type == 'workOrderManagement'){
+      this.workOrderManagement = this.type
+    }
+    if(this.type == 'EnterpriseNetwork'){
+      this.EnterpriseNetwork = this.type
+    }
+  }
 }
 </script>
 
@@ -50,14 +111,15 @@ export default {
   font-size: 13px;
   font-weight: 600;
 }
-.data_screening_top span{
-  color: #445eee;
-  font-size: 13px;
-}
+
 .data_screening_search{
   display: flex;
   align-items: center;
   padding: 0 0 0 30px;
+}
+.search_input{
+  display: flex;
+  align-items: center;
 }
 .data_screening_search p{
   margin-right: 20px;
