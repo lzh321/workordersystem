@@ -17,6 +17,7 @@ import addUser from '@/components/userManagement/addUser'
 import addNetwork from '@/components/userManagement/addNetwork'
 import addInstitution from '@/components/systemManagement/addInstitution'
 import addMessage from '@/components/systemManagement/addMessage'
+import deploy from '@/components/systemManagement/deploy'
 
 Vue.use(Router)
 
@@ -107,6 +108,11 @@ export default new Router({
           path: '/addMessage',
           name: 'addMessage',
           component: addMessage
+        },
+        {
+          path: '/deploy',
+          name: 'deploy',
+          component: deploy
         },
       ]
     },

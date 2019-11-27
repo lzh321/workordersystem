@@ -6,10 +6,10 @@
         <h2>数据列表</h2>
         <p class="layui-btn-container">
           <router-link to="/addInstitution" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 添加</router-link>
-          <button class="layui-btn layui-btn-primary layui-btn-sm">
+          <router-link to="/deploy" class="layui-btn layui-btn-primary layui-btn-sm">
             <i class="layui-icon">&#xe620;</i>
             配置
-          </button>
+          </router-link>
         </p>
       </div>
       <div class="dataList_table" >
