@@ -15,13 +15,10 @@
       <div class="dataList_table" >
         <table id="demo" lay-filter="test"></table>
         <div id="barDemo" style="display:none">
-          <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
-        </div>
-        <div id="barInput" style="display:none">
-          <input type='checkbox' name='' lay-skin='primary'>
+          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
+          <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
+          <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </div>
         <div id="Enable_Disable" style="display:none">
           <input type="checkbox" name="switch" lay-skin="switch">
@@ -57,6 +54,7 @@ export default {
         cols: [
           [
             //表头
+            {type: 'checkbox', fixed: 'left'},
             {field: "workOrderId", width:80, title: "<input type='checkbox' name='' lay-skin='primary'>", fixed: "left",align: "center",toolbar: '#barInput'},
             { field: "workOrderId", title: "公司编号", width:200, sort: true,align: "center"},
             { field: "workOrderStatus", title: "公司名称", width:260, sort: true,align: "center"},

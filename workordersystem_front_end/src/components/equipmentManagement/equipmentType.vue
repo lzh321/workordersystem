@@ -4,19 +4,15 @@
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
-        <!-- <p class="layui-btn-container">
-          <router-link to="" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 查询</router-link>
-          <button class="layui-btn layui-btn-primary layui-btn-sm">
-            <i class="layui-icon">&#xe669;</i>
-            重置
-          </button>
-        </p> -->
+        <p class="layui-btn-container">
+          <router-link to="/addEquipmentType" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 添加</router-link>
+        </p>
       </div>
       <div class="dataList_table" >
         <table id="demo" lay-filter="test"></table>
         <div id="barDemo" style="display:none">
-          <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
+          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </div>
       </div>
     </div>
@@ -98,5 +94,8 @@ export default {
 .dataList .dataList_table td .btn{
   font-size: 13px !important;
   color: blue !important;
+}
+.layui-btn{
+  margin-bottom: 0; 
 }
 </style>

@@ -18,11 +18,16 @@ import addNetwork from '@/components/userManagement/addNetwork'
 import addInstitution from '@/components/systemManagement/addInstitution'
 import addMessage from '@/components/systemManagement/addMessage'
 import deploy from '@/components/systemManagement/deploy'
+import addEquipment from '@/components/equipmentManagement/addEquipment'
+import checkEquipmentInfo from '@/components/equipmentManagement/checkEquipmentInfo'
+import bulkImport from '@/components/equipmentManagement/bulkImport'
+import addEquipmentType from '@/components/equipmentManagement/addEquipmentType'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
+  base: '/System/',
   routes: [
     {
       path: '/',
@@ -113,6 +118,26 @@ export default new Router({
           path: '/deploy',
           name: 'deploy',
           component: deploy
+        },
+        {
+          path: '/addEquipment',
+          name: 'addEquipment',
+          component: addEquipment
+        },
+        {
+          path: '/checkEquipmentInfo',
+          name: 'checkEquipmentInfo',
+          component: checkEquipmentInfo
+        },
+        {
+          path: '/bulkImport',
+          name: 'bulkImport',
+          component: bulkImport
+        },
+        {
+          path: '/addEquipmentType',
+          name: 'addEquipmentType',
+          component: addEquipmentType
         },
       ]
     },

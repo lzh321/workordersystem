@@ -24,6 +24,9 @@ export default {
       // title: "",
     };
   },
+  mounted(){
+    
+  }
 };
 </script>
 
@@ -96,4 +99,5 @@ footer {
   background: #ccc;
   padding: 10px 10px;
 }
+
 </style>

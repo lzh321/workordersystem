@@ -15,9 +15,9 @@
       <div class="dataList_table" >
         <table id="demo" lay-filter="test"></table>
         <div id="barDemo" style="display:none">
-          <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
+          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
+          <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </div>
         <div id="barInput" style="display:none">
           <input type='checkbox' name='' lay-skin='primary'>

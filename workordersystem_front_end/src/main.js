@@ -10,7 +10,8 @@ import qs from 'qs'
 
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)
-Vue.prototype.Axios = Axios
+Axios.defaults.baseURL = '/api'
+Vue.prototype.$ajax = Axios
 
 /* eslint-disable no-new */
 new Vue({
