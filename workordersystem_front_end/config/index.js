@@ -11,7 +11,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/api': {
-        target: 'http://192.168.110.158:8089/api/gd/gd_api/',//设置你调用的接口域名和端口号 别忘了加http
+        target: 'http://192.168.1.245:9080/gd/gd_api',//设置你调用的接口域名和端口号 别忘了加http
+        // target: 'http://192.168.110.80:8077/gd/gd_api',//设置你调用的接口域名和端口号 别忘了加http
         changeOrigin: true,
         secure: false, // 允许https请求
         pathRewrite: {
@@ -51,7 +52,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/System/',
+    assetsPublicPath: '/',
 
     /**
      * Source Maps

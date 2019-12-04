@@ -7,6 +7,8 @@ import workOrderManagement from '@/components/workOrderManagement/workOrderManag
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
 import staffManagement from '@/components/userManagement/staffManagement'
 import EnterpriseNetwork from '@/components/userManagement/EnterpriseNetwork'
+import roleManagement from '@/components/systemManagement/roleManagement'
+import permissionsButton from '@/components/systemManagement/permissionsButton'
 import businessEnterprise from '@/components/systemManagement/businessEnterprise'
 import messageModule from '@/components/systemManagement/messageModule'
 import messagePushList from '@/components/systemManagement/messagePushList'
@@ -27,10 +29,9 @@ Vue.use(Router)
 
 export default new Router({
   mode: 'history',
-  base: '/System/',
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login
     },
@@ -105,6 +106,16 @@ export default new Router({
           component: addNetwork
         },
         {
+          path: '/roleManagement',
+          name: 'roleManagement',
+          component: roleManagement
+        },
+        {
+          path: '/permissionsButton',
+          name: 'permissionsButton',
+          component: permissionsButton
+        },
+        {
           path: '/addInstitution',
           name: 'addInstitution',
           component: addInstitution
@@ -141,5 +152,9 @@ export default new Router({
         },
       ]
     },
+    {
+      path: '*',
+      redirect: '/login'
+    }
   ]
 })

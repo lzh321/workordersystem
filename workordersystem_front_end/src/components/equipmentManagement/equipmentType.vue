@@ -31,28 +31,41 @@ export default {
   components: {
     dataScreening
   },
-  mounted() {
-    
-    layui.use("table", function() {
-      var table = layui.table;
-      //第一个实例
-      table.render({
-        elem: "#demo",
-        height: 485,
-        url: "../../../static/table.json", //数据接口
-        page: true, //开启分页
-        limit: 10,
-        cols: [
-          [
-            //表头
-            { field: "workOrderId", title: "设备类型编码", sort: true,align: "center"},
-            { field: "workOrderStatus", title: "设备类型",  sort: true,align: "center"},
-            { field: "bankName", title: "存货名称",  sort: true,align: "center" },
-            { field: "subBranchName", title: "操作",  align: "center",toolbar:'#barDemo' },
+  methods: {
+    layui: function(){
+      layui.use("table", function() {
+        var table = layui.table;
+        //第一个实例
+        table.render({
+          elem: "#demo",
+          url: "/api/getDeviceModelList", //数据接口
+          method: 'post',
+          parseData: function(res){ //res 即为原始返回的数据
+            return {
+              "code": res.retCode, //解析接口状态
+              "msg": res.retMsg, //解析提示文本
+              "count": res.body.modelList.length, //解析数据长度
+              "data": res.body.modelList //解析数据列表
+            };
+          },
+          page: true, //开启分页
+          limit: 10,
+          cols: [
+            [
+              //表头
+              {field: "modelId", type: 'checkbox', fixed: 'left'},
+              { field: "modelId", title: "设备类型编码", sort: true,align: "center"},
+              { field: "modelType", title: "设备类型",  sort: true,align: "center"},
+              { field: "modelName", title: "存货名称",  sort: true,align: "center" },
+              { title: "操作",  align: "center",toolbar:'#barDemo' },
+            ]
           ]
-        ]
+        });
       });
-    });
+    }
+  },
+  mounted() {
+    this.layui()
   },
   created(){
     this.type = this.$route.query.type
@@ -98,4 +111,5 @@ export default {
 .layui-btn{
   margin-bottom: 0; 
 }
+
 </style>

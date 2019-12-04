@@ -4,7 +4,7 @@
       <h1 class="logo">工单管理系统</h1>
       <ul class="header_nav">
         <li class="header_nav_item">
-          <p>Admin</p>
+          <p>{{userId}}</p>
           <ul class="userOperate">
             <li class="userOperate_item">修改密码</li>
             <li class="userOperate_item">基本信息</li>
@@ -31,6 +31,7 @@ export default {
   data() {
     return {
       isLogin: true,
+      userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : '',
       titleText: "工作台"
     };
   },

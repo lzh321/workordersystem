@@ -1,4 +1,5 @@
-<template>
+<template> 
+<!-- 合作网点管理 -->
   <div class="EnterpriseNetwork">
     <data-screening :type="type"></data-screening>
     <div class="dataList">
@@ -65,6 +66,7 @@ export default {
   },
   created(){
     this.type = this.$route.query.type
+    // this.$axios.post('')
   }
 }
 </script>

@@ -26,12 +26,14 @@
 
 <script>
 import popupModal from "@/components/popupModal";
+import { mapMutations } from "vuex";
 export default {
   name: "Login",
   data() {
     return {
       userId: "",
       password: "",
+      userId: "",
       show: false,
       title: "账号密码错误",
       content: ""
@@ -41,33 +43,46 @@ export default {
     popupModal
   },
   methods: {
+    ...mapMutations(["changeLogin"]),
     login: function() {
       if (this.userId == "") {
-        layui.use('layer', function(){
+        layui.use("layer", function() {
           var layer = layui.layer;
           layer.open({
-            title: '登录失败'
-            ,content: '账号不能为空，请重新输入'
+            title: "登录失败",
+            content: "账号不能为空，请重新输入"
           });
         });
       } else if (this.password == "") {
-        layui.use('layer', function(){
+        layui.use("layer", function() {
           var layer = layui.layer;
           layer.open({
-            title: '登录失败'
-            ,content: '密码不能为空，请重新输入'
+            title: "登录失败",
+            content: "密码不能为空，请重新输入"
           });
         });
-      }else{
-        // let data = {
-        //     "userId": "admin",
-        //     "userPassword": "123456"
-        //   };
-        // this.Axios.post('http://192.168.110.158:8089/api/gd/gd_api/getUserCheckInfo',data).then((response) => {
-        //     console.log("post:"+response.data);
-        // })
-        sessionStorage.setItem('isLogin', this.userId)
-        this.$router.push('/Home')
+      } else {
+        let data = {
+          userId: this.userId,
+          userPassword: this.password
+        };
+        this.$axios
+          .post("/api/getUserCheckInfo",data)
+          .then(res => {
+            console.log(res);
+            // 将用户token保存到vuex中
+            if (res.data.retCode == "000000") {
+              this.userId = res.data.body.userId;
+              // 将用户token保存到vuex中
+              this.changeLogin({ userId: this.userId });
+              this.$router.push("/Home");
+            } else {
+              layer.open({
+                title: "登录失败",
+                content: res.data.retMsg
+              });
+            }
+          });
       }
       console.log(this.userId, this.password);
     }

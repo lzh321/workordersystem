@@ -10,8 +10,19 @@
         :to="nav_item.path ? nav_item.path : ''"
       >
         <span @click="active(index,nav_item.nav_title,nav)">{{nav_item.nav_title}}</span>
-        <div v-if="nav_item.children ? true : false" class="children_item" :class="{active:index === num}">
-          <router-link tag="p" v-for="(item,index)  in nav_item.children" :key="index" :to="item.path ? item.path : ''"><span @click="actives(item.title)">{{item.title}}</span></router-link>
+        <div
+          v-if="nav_item.children ? true : false"
+          class="children_item"
+          :class="{active:index === num}"
+        >
+          <router-link
+            tag="p"
+            v-for="(item,index)  in nav_item.children"
+            :key="index"
+            :to="item.path ? item.path : ''"
+          >
+            <span @click="actives(item.title)">{{item.title}}</span>
+          </router-link>
         </div>
       </router-link>
     </ul>
@@ -24,32 +35,83 @@ export default {
     return {
       num: 0,
       nav: [
-        { nav_title: "工作台" , path: '/workTable?type=workTable'},
-        { nav_title: "工单管理", path: '/workOrderManagement?type=workOrderManagement'},
-        { nav_title: "协同管理", path: '/synergyManagement?type=synergyManagement' },
-        { nav_title: "用户管理", path: '/staffManagement?type=staffManagement', children:[{title: '员工管理', path: '/staffManagement?type=staffManagement'}, {title: '合作行网点管理', path: '/EnterpriseNetwork?type=EnterpriseNetwork'}]},
-        { nav_title: "系统管理", path: '/businessEnterprise?type=businessEnterprise', children:[{title: '企业机构管理', path: '/businessEnterprise?type=businessEnterprise'}, {title: '消息模块管理',path: '/messageModule?type=messageModule'},{title: '消息推送列表',path: '/messagePushList?type=messagePushList'}] },
-        { nav_title: "设备管理", path: '/equipmentList?type=equipmentList', children:[{title: '设备列表', path: '/equipmentList?type=equipmentList'}, {title: '设备类型管理', path: '/equipmentType?type=equipmentType'}] }
+        { nav_title: "工作台", path: "/workTable?type=workTable" },
+        {
+          nav_title: "工单管理",
+          path: "/workOrderManagement?type=workOrderManagement"
+        },
+        {
+          nav_title: "协同管理",
+          path: "/synergyManagement?type=synergyManagement"
+        },
+        {
+          nav_title: "用户管理",
+          path: "/staffManagement?type=staffManagement",
+          children: [
+            {
+              title: "员工管理",
+              path: "/staffManagement?type=staffManagement"
+            },
+            {
+              title: "合作行网点管理",
+              path: "/EnterpriseNetwork?type=EnterpriseNetwork"
+            },
+            
+          ]
+        },
+        {
+          nav_title: "系统管理",
+          path: "/businessEnterprise?type=businessEnterprise",
+          children: [
+            {
+              title: "企业机构管理",
+              path: "/businessEnterprise?type=businessEnterprise"
+            },{
+              title: "权限按钮",
+              path: "/permissionsButton?type=permissionsButton"
+            },
+            {
+              title: "角色管理",
+              path: "/roleManagement?type=roleManagement"
+            },
+            {
+              title: "消息模块管理",
+              path: "/messageModule?type=messageModule"
+            },
+            {
+              title: "消息推送列表",
+              path: "/messagePushList?type=messagePushList"
+            }
+          ]
+        },
+        {
+          nav_title: "设备管理",
+          path: "/equipmentList?type=equipmentList",
+          children: [
+            { title: "设备列表", path: "/equipmentList?type=equipmentList" },
+            { title: "设备类型管理", path: "/equipmentType?type=equipmentType" }
+          ]
+        }
       ],
-      queryType: ''
+      queryType: ""
     };
   },
   methods: {
-    active: function(index,title) {
+    active: function(index, title) {
       this.num = index;
-      this.$emit("titleFn", title)
+      this.$emit("titleFn", title);
       // console.log(title)
     },
-    actives: function(title){
-      this.$emit("titleFn", title)
-      console.log(title)
+    actives: function(title) {
+      this.$emit("titleFn", title);
+      console.log(title);
     }
   },
   created() {
-    if(this.$route.query.type !== 'workTable'){
-      this.$router.push('/workTable?type=workTable')
+    if (this.$route.query.type !== "workTable") {
+      this.$router.push("/workTable?type=workTable");
     }
-  },
+  }
 };
 </script>
 
@@ -76,7 +138,7 @@ export default {
   background: #151f38;
   box-shadow: 0px -1px 8px 0px #224977 inset;
 }
-.side_nav li span{
+.side_nav li span {
   display: inline-block;
   width: 100%;
   height: 100%;
@@ -84,14 +146,14 @@ export default {
 .children_item {
   display: none;
 }
-.side_nav li .children_item p{
+.side_nav li .children_item p {
   height: 50px;
   background: #314093;
   line-height: 50px;
   font-size: 13px;
 }
-.side_nav li .children_item p:hover{
-  background: #16266e
+.side_nav li .children_item p:hover {
+  background: #16266e;
 }
 .active {
   background: #151f38;

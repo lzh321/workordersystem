@@ -1,4 +1,5 @@
 <template>
+<!-- 新增设备类型 -->
   <div class="addEquipmentType">
     <form class="layui-form layui-form-pane" action>
       <div class="info">
@@ -46,12 +47,16 @@ export default {
   },
   mounted() {
     //Demo
+    var _this = this
     layui.use("form", function() {
       var form = layui.form;
       form.render();
       //监听提交
       form.on("submit(formDemo)", function(data) {
         layer.msg(JSON.stringify(data.field));
+        _this.$axios.post('/api/addDeviceModelInfo',data.field).then(res=>{
+          console.log(res)
+        })
         return false;
       });
     });
