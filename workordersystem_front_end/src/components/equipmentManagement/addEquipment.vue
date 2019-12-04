@@ -20,7 +20,7 @@
 
       <div class="layui-form-item">
         <label class="layui-form-label">设备型号</label>
-        <div class="layui-input-block">
+        <div class="layui-input-block" layui-filter="test2">
           <select name="modelId" lay-verify="required">
             <option value>请选择设备型号</option>
             <option value="1">北京</option>
@@ -32,7 +32,7 @@
 
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
-        <div class="layui-input-block">
+        <div class="layui-input-block" layui-filter="test2">
           <select name="modelName" lay-verify="required">
             <option value>请选择一个城市</option>
             <option value="1">北京</option>
@@ -44,7 +44,7 @@
 
       <div class="layui-form-item">
         <label class="layui-form-label">客户名称</label>
-        <div class="layui-input-block">
+        <div class="layui-input-block" layui-filter="test2">
           <select name="customerName" lay-verify="required">
             <option value>请选择一个客户</option>
             <option value="1">民生</option>
@@ -458,20 +458,24 @@ export default {
         pass: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"]
       });
     });
-    self.getResponse()
   },
   methods: {
-    getResponse() {
-      let _this = this;
-      _this.$axios
-        .post("/api/getCustomerNameList", _this.$store.state.userId)
+    send() {
+      this.$axios
+        .post("/api/getCustomerNameList", this.$store.state.userId)
         .then(res => {
           console.log(res.data.body.customerNameList);
-          _this.customerNameList = res.data.body.customerNameList;
+          this.customerNameList = res.data.body.customerNameList;
         });
     }
   },
-  created() {},
+  created() {
+    this.send()
+  },
+  updated:function(){
+    layui.form.render('select','test2')
+    console.log(layui.form)
+  }
 };
 </script>
 
