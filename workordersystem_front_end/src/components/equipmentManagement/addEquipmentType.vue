@@ -9,23 +9,14 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备类型</label>
         <div class="layui-input-block">
-          <select name="device_type" lay-verify="required">
-            <option value>请选择公司</option>
-            <option value="2">票联金融</option>
-            <option value="3">票联金融</option>
-          </select>
+          <input type="text" class="layui-input" lay-verify="required" name="modelType" placeholder="请输入设备类型">
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
         <div class="layui-input-block">
-          <select name="stock_name" lay-verify="required">
-            <option value>请选择一个职务</option>
-            <option value="010">Java开发工程师</option>
-            <option value="021">前端开发工程师</option>
-            <option value="0571">PHP开发工程师</option>
-          </select>
+          <input type="text" class="layui-input" lay-verify="required" name="modelName" placeholder="请输入存货名称">
         </div>
       </div>
 
@@ -53,13 +44,41 @@ export default {
       form.render();
       //监听提交
       form.on("submit(formDemo)", function(data) {
-        layer.msg(JSON.stringify(data.field));
-        _this.$axios.post('/api/addDeviceModelInfo',data.field).then(res=>{
-          console.log(res)
-        })
+        var modelId = sessionStorage.getItem('modelId') ? sessionStorage.getItem('modelId') : ''
+        data.field.userId = _this.$store.state.userId
+        if(modelId === null || modelId === '' || modelId === undefined){
+          _this.$axios.post('/api/addDeviceModelInfo',data.field).then(res=>{  // 添加设备类型
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1});
+              setTimeout(()=>{
+                _this.$router.push('/equipmentType?type=equipmentType')
+              },2000)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2});
+            }
+            
+          })
+        }else{
+          data.field.modelId = modelId
+          _this.$axios.post('/api/alterDeviceModelInfo',data.field).then(res=>{  // 添加设备类型
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1});
+              setTimeout(()=>{
+                _this.$router.push('/equipmentType?type=equipmentType')
+              },2000)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2});
+            }
+            
+          })
+        }
+        
         return false;
       });
     });
+  },
+  beforeDestroy(){
+    sessionStorage.removeItem("modelId")
   }
 };
 </script>

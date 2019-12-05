@@ -53,34 +53,6 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-layui.use("table",function() {
-  var table = layui.table;
-  //监听行工具事件
-  table.on('tool(test)', function(obj){
-    var data = obj.data;
-    //console.log(obj)
-    if(obj.event === 'deletion'){
-      layer.confirm('真的删除行么', function(index){
-        obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-        layer.close(index);
-        //向服务端发送删除指令
-      });
-    } else if(obj.event === 'edit'){
-      layer.prompt({
-        formType: 2
-        ,value: data.email
-      }, function(value, index){
-        //同步更新缓存对应的值
-        obj.update({
-          email: value
-        });
-        layer.close(index);
-      });
-    }else if(obj.event === 'detail'){
-      self.$router.push({path: "/checkEquipmentInfo"})
-    }
-  });
-})
 
 /* eslint-disable no-new */
 new Vue({

@@ -13,7 +13,7 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="test"></table>
+        <table id="demo" lay-filter="equipmentList" lay-data="{id:'serachData'}"></table>
         <!-- <script type="text/html" id="toolbarDemo">
           <div class="layui-btn-container">
             <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
@@ -38,7 +38,7 @@ export default {
   name:'equipmentList',
   data() {
     return {
-      type:''
+      type:'',
     }
   },
   components: {
@@ -46,14 +46,26 @@ export default {
   },
   methods: {
     layui: function(){
-      var self = this  // 改变this指向
-      layui.use("table", function() {
+      var _this = this  // 改变this指向
+      layui.use(['table', 'form'], function() {
         var table = layui.table;
+        var form = layui.form
+        form.render()
+        form.on('submit(serach)', function(data){
+          console.log(data.field)
+          data.field.userId = _this.$store.state.userId
+          table.reload('serachData',{
+            url: "/api/getDeviceInfoList",
+            where:data.field,
+            // page:{curr: 1}
+          })
+        })
         //第一个实例
         table.render({
           elem: "#demo",
           url: "/api/getDeviceInfoList", //数据接口
           method: 'post',
+          id: 'serachData',
           parseData: function(res){ //res 即为原始返回的数据
               return {
                 "code": res.retCode, //解析接口状态
@@ -67,16 +79,24 @@ export default {
             ,layEvent: 'LAYTABLE_TIPS'
             ,icon: 'layui-icon-tips'
           }],
-          page: true, //开启分页
-          limit: 10,
+          initSort: {  // 排序
+            field: 'deviceId',
+            type: 'asc'   //升序
+          },
+          page: false, //开启分页
+          request: {
+            pageName: 'currentPage', //页码的参数名称，默认：page
+            curr: 'indexCount', //页码的参数名称，默认：page
+            limitName: 'everyCount' //每页数据量的参数名，默认：limit
+          },
           title: '设备列表',
           cols: [
             [
               //表头
-              {field: "customerId", type: 'checkbox', fixed: 'left'},
-              { field: "deviceId", title: "存货Id", sort: true,align: "center"},
-              { field: "deviceNumber", title: "存货编码",  sort: true,align: "center"},
-              { field: "modelName", title: "设备型号",  sort: true,align: "center" },
+              {field: "deviceId", fixed: 'left', hide:true},
+              { field: "deviceNumber", title: "存货编码", sort: true,align: "center"},
+              { field: "modelName", title: "存货名称",  sort: true,align: "center"},
+              { field: "modelType", title: "设备型号",  sort: true,align: "center" },
               { field: "seviceBegintime", title: "维保开始时间",  align: "center" },
               { field: "seviceEndtime", title: "维保结束时间",  align: "center" },
               { field: "customerName", title: "银行名称",sort: true,align: "center" },
@@ -88,8 +108,15 @@ export default {
           ]
         });
 
+        table.reload('serachData',
+          {
+            url: "/api/getDeviceInfoList", //数据接口
+            where:{
+              userId: _this.$store.state.userId
+            }
+        })
         //头工具栏事件
-        table.on('toolbar(test)', function(obj){
+        table.on('toolbar(equipmentList)', function(obj){
           var checkStatus = table.checkStatus(obj.config.id);
           switch(obj.event){
             case 'getCheckData':
@@ -112,30 +139,36 @@ export default {
         });
         
         //监听行工具事件
-        table.on('tool(test)', function(obj){
+        table.on('tool(equipmentList)', function(obj){
           var data = obj.data;
-          //console.log(obj)
+          console.log(data)
+          var deviceId = data.deviceId
           if(obj.event === 'deletion'){
             layer.confirm('真的删除行么', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令
+              var delParam = {
+                userId : _this.$store.state.userId,
+                deviceId: deviceId
+              }
+              _this.$axios.post('/api/deleDeviceInfo',delParam).then(res=>{
+                console.log(res)
+                if(res.data.retCode == '000000'){
+                  layer.msg(res.data.retMsg,{icon: 1})
+                }
+              })
             });
-          } else if(obj.event === 'edit'){
-            layer.prompt({
-              formType: 2
-              ,value: data.email
-            }, function(value, index){
-              //同步更新缓存对应的值
-              obj.update({
-                email: value
-              });
-              layer.close(index);
-            });
+          } else if(obj.event === 'edit'){;
+            sessionStorage.setItem('deviceId',deviceId)
+            _this.$router.push('/addEquipment')
           }else if(obj.event === 'detail'){
-            self.$router.push({path: "/checkEquipmentInfo"})
+            sessionStorage.setItem('deviceId',deviceId)
+            _this.$router.push("/checkEquipmentInfo")
           }
         });
+
+        
       });
     }
   },

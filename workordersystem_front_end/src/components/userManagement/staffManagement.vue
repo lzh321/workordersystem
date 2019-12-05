@@ -10,18 +10,12 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="test"></table>
+        <table id="demo" lay-filter="test" lay-data="{id:'serachData'}"></table>
         <div id="barDemo" style="display:none">
           <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a href='' class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
           <a href='' class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
           <a href='' class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
-        </div>
-        <div id="barInput" style="display:none">
-          <input type='checkbox' name='' lay-skin='primary'>
-        </div>
-        <div id="Enable_Disable" style="display:none">
-          <input type="checkbox" name="switch" lay-skin="switch">
         </div>
       </div>
     </div>
@@ -44,36 +38,49 @@ export default {
     layui: function(){}
   },
   mounted() {
-    
-    layui.use("table", function() {
+    var _this = this
+    layui.use(["table","form"], function() {
       var table = layui.table;
+      var form = layui.form
+        form.render()
+        form.on('submit(serach)', function(data){
+          data.field.userId = _this.$store.state.userId
+          console.log(data.field)
+          table.reload('serachData',{
+            url: "/api/getUserList",
+            where:data.field,
+            page:{curr: 1, limit: 10}
+          })
+        })
       //第一个实例
       table.render({
         elem: "#demo",
         url: "/api/getUserList", //数据接口
         method: 'post',
+        id: 'serachData',
         parseData: function(res){ //res 即为原始返回的数据
           return {
             "code": res.retCode, //解析接口状态
             "msg": res.retMsg, //解析提示文本
-            // "count": res.body.deviceInfoList.length, //解析数据长度
-            // "data": res.body.deviceInfoList //解析数据列表
+            "count": res.body.totalCount, //解析数据长度
+            "data":JSON.parse(res.body.userList) //解析数据列表
           };
         },
         page: true, //开启分页
-        limit: 10,
+        request: {
+          pageName: 'currentPage', //页码的参数名称，默认：page
+          limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        },
         cols: [
           [
             //表头
-            {field: "workOrderId", width:80, title: "<input type='checkbox' name='' lay-skin='primary'>", fixed: "left",align: "center",toolbar: '#barInput'},
-            { field: "workOrderId", title: "员工姓名", width:150, sort: true,align: "center"},
-            { field: "workOrderStatus", title: "性别", width:100, sort: true,align: "center"},
-            { field: "bankName", title: "所属公司",  sort: true,align: "center" },
-            { field: "subBranchName", title: "所属部门", width:150, align: "center" },
-            { field: "PriorityDescription", title: "当前职务", align: "center" },
-            { field: "currentTotalTime", title: "登录账号", width:120, sort: true,align: "center" },
-            { field: "workOrderTime", title: "手机", width:200, sort: true,align: "center" },
-            { field: "creator", title: "启用", width: 100, align: "center",toolbar:'#Enable_Disable'},
+            { field: "userName", title: "员工姓名", width:150, sort: true,align: "center"},
+            { field: "userSex", title: "性别", width:100, sort: true,align: "center"},
+            { field: "companyId", title: "所属公司",  sort: true,align: "center" },
+            { field: "deptId", title: "所属部门", width:150, align: "center" },
+            { field: "jobId", title: "当前职务", align: "center" },
+            { field: "userId", title: "登录账号", width:120, sort: true,align: "center" },
+            { field: "userPhone", title: "手机", width:200, sort: true,align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]
@@ -82,11 +89,18 @@ export default {
   },
   created(){
     this.type = this.$route.query.type
-    this.$axios.post('/api/getUserList').then(res=>{
-      console.log(res)
-    }).catch(err=>{
-      console.log(err)
-    })
+    // var data = {}
+    // var userId = this.$store.state.userId
+    // data.userId = userId
+    // data.currentPage = 1
+    // data.everyCount = 10
+    // console.log(data)
+    // this.$axios.post('/api/getUserList',data).then(res=>{
+    //   console.log(res)
+    //   console.log(JSON.parse(res.data.body.userList))
+    // }).catch(err=>{
+    //   console.log(err)
+    // })
   }
 }
 </script>

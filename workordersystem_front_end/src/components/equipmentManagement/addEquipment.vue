@@ -20,25 +20,18 @@
 
       <div class="layui-form-item">
         <label class="layui-form-label">设备型号</label>
-        <div class="layui-input-block" layui-filter="test2">
+        <div class="layui-input-block" layui-filter>
           <select name="modelId" lay-verify="required">
             <option value>请选择设备型号</option>
-            <option value="1">北京</option>
-            <option value="2">上海</option>
-            <option value="3">深圳</option>
+            <option v-for="(item) in deviceInfoList" :key="item.deviceId" :value="item.modelId">{{item.modelType}}</option>
           </select>
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
-        <div class="layui-input-block" layui-filter="test2">
-          <select name="modelName" lay-verify="required">
-            <option value>请选择一个城市</option>
-            <option value="1">北京</option>
-            <option value="2">上海</option>
-            <option value="3">深圳</option>
-          </select>
+        <div class="layui-input-block" layui-filter>
+          <input type="text" name="inventoryName" lay-verify="required" placeholder="请输入存货名称" value="" class="layui-input" />
         </div>
       </div>
 
@@ -47,7 +40,6 @@
         <div class="layui-input-block" layui-filter="test2">
           <select name="customerName" lay-verify="required">
             <option value>请选择一个客户</option>
-            <option value="1">民生</option>
             <option
               v-for="(item) in customerNameList"
               :key="item.customerId"
@@ -60,18 +52,16 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备投放点</label>
         <div class="layui-input-block">
-          <select name="seleNetworkName" lay-verify="required">
-            <option value>请选择一个城市</option>
-            <option value="1">北京</option>
-            <option value="2">上海</option>
-            <option value="3">深圳</option>
+          <select name="networkId" lay-filter="seleNetworkName" lay-verify="required">
+            <option value>请选择一个投放点</option>
+            <option v-for="(item) in networkList" :key="item.id" :value="item.id">{{item.networName}}</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">所在城市</label>
         <div class="layui-input-block">
-          <input type="text" name="region" autocomplete="off" class="layui-input" disabled />
+          <input type="text" name="region" autocomplete="off" :value="regionName" class="layui-input" disabled />
         </div>
       </div>
 
@@ -80,10 +70,10 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="networkAddress"
+            name="networAddress"
             autocomplete="off"
             class="layui-input"
-            value
+            :value="networAddress"
             disabled
           />
         </div>
@@ -95,6 +85,7 @@
           <input
             type="text"
             class="layui-input"
+            lay-verify="required"
             name="seviceBegintime"
             id="Maintenance_start"
             placeholder="请选择维保开始时间"
@@ -107,6 +98,7 @@
           <input
             type="text"
             class="layui-input"
+            lay-verify="required"
             name="seviceEndtime"
             id="Maintenance_end"
             placeholder="请选择维保结束时间"
@@ -350,7 +342,7 @@
 
       <div class="layui-form-item">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter>立即提交</button>
+          <button class="layui-btn" lay-submit lay-filter="addEquiment">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
       </div>
@@ -363,11 +355,15 @@ export default {
   name: "addEquipment",
   data() {
     return {
-      customerNameList: []
+      deviceInfoList: [],
+      customerNameList: [],
+      networkList: [],
+      regionName: '',
+      networAddress: ''
     };
   },
   mounted() {
-    var self = this;
+    var _this = this;
     layui.use("laydate", function() {
       var laydate = layui.laydate;
       //日期时间选择器
@@ -406,12 +402,19 @@ export default {
     //Demo
     layui.use("form", function() {
       var form = layui.form;
-      form.render();
       // select监听
-      form.on("select(filter)", function(data) {
-        console.log(data.elem); //得到select原始DOM对象
-        console.log(data.value); //得到被选中的值
-        console.log(data.othis); //得到美化后的DOM对象
+      form.on("select(seleNetworkName)", function(data) {
+        for(var i = 0; i < _this.networkList.length; i++){
+          console.log(data.value)
+          if(data.value == _this.networkList[i].id){
+            _this.regionName = _this.networkList[i].regionName
+            _this.networAddress = _this.networkList[i].networAddress
+          }
+        }
+        if(data.value == ''){
+          _this.regionName =''
+          _this.networAddress = ''
+        }
       });
       // 监听radio
       form.on("radio(filter)", function(data) {
@@ -419,22 +422,33 @@ export default {
         console.log(data.value); //被点击的radio的value值
       });
       //监听提交
-      form.on("submit", function(data) {
-        // layer.msg(JSON.stringify(data.field));
-        // data.field.userId = sessionStorage.getItem('userId')
-        console.log(data.field.deviceNumber);
-        var formData = {};
-        formData.userId = sessionStorage.getItem("userId");
-        formData.deviceNumber = data.field.deviceNumber;
-        formData.modelId = data.field.modelId;
-        formData.seviceBegintime = data.field.seviceBegintime;
-        formData.seviceEndtime = data.field.seviceEndtime;
-        formData.networkAddress = data.field.networkAddress;
-
-        console.log(formData);
-        self.$axios.post("/api/addDeviceInfo", formData).then(res => {
-          console.log(res);
-        });
+      form.on("submit(addEquiment)", function(data) {
+        var deviceId = sessionStorage.getItem('deviceId') ? sessionStorage.getItem('deviceId') : ''
+        console.log(deviceId)
+        data.field.userId = _this.$store.state.userId
+        if(deviceId === null || deviceId === ''){
+          _this.$axios.post("/api/addDeviceInfo", data.field).then(res => {
+            console.log(res);
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(function(){
+                _this.$router.push('/equipmentList?type=equipmentList')
+              },3000)
+            }
+          });
+        }else{
+          data.field.deviceId = deviceId
+          _this.$axios.post("/api/alterDeviceInfo", data.field).then(res => {
+            console.log(res);
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              sessionStorage.removeItem("deviceId")
+              setTimeout(function(){
+                _this.$router.push('/equipmentList?type=equipmentList')
+              },3000)
+            }
+          });
+        }
         return false;
       });
 
@@ -461,21 +475,31 @@ export default {
   },
   methods: {
     send() {
-      this.$axios
-        .post("/api/getCustomerNameList", this.$store.state.userId)
-        .then(res => {
-          console.log(res.data.body.customerNameList);
-          this.customerNameList = res.data.body.customerNameList;
-        });
+      var userId = this.$store.state.userId
+      this.$axios.post("/api/getDeviceInfoList", userId).then(res => {  // 设备型号
+        this.deviceInfoList = res.data.body.deviceInfoList;
+      });
+      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 存货名称
+        this.customerNameList = res.data.body.customerNameList;
+      });
+      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称
+        this.customerNameList = res.data.body.customerNameList;
+      });
+      this.$axios.post('/api/getNetworkList', userId).then(res=>{  // 设备投放地点
+        this.networkList = res.data.body.networkList
+      })
     }
   },
   created() {
-    this.send()
+    this.send();
   },
-  updated:function(){
-    layui.form.render('select','test2')
-    console.log(layui.form)
-  }
+  updated() {
+    setTimeout(function() {
+            layui.use("form", function() {
+              layui.form.render();
+            });
+          }, 10);
+  },
 };
 </script>
 

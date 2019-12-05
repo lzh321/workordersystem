@@ -5,15 +5,10 @@
       <div class="layui-form-item">
         <label class="layui-form-label">公司名称</label>
         <div class="layui-input-block">
-          <input
-            type="text"
-            name="title"
-            required
-            lay-verify="required"
-            placeholder="请输入公司名称"
-            autocomplete="off"
-            class="layui-input"
-          />
+          <select name="companyId" lay-verify="required">
+            <option value="">请选择公司名称</option>
+            <option v-for="(item) in companyList" :key="item.id" :value="item.id">{{item.companyName}}</option>
+          </select>
         </div>
       </div>
       <div class="layui-form-item">
@@ -21,7 +16,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="userName"
             required
             lay-verify="required"
             placeholder="请输入姓名"
@@ -35,7 +30,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="userId"
             required
             lay-verify="required"
             placeholder="请输入账号"
@@ -50,7 +45,7 @@
         <div class="layui-input-inline">
           <input
             type="password"
-            name="password"
+            name="userPassword"
             required
             lay-verify="required"
             placeholder="请输入密码"
@@ -63,8 +58,8 @@
       <div class="layui-form-item" pang>
         <label class="layui-form-label">性别</label>
         <div class="layui-input-block">
-          <input type="radio" name="sex" value="男" title="男" />
-          <input type="radio" name="sex" value="女" title="女" checked />
+          <input type="radio" name="userSex" value="男" title="男" />
+          <input type="radio" name="userSex" value="女" title="女" checked />
         </div>
       </div>
       <div class="layui-form-item">
@@ -72,9 +67,9 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="userPhone"
             required
-            lay-verify="required"
+            lay-verify="phone"
             placeholder="请输入手机号码"
             autocomplete="off"
             class="layui-input"
@@ -86,8 +81,8 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
-            lay-verify=""
+            name="userEmail"
+            lay-verify="required"
             placeholder="请输入邮箱"
             autocomplete="off"
             class="layui-input"
@@ -97,22 +92,19 @@
       <div class="layui-form-item">
         <label class="layui-form-label">所属部门</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="required">
+          <select name="deptId" lay-verify="required">
             <option value=""></option>
-            <option value="1">全部</option>
-            <option value="2">测试</option>
-            <option value="3">开发</option>
+            <option v-for="(item) in DeptList" :key="item.id" :value="item.deptId">{{item.deptName}}</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">当前职务</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="required">
+          <select name="jobId" lay-verify="required">
             <option value=""></option>
-            <option value="1">全部</option>
-            <option value="2">测试工程师</option>
-            <option value="3">开发工程师</option>
+            <option v-for="(item) in JobList" :key="item.id" :value="item.id">{{item.jobName}}</option>
+
           </select>
         </div>
       </div>
@@ -120,7 +112,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">座机/分机</label>
         <div class="layui-input-block" style="display:flex">
-          <input
+          <!-- <input
             type="text"
             name="title"
             lay-verify=""
@@ -143,6 +135,14 @@
             placeholder="分机号码"
             autocomplete="off"
             class="layui-input"
+          /> -->
+          <input
+            type="text"
+            name="telePhone"
+            lay-verify=""
+            placeholder="请输入座机/分机号"
+            autocomplete="off"
+            class="layui-input"
           />
         </div>
       </div>
@@ -152,7 +152,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="userJobNumber"
             required
             lay-verify=""
             placeholder="请输入工号"
@@ -166,7 +166,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="userNativePlace"
             required
             lay-verify=""
             placeholder="请输入籍贯"
@@ -181,7 +181,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="graduateSchool"
             required
             lay-verify=""
             placeholder="请输入毕业院校"
@@ -194,18 +194,20 @@
       <div class="layui-form-item">
         <label class="layui-form-label">毕业时间</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="">
-            <option value=""></option>
-            <option value="1">全部</option>
-            <option value="2">测试工程师</option>
-            <option value="3">开发工程师</option>
-          </select>
+          <input
+            type="text"
+            class="layui-input"
+            lay-verify=""
+            name="graduateTime"
+            id="graduateTime"
+            placeholder="毕业时间"
+          />
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">学历</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="">
+          <select name="userEducation" lay-verify="">
             <option value=""></option>
             <option value="1">全部</option>
             <option value="2">博士</option>
@@ -224,7 +226,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="major"
             required
             lay-verify=""
             placeholder="请输入所学专业"
@@ -237,12 +239,12 @@
       <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
-          <textarea name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+          <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
         </div>
       </div>
       <div class="layui-form-item">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+          <button class="layui-btn" lay-submit lay-filter="addUser">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
         </div>
       </div>
@@ -254,13 +256,26 @@
 export default {
   name: "addUser",
   data() {
-    return {};
+    return {
+      
+      companyList: [],
+      DeptList: [],
+      JobList: []
+    };
   },
   mounted() {
     //Demo
-    layui.use("form", function() {
+    var _this = this
+    layui.use(["form", "laydate"], function() {
       var form = layui.form;
+      var laydate = layui.laydate
       form.render();
+      laydate.render({
+        // 维保开始时间
+        elem: "#graduateTime",
+        type: "date",
+        closeStop: "#graduateTime"
+      });
       // select监听
       form.on('select(filter)', function(data){
         console.log(data.elem); //得到select原始DOM对象
@@ -273,8 +288,20 @@ export default {
         console.log(data.value); //被点击的radio的value值
       });
       //监听提交
-      form.on("submit(formDemo)", function(data) {
-        layer.msg(JSON.stringify(data.field));
+      form.on("submit(addUser)", function(data) {
+        console.log(data.field);
+        _this.$axios.post('/api/addUserInfo',data.field).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg('添加用户成功', {icon: 1})
+            setTimeout(()=>{
+              _this.$router.push('/staffManagement?type=staffManagement')
+
+            },2000)
+          }else{
+            layer.msg('添加用户失败', {icon: 1})
+          }
+        })
         return false;
       });
 
@@ -300,6 +327,39 @@ export default {
         ] 
       });
     });
+  },
+  methods:{
+    send(){
+      var userId = this.$store.state.userId
+      this.$axios.post('/api/getCompanyList',userId).then(res=>{ //公司列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.companyList = res.data.body.list
+        }
+      })
+      this.$axios.post('/api/getDeptList',userId).then(res=>{  //部门列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.DeptList = res.data.body.list
+        }
+      })
+      this.$axios.post('/api/getJobList',userId).then(res=>{  //职务列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.JobList = res.data.body.list
+        }
+      })
+    }
+  },
+  created(){
+    this.send()
+  },
+  updated() {
+    setTimeout(function() {
+      layui.use("form", function() {
+        layui.form.render();
+      });
+    }, 10);
   }
 };
 </script>
