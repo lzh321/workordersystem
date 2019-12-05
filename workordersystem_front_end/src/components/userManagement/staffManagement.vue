@@ -10,7 +10,7 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="test" lay-data="{id:'serachData'}"></table>
+        <table id="demo" lay-filter="staffManagement" lay-data="{id:'serachData'}"></table>
         <div id="barDemo" style="display:none">
           <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a href='' class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
@@ -85,6 +85,38 @@ export default {
           ]
         ]
       });
+      //监听行工具事件
+        table.on('tool(staffManagement)', function(obj){
+          var data = obj.data;
+          console.log(data)
+          var deviceId = data.deviceId
+          if(obj.event === 'deletion'){
+            layer.confirm('真的删除行么', function(index){
+              obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+              layer.close(index);
+              //向服务端发送删除指令
+              var delParam = {
+                userId : _this.$store.state.userId,
+                deviceId: deviceId
+              }
+              // _this.$axios.post('/api/deleDeviceInfo',delParam).then(res=>{
+              //   console.log(res)
+              //   if(res.data.retCode == '000000'){
+              //     layer.msg(res.data.retMsg,{icon: 1})
+              //   }
+              // })
+            });
+          } else if(obj.event === 'edit'){   //编辑
+            // sessionStorage.setItem('deviceId',deviceId)
+            // _this.$router.push('/addEquipment')
+          }else if(obj.event === 'privilege'){  // 权限
+            // sessionStorage.setItem('deviceId',deviceId)
+            // _this.$router.push("/checkEquipmentInfo")
+          }else if(obj.event === 'freeze'){   //冻结
+
+          }
+        });
+
     });
   },
   created(){
