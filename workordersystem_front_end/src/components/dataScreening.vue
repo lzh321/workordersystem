@@ -47,19 +47,34 @@
             </select>
           </p>
         </div>
-        <div class="search_input" v-if="EnterpriseNetwork">
+        <div class="search_input" v-if="NetworkList">
           <p>
-            <span for>银行名称</span>
-            <select name id>
-              <option value>全部</option>
-              <option value>php开发工程师</option>
-              <option value>前端开发工程师</option>
-              <option value>java开发工程师</option>
+            <span for>客户名称</span>
+            <select name="seleCustomerName" lay-verify="">
+              <option value>请选择一个客户</option>
+              <option
+                v-for="(item) in customerNameList"
+                :key="item.customerId"
+                :value="item.customerId"
+              >{{item.customerName}}</option>
             </select>
           </p>
           <p>
-            <span for>网点名称</span>
-            <input type="text" />
+            <span for>投放点</span>
+            <input type="text" name="seleNetworkName" />
+          </p>
+        </div>
+        <div class="search_input" v-if="CustomerNameList">
+          <p>
+            <span for>客户名称</span>
+            <select name="seleCustomerName" lay-verify="">
+              <option value>请选择一个客户</option>
+              <option
+                v-for="(item) in customerNameList"
+                :key="item.customerId"
+                :value="item.customerName"
+              >{{item.customerName}}</option>
+            </select>
           </p>
         </div>
         <div class="search_input" v-if="messageModule">
@@ -97,9 +112,9 @@
             <select name="seleModelType">
               <option value>全部</option>
               <option
-                v-for="(item) in deviceInfoList"
-                :key="item.deviceId"
-                :value="item.modelType"
+                v-for="(item) in DeviceModelType"
+                :key="item.modelId"
+                :value="item.modelId"
               >{{item.modelType}}</option>
             </select>
           </p>
@@ -107,7 +122,14 @@
         <div class="search_input" v-if="equipmentType">
           <p>
             <span for>设备型号</span>
-            <input type="text" name="seleModelType" />
+            <select name="seleModelType">
+              <option value>全部</option>
+              <option
+                v-for="(item) in DeviceModelType"
+                :key="item.modelId"
+                :value="item.modelId"
+              >{{item.modelType}}</option>
+            </select>
           </p>
           <p>
             <span for>存货名称</span>
@@ -140,32 +162,38 @@ export default {
     return {
       staffManagement: "",
       workOrderManagement: "",
-      EnterpriseNetwork: "",
+      NetworkList: "",
+      CustomerNameList: "",
       businessEnterprise: "",
       messageModule: "",
       messagePushList: "",
       equipmentList: "",
       equipmentType: "",
-      deviceInfoList: [],
+      DeviceModelType: [],
       DeptList: [],
-      JobList: []
+      JobList: [],
+      customerNameList: []
     };
   },
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getDeviceInfoList", userId).then(res => {
+      this.$axios.post("/api/getDeviceModelList", userId).then(res => {
         // 设备型号
-        this.deviceInfoList = res.data.body.deviceInfoList;
+        // console.log(res)
+        this.DeviceModelType = res.data.body.modelList;
+      });
+      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称
+        this.customerNameList = res.data.body.customerNameList;
       });
       this.$axios.post('/api/getDeptList',userId).then(res=>{  //部门列表
-        console.log(res)
+        // console.log(res)
         if(res.data.retCode == '000000'){
           this.DeptList = res.data.body.list
         }
       })
       this.$axios.post('/api/getJobList',userId).then(res=>{  //职务列表
-        console.log(res)
+        // console.log(res)
         if(res.data.retCode == '000000'){
           this.JobList = res.data.body.list
         }
@@ -181,8 +209,11 @@ export default {
     if (this.type == "workOrderManagement") {
       this.workOrderManagement = this.type;
     }
-    if (this.type == "EnterpriseNetwork") {
-      this.EnterpriseNetwork = this.type;
+    if (this.type == "CustomerNameList") {
+      this.CustomerNameList = this.type;
+    }
+    if (this.type == "NetworkList") {
+      this.NetworkList = this.type;
     }
     if (this.type == "messageModule") {
       this.messageModule = this.type;

@@ -6,7 +6,7 @@ import workTable from '@/components/workTable/workTable'
 import workOrderManagement from '@/components/workOrderManagement/workOrderManagement'
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
 import staffManagement from '@/components/userManagement/staffManagement'
-import EnterpriseNetwork from '@/components/userManagement/EnterpriseNetwork'
+import NetworkList from '@/components/userManagement/NetworkList'
 import roleManagement from '@/components/systemManagement/roleManagement'
 import permissionsButton from '@/components/systemManagement/permissionsButton'
 import businessEnterprise from '@/components/systemManagement/businessEnterprise'
@@ -17,6 +17,8 @@ import equipmentType from '@/components/equipmentManagement/equipmentType'
 import workOrderCreate from '@/components/workOrderManagement/workOrderCreate'
 import addUser from '@/components/userManagement/addUser'
 import addNetwork from '@/components/userManagement/addNetwork'
+import addCustomer from '@/components/userManagement/addCustomer'
+import CustomerNameList from '@/components/userManagement/CustomerNameList'
 import addInstitution from '@/components/systemManagement/addInstitution'
 import addMessage from '@/components/systemManagement/addMessage'
 import deploy from '@/components/systemManagement/deploy'
@@ -61,9 +63,9 @@ export default new Router({
           component: staffManagement
         },
         {
-          path: '/EnterpriseNetwork',
-          name: 'EnterpriseNetwork',
-          component: EnterpriseNetwork
+          path: '/NetworkList',
+          name: 'NetworkList',
+          component: NetworkList
         },
         {
           path: '/businessEnterprise',
@@ -104,6 +106,16 @@ export default new Router({
           path: '/addNetwork',
           name: 'addNetwork',
           component: addNetwork
+        },
+        {
+          path: '/addCustomer',
+          name: 'addCustomer',
+          component: addCustomer
+        },
+        {
+          path: '/CustomerNameList',
+          name: 'CustomerNameList',
+          component: CustomerNameList
         },
         {
           path: '/roleManagement',

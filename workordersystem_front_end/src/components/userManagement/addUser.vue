@@ -30,12 +30,14 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="userId"
+            :name="loginId"
             required
             lay-verify="required"
             placeholder="请输入账号"
             autocomplete="off"
             class="layui-input"
+            id="alterId"
+            :value="alterId"
           />
         </div>
       </div>
@@ -58,8 +60,8 @@
       <div class="layui-form-item" pang>
         <label class="layui-form-label">性别</label>
         <div class="layui-input-block">
-          <input type="radio" name="userSex" value="男" title="男" />
-          <input type="radio" name="userSex" value="女" title="女" checked />
+          <input type="radio" name="userSex" value="0" title="男" />
+          <input type="radio" name="userSex" value="1" title="女" checked />
         </div>
       </div>
       <div class="layui-form-item">
@@ -81,7 +83,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="userEmail"
+            name="userMail"
             lay-verify="required"
             placeholder="请输入邮箱"
             autocomplete="off"
@@ -246,6 +248,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addUser">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -257,10 +260,11 @@ export default {
   name: "addUser",
   data() {
     return {
-      
+      alterId: '',
       companyList: [],
       DeptList: [],
-      JobList: []
+      JobList: [],
+      loginId: ''
     };
   },
   mounted() {
@@ -290,18 +294,35 @@ export default {
       //监听提交
       form.on("submit(addUser)", function(data) {
         console.log(data.field);
-        _this.$axios.post('/api/addUserInfo',data.field).then(res=>{
-          console.log(res)
-          if(res.data.retCode == '000000'){
-            layer.msg('添加用户成功', {icon: 1})
-            setTimeout(()=>{
-              _this.$router.push('/staffManagement?type=staffManagement')
+        var alterId = sessionStorage.getItem('alterId') ? sessionStorage.getItem('alterId') : ''
+        data.field.userId = _this.$store.state.userId
+        if(alterId === null || alterId === '' || alterId === undefined){
+          _this.$axios.post('/api/addUserInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg, {icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/staffManagement?type=staffManagement')
 
-            },2000)
-          }else{
-            layer.msg('添加用户失败', {icon: 1})
-          }
-        })
+              },2000)
+            }else{
+              layer.msg(res.data.retMsg, {icon: 2})
+            }
+          })
+        }else{
+          _this.$axios.post('/api/alterUserInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg, {icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/staffManagement?type=staffManagement')
+  
+              },2000)
+            }else{
+              layer.msg(res.data.retMsg, {icon: 2})
+            }
+          })
+        }
         return false;
       });
 
@@ -349,6 +370,9 @@ export default {
           this.JobList = res.data.body.list
         }
       })
+    },
+    cancel(){
+      this.$router.push('/staffManagement?type=staffManagement')
     }
   },
   created(){
@@ -360,6 +384,17 @@ export default {
         layui.form.render();
       });
     }, 10);
+    var alterId = sessionStorage.getItem('alterId') ? sessionStorage.getItem('alterId') : ''
+    if(alterId === null || alterId === '' || alterId === undefined){
+      this.loginId = 'addUserId'
+    }else{
+      this.alterId = alterId
+      this.loginId = 'alterId'
+      document.getElementById('alterId').disabled = true
+    }
+  },
+  beforeDestroy(){
+    sessionStorage.removeItem('alterId')
   }
 };
 </script>

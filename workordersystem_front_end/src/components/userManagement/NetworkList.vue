@@ -1,20 +1,18 @@
-<template>
-<!-- 员工管理 -->
-  <div class="staffManagement">
+<template> 
+<!-- 投放点管理 -->
+  <div class="NetworkList">
     <data-screening :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p>
-          <router-link to="/addUser" tag="button">添加</router-link>
+          <router-link to="/addNetwork" tag="button">添加</router-link>
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="staffManagement" lay-data="{id:'serachData'}"></table>
+        <table id="demo" lay-filter="NetworkList" lay-data="{id: serachData}"></table>
         <div id="barDemo" style="display:none">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
-          <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </div>
       </div>
@@ -25,21 +23,18 @@
 <script>
 import dataScreening from '../dataScreening'
 export default {
-  name:'staffManagement',
+  name:'NetworkList',
   data() {
     return {
-      type:'',
+      type: ''
     }
   },
   components: {
     dataScreening
   },
-  methods: {
-    layui: function(){}
-  },
   mounted() {
     var _this = this
-    layui.use(["table","form"], function() {
+    layui.use("table", function() {
       var table = layui.table;
       var form = layui.form
         form.render()
@@ -47,50 +42,58 @@ export default {
           data.field.userId = _this.$store.state.userId
           console.log(data.field)
           table.reload('serachData',{
-            url: "/api/getUserList",
+            url: "/api/getNetworkList",
             where:data.field,
-            page:{curr: 1, limit: 10}
+            // page:{curr: 1}
           })
         })
       //第一个实例
       table.render({
         elem: "#demo",
-        url: "/api/getUserList", //数据接口
+        url: "/api/getNetworkList", //数据接口
         method: 'post',
         id: 'serachData',
+        response: {
+          statusCode: '000000'
+        },
         parseData: function(res){ //res 即为原始返回的数据
           return {
             "code": res.retCode, //解析接口状态
             "msg": res.retMsg, //解析提示文本
-            "count": res.body.totalCount, //解析数据长度
-            "data":res.body.userList //解析数据列表
+            "count": res.body.networkList.length, //解析数据长度
+            "data": res.body.networkList //解析数据列表
           };
         },
-        page: true, //开启分页
-        request: {
-          pageName: 'currentPage', //页码的参数名称，默认：page
-          limitName: 'everyCount' //每页数据量的参数名，默认：limit
-        },
+        // page: true, //开启分页
+        // request: {
+        //   pageName: 'currentPage', //页码的参数名称，默认：page
+        //   limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        // },
         cols: [
           [
             //表头
-            { field: "userName", title: "员工姓名", width:150, sort: true,align: "center"},
-            { field: "userSex", title: "性别", width:100, sort: true,align: "center"},
-            { field: "companyName", title: "所属公司",  sort: true,align: "center" },
-            { field: "deptName", title: "所属部门", width:150, align: "center" },
-            { field: "jobName", title: "当前职务", align: "center" },
-            { field: "userId", title: "登录账号", width:120, sort: true,align: "center" },
-            { field: "userPhone", title: "手机", width:200, sort: true,align: "center" },
+            
+            { field: "customerId", fixed: 'left', hide:true},
+            { field: "id", title: "投放点ID",  sort: true,align: "center"},
+            { field: "customerName", title: "客户名称",  sort: true,align: "center"},
+            { field: "networName", title: "投放点",  sort: true,align: "center"},
+            { field: "regionName", title: "所在城市",  sort: true,align: "center"},
+            { field: "networAddress", title: "投放地址",  sort: true,align: "center"},
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]
       });
+
+      table.reload('serachData',{
+        where:{userId: _this.$store.state.userId}
+      })
+
       //监听行工具事件
-        table.on('tool(staffManagement)', function(obj){
+        table.on('tool(NetworkList)', function(obj){
           var data = obj.data;
           console.log(data)
-          var alterId = data.userId
-          console.log(alterId)
+          var networkId = data.id
+          console.log(networkId)
           if(obj.event === 'deletion'){
             layer.confirm('真的删除行么', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
@@ -98,9 +101,9 @@ export default {
               //向服务端发送删除指令
               var delParam = {
                 userId : _this.$store.state.userId,
-                deleId: alterId
+                networkId: networkId
               }
-              _this.$axios.post('/api/deleUserInfo',delParam).then(res=>{
+              _this.$axios.post('/api/deleNetworkInfo',delParam).then(res=>{
                 console.log(res)
                 if(res.data.retCode == '000000'){
                   layer.msg(res.data.retMsg,{icon: 1})
@@ -110,31 +113,19 @@ export default {
               })
             });
           } else if(obj.event === 'edit'){   //编辑
-            sessionStorage.setItem('alterId',alterId)
-            _this.$router.push('/addUser')
-          }else if(obj.event === 'privilege'){  // 权限
-            // sessionStorage.setItem('deviceId',deviceId)
-            // _this.$router.push("/checkEquipmentInfo")
-          }else if(obj.event === 'freeze'){   //冻结
-
+            sessionStorage.setItem('networkId',networkId)
+            _this.$router.push('/addNetwork')
           }
         });
-
     });
   },
   created(){
     this.type = this.$route.query.type
-    var data = {}
-    var userId = this.$store.state.userId
-    data.userId = userId
-    data.currentPage = 1
-    data.everyCount = 10
-    console.log(data)
-    this.$axios.post('/api/getUserList',data).then(res=>{
+    var data ={
+      userId: this.$store.state.userId,
+    }
+    this.$axios.post('/api/getNetworkList',data).then(res=>{
       console.log(res)
-      console.log(JSON.parse(res.data.body.userList))
-    }).catch(err=>{
-      console.log(err)
     })
   }
 }
@@ -164,11 +155,7 @@ export default {
   font-size: 13px;
   margin: 0 10px;
 }
-/* .dataList .dataList_top p button:nth-child(1) {
-  background: #fff;
-  border: 1px solid #eee;
-  color: #444;
-} */
+
 .dataList .dataList_table{
   padding: 0 15px;
 }

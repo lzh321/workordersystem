@@ -1,28 +1,22 @@
 <template>
 <!-- 新增设备类型 -->
-  <div class="addEquipmentType">
+  <div class="addCustomer">
     <form class="layui-form layui-form-pane" action>
       <div class="info">
         <span>基础信息</span>
         <span>为必填项</span>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">设备类型</label>
+        <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" name="modelType" placeholder="请输入设备类型">
-        </div>
-      </div>
-
-      <div class="layui-form-item">
-        <label class="layui-form-label">存货名称</label>
-        <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" name="modelName" placeholder="请输入存货名称">
+          <input type="text" class="layui-input" lay-verify="required" name="customerName" placeholder="请输入客户名称">
         </div>
       </div>
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="addCustomer">确认</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
@@ -32,13 +26,13 @@
 
 <script>
 export default {
-  name: "addEquipmentType",
+  name: "addCustomer",
   data() {
     return {};
   },
   methods:{
     cancel(){
-      this.$router.push('/equipmentType?type=equipmentType')
+      this.$router.push('/CustomerNameList?type=CustomerNameList')
     }
   },
   mounted() {
@@ -48,48 +42,50 @@ export default {
       var form = layui.form;
       form.render();
       //监听提交
-      form.on("submit(formDemo)", function(data) {
-        var modelId = sessionStorage.getItem('modelId') ? sessionStorage.getItem('modelId') : ''
+      form.on("submit(addCustomer)", function(data) {
+        var customerId = sessionStorage.getItem('customerId') ? sessionStorage.getItem('customerId') : ''
         data.field.userId = _this.$store.state.userId
-        if(modelId === null || modelId === '' || modelId === undefined){
-          _this.$axios.post('/api/addDeviceModelInfo',data.field).then(res=>{  // 添加设备类型
+        if(customerId === null || customerId === '' || customerId === undefined){
+          _this.$axios.post('/api/addCustomerInfo',data.field).then(res=>{  // 添加客户
             if(res.data.retCode == '000000'){
               layer.msg(res.data.retMsg,{icon: 1});
               setTimeout(()=>{
-                _this.$router.push('/equipmentType?type=equipmentType')
-              },2000)
+                _this.$router.push('/CustomerNameList?type=CustomerNameList')
+              },3100)
             }else{
               layer.msg(res.data.retMsg,{icon: 2});
             }
             
           })
         }else{
-          data.field.modelId = modelId
-          _this.$axios.post('/api/alterDeviceModelInfo',data.field).then(res=>{  // 添加设备类型
+          data.field.customerId = customerId
+          // console.log(data.field)
+          _this.$axios.post('/api/alterCustomerInfo',data.field).then(res=>{  
+            console.log(res)
             if(res.data.retCode == '000000'){
               layer.msg(res.data.retMsg,{icon: 1});
               setTimeout(()=>{
-                _this.$router.push('/equipmentType?type=equipmentType')
-              },2000)
+                _this.$router.push('/CustomerNameList?type=CustomerNameList')
+              },3000)
             }else{
               layer.msg(res.data.retMsg,{icon: 2});
             }
             
           })
         }
-        
         return false;
       });
+      
     });
   },
   beforeDestroy(){
-    sessionStorage.removeItem("modelId")
+    sessionStorage.removeItem("customerId")
   }
 };
 </script>
 
 <style scoped>
-.addEquipmentType{
+.addCustomer{
   padding: 15px 15px 0;
 }
 .layui-btn {

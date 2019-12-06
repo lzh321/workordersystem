@@ -4,7 +4,7 @@
       <div class="content_all">
         <div class="content_header">
           <span>{{title}}</span>
-          <span>刷新</span>
+          <span @click="Refresh">刷新</span>
         </div>
         <div class="content_main">
           <router-view></router-view>
@@ -19,10 +19,16 @@
 export default {
   name: "Main",
   props: ['title'],
+  inject: ["reload"],
   data() {
     return {
       // title: "",
     };
+  },
+  methods:{
+    Refresh(){
+      this.reload()
+    }
   },
   mounted(){
     

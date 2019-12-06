@@ -53,8 +53,12 @@ export default {
               path: "/staffManagement?type=staffManagement"
             },
             {
-              title: "合作行网点管理",
-              path: "/EnterpriseNetwork?type=EnterpriseNetwork"
+              title: "投放点管理",
+              path: "/NetworkList?type=NetworkList"
+            },
+            {
+              title: "客户列表",
+              path: "/CustomerNameList?type=CustomerNameList"
             },
             
           ]

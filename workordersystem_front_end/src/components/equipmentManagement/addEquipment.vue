@@ -23,7 +23,7 @@
         <div class="layui-input-block" layui-filter>
           <select name="modelId" lay-verify="required">
             <option value>请选择设备型号</option>
-            <option v-for="(item) in deviceInfoList" :key="item.deviceId" :value="item.modelId">{{item.modelType}}</option>
+            <option v-for="(item) in DeviceModelType" :key="item.modelId" :value="item.modelId">{{item.modelType}}</option>
           </select>
         </div>
       </div>
@@ -344,6 +344,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addEquiment">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -355,7 +356,7 @@ export default {
   name: "addEquipment",
   data() {
     return {
-      deviceInfoList: [],
+      DeviceModelType: [],
       customerNameList: [],
       networkList: [],
       regionName: '',
@@ -476,11 +477,8 @@ export default {
   methods: {
     send() {
       var userId = this.$store.state.userId
-      this.$axios.post("/api/getDeviceInfoList", userId).then(res => {  // 设备型号
-        this.deviceInfoList = res.data.body.deviceInfoList;
-      });
-      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 存货名称
-        this.customerNameList = res.data.body.customerNameList;
+      this.$axios.post("/api/getDeviceModelList", userId).then(res => {  // 设备型号
+        this.DeviceModelType = res.data.body.modelList;
       });
       this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称
         this.customerNameList = res.data.body.customerNameList;
@@ -488,6 +486,9 @@ export default {
       this.$axios.post('/api/getNetworkList', userId).then(res=>{  // 设备投放地点
         this.networkList = res.data.body.networkList
       })
+    },
+    cancel(){
+      this.$router.push('/equipmentList?type=equipmentList')
     }
   },
   created() {
@@ -495,11 +496,14 @@ export default {
   },
   updated() {
     setTimeout(function() {
-            layui.use("form", function() {
-              layui.form.render();
-            });
-          }, 10);
+      layui.use("form", function() {
+        layui.form.render();
+      });
+    }, 10);
   },
+  beforeDestroy(){
+    sessionStorage.removeItem('deviceId')
+  }
 };
 </script>
 

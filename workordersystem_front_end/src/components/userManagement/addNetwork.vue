@@ -3,22 +3,24 @@
     <form class="layui-form layui-form-pane" action>
       <div class="info">基础信息</div>
       <div class="layui-form-item">
-        <label class="layui-form-label">银行名称</label>
+        <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <select name="bankname" lay-verify="required">
-            <option value=""></option>
-            <option value="1">请选择银行</option>
-            <option value="2">中国民生银行</option>
-            <option value="3">中国农业银行</option>
-          </select>
+          <select name="customerId" lay-verify="required">
+              <option value>请选择一个客户</option>
+              <option
+                v-for="(item) in customerNameList"
+                :key="item.customerId"
+                :value="item.customerId"
+              >{{item.customerName}}</option>
+            </select>
         </div>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">网点名称</label>
+        <label class="layui-form-label">投放点</label>
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="networName"
             lay-verify="required"
             placeholder="请输入网点名称"
             autocomplete="off"
@@ -30,25 +32,28 @@
       <div class="layui-form-item">
         <label class="layui-form-label">所在城市</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="required">
+          <select name="regionId" lay-verify="required">
             <option value="">请选择一个城市</option>
-            <option value="010">北京</option>
-            <option value="021">上海</option>
-            <option value="0571">杭州</option>
+            <option
+                v-for="(item) in RegionInfoList"
+                :key="item.regionId"
+                :value="item.regionId"
+              >{{item.regionName}}</option>
           </select> 
         </div>
       </div>
 
       <div class="layui-form-item layui-form-text">
-        <label class="layui-form-label">网点地址</label>
+        <label class="layui-form-label">投放点详细地址</label>
         <div class="layui-input-block">
-          <textarea lay-verify="required" name="desc" placeholder="请输入内容" class="layui-textarea"></textarea>
+          <textarea lay-verify="required" name="networAddress" placeholder="请输入内容" class="layui-textarea"></textarea>
         </div>
       </div>
       <div class="layui-form-item">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -59,27 +64,64 @@
 export default {
   name: "addNetwork",
   data() {
-    return {};
+    return {
+      customerNameList:[],
+      RegionInfoList: []
+    };
+  },
+  methods:{
+    send(){
+      var userId = this.$store.state.userId
+      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称
+      console.log(res)
+        this.customerNameList = res.data.body.customerNameList;
+      });
+      this.$axios.post("/api/getRegionInfoList", userId).then(res => {  // 客户名称
+      console.log(res)
+        this.RegionInfoList = res.data.body.addrList;
+      });
+    },
+    cancel(){
+      this.$router.push('/NetworkList?type=NetworkList')
+    }
   },
   mounted() {
     //Demo
+    var _this = this
     layui.use("form", function() {
       var form = layui.form;
       form.render();
-      // select监听
-      form.on('select(filter)', function(data){
-        console.log(data.elem); //得到select原始DOM对象
-        console.log(data.value); //得到被选中的值
-        console.log(data.othis); //得到美化后的DOM对象
-      }); 
-      // 监听radio
-      form.on('radio(filter)', function(data){
-        console.log(data.elem); //得到radio原始DOM对象
-        console.log(data.value); //被点击的radio的value值
-      });
+
       //监听提交
       form.on("submit(formDemo)", function(data) {
-        layer.msg(JSON.stringify(data.field));
+        var networkId = sessionStorage.getItem('networkId') ? sessionStorage.getItem('networkId') : ''
+        data.field.userId = _this.$store.state.userId
+        if(networkId === null || networkId === '' || networkId === undefined){
+          _this.$axios.post('/api/addNetworkInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/NetworkList?type=NetworkList')
+              },3200)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2})
+            }
+          })
+        }else{
+          data.field.networkId = networkId
+          _this.$axios.post('/api/alterNetworkInfo',data.field).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg(res.data.retMsg,{icon: 1})
+            setTimeout(()=>{
+              _this.$router.push('/NetworkList?type=NetworkList')
+            },3200)
+          }else{
+            layer.msg(res.data.retMsg,{icon: 2})
+          }
+        })
+        }
         return false;
       });
 
@@ -105,6 +147,19 @@ export default {
         ] 
       });
     });
+  },
+  created(){
+    this.send()
+  },
+  updated() {
+    setTimeout(function() {
+      layui.use("form", function() {
+        layui.form.render();
+      });
+    }, 10);
+  },
+  beforeDestroy(){
+    sessionStorage.removeItem('networkId')
   }
 };
 </script>
