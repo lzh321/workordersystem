@@ -1,26 +1,19 @@
 <template>
-  <div class="businessEnterprise">
+  <div class="menuManagement">
     <data-screening :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p class="layui-btn-container">
-          <router-link to="/addInstitution" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 添加</router-link>
-          <router-link to="/deploy?type=CompanyList" class="layui-btn layui-btn-primary layui-btn-sm">
-            <i class="layui-icon">&#xe620;</i>
-            配置
-          </router-link>
+          <router-link to="/addMenu" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 添加</router-link>
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="businessEnterprise" lay-filter="businessEnterprise"></table>
-        <div id="barDemo" style="display:none">
+        <table id="menuManagement" lay-filter="menuManagement"></table>
+        <script id="barDemo" type="text/html">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
-        </div>
-        <div id="Enable_Disable" style="display:none">
-          <input type="checkbox" name="switch" lay-skin="switch">
-        </div>
+        </script>
       </div>
     </div>
   </div>
@@ -29,7 +22,7 @@
 <script>
 import dataScreening from '../dataScreening'
 export default {
-  name:'businessEnterprise',
+  name:'menuManagement',
   data() {
     return {
       type: ''
@@ -44,39 +37,44 @@ export default {
       var table = layui.table;
       //第一个实例
       table.render({
-        elem: "#businessEnterprise",
+        elem: "#menuManagement",
         height: 485,
-        url: "/api/getOrganizationList", //数据接口
+        url: "/api/getMenuList", //数据接口
         method: 'post',
         parseData: function(res){ //res 即为原始返回的数据
           return {
             "code": res.retCode, //解析接口状态
             "msg": res.retMsg, //解析提示文本
-            "count": res.body.list.length, //解析数据长度
-            "data": res.body.list //解析数据列表
+            "count": res.body.totalPage, //解析数据长度
+            "data": res.body.menuList //解析数据列表
           };
         },
+        request: {
+          pageName: 'currentPage', //页码的参数名称，默认：page
+          // curr: 'indexCount', //页码的参数名称，默认：page
+          limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        },
         page: true, //开启分页
-        limit: 10,
+        // limit: 10,
         cols: [
           [
             //表头
-            {type: 'checkbox', fixed: 'left'},
-            { field: "companyId", title: "公司编号", width:200, sort: true,align: "center"},
-            { field: "companyName", title: "公司名称", width:260, sort: true,align: "center"},
-            { field: "deptName", title: "部门",  sort: true,align: "center" },
-            { field: "jobName", title: "职务", width:150, align: "center" },
-            { field: "PriorityDescription", title: "启用", align: "center", toolbar: '#Enable_Disable'},
+            
+            { field: "xuhao", title: "序号", width:200, fixed: 'left', sort: true,align: "center",type: 'numbers'},
+            { field: "menuId", title: "序号", width:200, sort: true,align: "center", hide: true},
+            { field: "menuNo", title: "菜单编号", width:200, sort: true,align: "center"},
+            { field: "menuOrder", title: "菜单类型", width:260, sort: true,align: "center"},
+            { field: "menuName", title: "菜单名称",  sort: true,align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]
       });
 
       //监听行工具事件
-        table.on('tool(businessEnterprise)', function(obj){
+        table.on('tool(menuManagement)', function(obj){
           var data = obj.data;
           console.log(data)
-          var listId = data.id
+          var menuId = data.menuId
           if(obj.event === 'deletion'){
             layer.confirm('真的删除行么', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
@@ -84,9 +82,9 @@ export default {
               //向服务端发送删除指令
               var delParam = {
                 userId : _this.$store.state.userId,
-                listId: listId
+                menuId: menuId
               }
-              _this.$axios.post('/api/deleOrganizationInfo',delParam).then(res=>{
+              _this.$axios.post('/api/deleMenuInfo',delParam).then(res=>{
                 console.log(res)
                 if(res.data.retCode == '000000'){
                   layer.msg(res.data.retMsg,{icon: 1})
@@ -96,20 +94,20 @@ export default {
               })
             });
           } else if(obj.event === 'edit'){ //编辑
-            sessionStorage.setItem('listId',listId)
-            _this.$router.push('/addInstitution')
-          }else if(obj.event === 'privilege'){  // 权限
-            // sessionStorage.setItem('deviceId',deviceId)
-            // _this.$router.push("/checkEquipmentInfo")
-          }else if(obj.event === 'freeze'){   //冻结
-
+            // sessionStorage.setItem('listId',listId)
+            // _this.$router.push('/addInstitution')
           }
         });
     });
   },
   created(){
     this.type = this.$route.query.type
-    this.$axios.post('/api/getOrganizationList').then(res=>{
+    var data = {
+      userId:this.$store.state.userId,
+      currentPage: 1,
+      everyCount: 10
+    }
+    this.$axios.post('/api/getMenuList',data).then(res=>{
       console.log(res)
     }).catch(err=>{
       console.log(err)

@@ -9,6 +9,9 @@ import staffManagement from '@/components/userManagement/staffManagement'
 import NetworkList from '@/components/userManagement/NetworkList'
 import roleManagement from '@/components/systemManagement/roleManagement'
 import permissionsButton from '@/components/systemManagement/permissionsButton'
+import menuManagement from '@/components/systemManagement/menuManagement'
+import addMenu from '@/components/systemManagement/addMenu'
+import addRole from '@/components/systemManagement/addRole'
 import businessEnterprise from '@/components/systemManagement/businessEnterprise'
 import messageModule from '@/components/systemManagement/messageModule'
 import messagePushList from '@/components/systemManagement/messagePushList'
@@ -29,6 +32,13 @@ import bulkImport from '@/components/equipmentManagement/bulkImport'
 import addEquipmentType from '@/components/equipmentManagement/addEquipmentType'
 
 Vue.use(Router)
+
+
+// 重写路由
+const routerPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
 
 export default new Router({
   mode: 'history',
@@ -127,6 +137,21 @@ export default new Router({
           path: '/permissionsButton',
           name: 'permissionsButton',
           component: permissionsButton
+        },
+        {
+          path: '/menuManagement',
+          name: 'menuManagement',
+          component: menuManagement
+        },
+        {
+          path: '/addMenu',
+          name: 'addMenu',
+          component: addMenu
+        },
+        {
+          path: '/addRole',
+          name: 'addRole',
+          component: addRole
         },
         {
           path: '/addInstitution',

@@ -27,6 +27,7 @@
           <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </script>
+        
       </div>
     </div>
   </div>

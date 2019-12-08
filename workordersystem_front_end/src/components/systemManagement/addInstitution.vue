@@ -8,43 +8,37 @@
       <div class="layui-form-item">
         <label class="layui-form-label">公司名称</label>
         <div class="layui-input-block">
-          <select name="bankname" lay-verify="required">
+          <select name="companyId" lay-verify="required">
             <option value>请选择公司</option>
-            <option value="2">票联金融</option>
-            <option value="3">票联金融</option>
+            <option v-for="(item) in companyList" :key="item.id" :value="item.id">{{item.companyName}}</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">部门名称</label>
         <div class="layui-input-block">
-          <input
-            type="text"
-            name="title"
-            lay-verify="required"
-            placeholder="请输入部门名称"
-            autocomplete="off"
-            class="layui-input"
-          />
+          <select name="deptId" lay-verify="required">
+            <option value>请选择部门</option>
+            <option v-for="(item) in DeptList" :key="item.id" :value="item.deptId">{{item.deptName}}</option>
+          </select>
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">职务名称</label>
         <div class="layui-input-block">
-          <select name="city" lay-verify="required">
+          <select name="jobId" lay-verify="required">
             <option value>请选择一个职务</option>
-            <option value="010">Java开发工程师</option>
-            <option value="021">前端开发工程师</option>
-            <option value="0571">PHP开发工程师</option>
+            <option v-for="(item) in JobList" :key="item.id" :value="item.id">{{item.jobName}}</option>
           </select>
         </div>
       </div>
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="addInstitution">确认</button>
-          <button type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="addInstitution">确认</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -55,19 +49,92 @@
 export default {
   name: "addInstitution",
   data() {
-    return {};
+    return {
+      companyList: [],
+      DeptList: [],
+      JobList: []
+    };
   },
   mounted() {
     //Demo
+    var _this = this
     layui.use("form", function() {
       var form = layui.form;
       form.render();
       //监听提交
       form.on("submit(addInstitution)", function(data) {
-        layer.msg(JSON.stringify(data.field));
+        // layer.msg(JSON.stringify(data.field));
+        var listId = sessionStorage.getItem('listId') ? sessionStorage.getItem('listId') : ''
+        data.field.userId = _this.$store.state.userId
+        if(listId === null || listId === '' || listId ===undefined){
+          _this.$axios.post('/api/addOrganizationInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/businessEnterprise?type=businessEnterprise')
+              },3000)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2})
+            }
+          })
+        }else{
+          data.field.listId = listId
+          console.log(data.field)
+          _this.$axios.post('/api/alterOrganizationInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/businessEnterprise?type=businessEnterprise')
+              },3000)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2})
+            }
+          })
+        }
         return false;
       });
     });
+  },
+  methods:{
+    send(){
+      var userId = this.$store.state.userId
+      this.$axios.post('/api/getCompanyList',userId).then(res=>{ //公司列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.companyList = res.data.body.list
+        }
+      })
+      this.$axios.post('/api/getDeptList',userId).then(res=>{  //部门列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.DeptList = res.data.body.list
+        }
+      })
+      this.$axios.post('/api/getJobList',userId).then(res=>{  //职务列表
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.JobList = res.data.body.list
+        }
+      })
+    },
+    cancel(){
+      this.$router.push('/businessEnterprise?type=businessEnterprise')
+    }
+  },
+  created(){
+    this.send()
+  },
+  updated() {
+    setTimeout(function() {
+      layui.use("form", function() {
+        layui.form.render();
+      });
+    }, 10);
+  },
+  beforeDestroy(){
+    sessionStorage.removeItem('listId')
   }
 };
 </script>

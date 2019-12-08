@@ -6,9 +6,9 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="companyName"
             lay-verify="required"
-            placeholder="请输入部门名称"
+            placeholder="请输入公司名称"
             autocomplete="off"
             class="layui-input"
           />
@@ -19,7 +19,7 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="deptName"
             lay-verify="required"
             placeholder="请输入部门名称"
             autocomplete="off"
@@ -32,9 +32,9 @@
         <div class="layui-input-block">
           <input
             type="text"
-            name="title"
+            name="jobName"
             lay-verify="required"
-            placeholder="请输入部门名称"
+            placeholder="请输入职务名称"
             autocomplete="off"
             class="layui-input"
           />
@@ -43,7 +43,7 @@
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button type="button" class="layui-btn" lay-submit lay-filter="addCompany">确认</button>
-          <button  type="reset" class="layui-btn layui-btn-primary">重置</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
@@ -62,35 +62,136 @@ export default {
       JobList: ""
     };
   },
-  methods:{
-    cancel(){
-      this.$router.go(-1)
-    }
+  methods: {
+    cancel() {
+      this.$router.push('/deploy?type='+this.type);
+    },
   },
   mounted() {
+    var _this = this;
     layui.use("form", function() {
       var form = layui.form;
       form.render();
       //监听提交
       form.on("submit(addCompany)", function(data) {
-        layer.msg(JSON.stringify(data.field));
+        console.log(data.field);
+        data.field.userId = _this.$store.state.userId
+        if (_this.type == "CompanyList") {
+          var companyId = sessionStorage.getItem('companyId') ? sessionStorage.getItem('companyId') : ''
+          if(companyId === null || companyId === '' || companyId === undefined){
+            _this.$axios.post('/api/addCompanyInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }else{
+            data.field.companyId = companyId
+            _this.$axios.post('/api/alterCompanyInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }
+          
+        }
+        if (_this.type == "DeptList") {
+
+          var deptId = sessionStorage.getItem('deptId') ? sessionStorage.getItem('deptId') : ''
+          if(deptId === null || deptId === '' || deptId === undefined){
+            _this.$axios.post('/api/addDeptInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }else{
+            data.field.deptId = deptId
+            _this.$axios.post('/api/alterDeptInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }
+        }
+        if (_this.type == "JobList") {
+          
+          var jobId = sessionStorage.getItem('jobId') ? sessionStorage.getItem('jobId') : ''
+          if(jobId === null || jobId === '' || jobId === undefined){
+            _this.$axios.post('/api/addJobInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }else{
+            data.field.jobId = jobId
+            _this.$axios.post('/api/alterJobInfo',data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg, {icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/deploy?type='+_this.type)
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg, {icon: 2})
+              }
+            })
+          }
+        }
+
         return false;
       });
     });
   },
   created() {
     if (this.type == "CompanyList") {
-      this.CompanyList = "CompanyList";
+      this.CompanyList = this.type;
     }
     if (this.type == "DeptList") {
-      this.DeptList = "DeptList";
+      this.DeptList = this.type;
     }
     if (this.type == "JobList") {
-      this.CompanyList = "JobList";
+      this.JobList = this.type;
     }
+  },
+  beforeDestroy(){
+    sessionStorage.removeItem('companyId')
+    sessionStorage.removeItem('deptId')
+    sessionStorage.removeItem('jobId')
   }
 };
 </script>
 
 <style scoped>
+.addCompany{
+  padding: 15px 15px 0;
+}
 </style>

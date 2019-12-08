@@ -75,6 +75,10 @@ export default {
               path: "/permissionsButton?type=permissionsButton"
             },
             {
+              title: "菜单管理",
+              path: "/menuManagement?type=menuManagement"
+            },
+            {
               title: "角色管理",
               path: "/roleManagement?type=roleManagement"
             },

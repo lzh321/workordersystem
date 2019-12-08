@@ -95,7 +95,7 @@
         <label class="layui-form-label">所属部门</label>
         <div class="layui-input-block">
           <select name="deptId" lay-verify="required">
-            <option value=""></option>
+            <option value="">选择部门</option>
             <option v-for="(item) in DeptList" :key="item.id" :value="item.deptId">{{item.deptName}}</option>
           </select>
         </div>

@@ -136,6 +136,18 @@
             <input type="text" name="seleModelName" />
           </p>
         </div>
+
+        <div class="search_input" v-if="menuManagement">
+          <p>
+            <span for>菜单编号</span>
+            <input type="text" name="seleModelName" />
+          </p>
+          <p>
+            <span for>菜单名称</span>
+            <input type="text" name="seleModelName" />
+          </p>
+        </div>
+
         <div class="layui-btn-container">
           <button
             type="button"
@@ -169,6 +181,7 @@ export default {
       messagePushList: "",
       equipmentList: "",
       equipmentType: "",
+      menuManagement: "",
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
@@ -227,6 +240,9 @@ export default {
     }
     if (this.type == "equipmentType") {
       this.equipmentType = this.type;
+    }
+    if (this.type == "menuManagement") {
+      this.menuManagement = this.type;
     }
     this.send()
   },
