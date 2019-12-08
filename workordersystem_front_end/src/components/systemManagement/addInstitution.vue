@@ -43,7 +43,7 @@
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
+          <button class="layui-btn" lay-submit lay-filter="addInstitution">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
@@ -63,7 +63,7 @@ export default {
       var form = layui.form;
       form.render();
       //监听提交
-      form.on("submit(formDemo)", function(data) {
+      form.on("submit(addInstitution)", function(data) {
         layer.msg(JSON.stringify(data.field));
         return false;
       });

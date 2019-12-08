@@ -22,6 +22,7 @@ import CustomerNameList from '@/components/userManagement/CustomerNameList'
 import addInstitution from '@/components/systemManagement/addInstitution'
 import addMessage from '@/components/systemManagement/addMessage'
 import deploy from '@/components/systemManagement/deploy'
+import addCompany from '@/components/systemManagement/addCompany'
 import addEquipment from '@/components/equipmentManagement/addEquipment'
 import checkEquipmentInfo from '@/components/equipmentManagement/checkEquipmentInfo'
 import bulkImport from '@/components/equipmentManagement/bulkImport'
@@ -141,6 +142,11 @@ export default new Router({
           path: '/deploy',
           name: 'deploy',
           component: deploy
+        },
+        {
+          path: '/addCompany',
+          name: 'addCompany',
+          component: addCompany
         },
         {
           path: '/addEquipment',

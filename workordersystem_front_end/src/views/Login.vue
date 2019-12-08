@@ -66,23 +66,26 @@ export default {
           userId: this.userId,
           userPassword: this.password
         };
-        this.$axios
-          .post("/api/getUserCheckInfo",data)
-          .then(res => {
-            console.log(res);
-            // 将用户token保存到vuex中
-            if (res.data.retCode == "000000") {
-              this.userId = res.data.body.userId;
-              // 将用户token保存到vuex中
-              this.changeLogin({ userId: this.userId });
-              this.$router.push("/Home");
-            } else {
-              layer.open({
-                title: "登录失败",
-                content: res.data.retMsg
-              });
-            }
-          });
+        this.userId = "admin"
+        this.changeLogin({ userId: this.userId });
+        this.$router.push("/Home");
+        // this.$axios
+        //   .post("/api/getUserCheckInfo",data)
+        //   .then(res => {
+        //     console.log(res);
+        //     // 将用户token保存到vuex中
+        //     if (res.data.retCode == "000000") {
+        //       this.userId = res.data.body.userId;
+        //       // 将用户token保存到vuex中
+        //       this.changeLogin({ userId: this.userId });
+        //       this.$router.push("/Home");
+        //     } else {
+        //       layer.open({
+        //         title: "登录失败",
+        //         content: res.data.retMsg
+        //       });
+        //     }
+        //   });
       }
       console.log(this.userId, this.password);
     }

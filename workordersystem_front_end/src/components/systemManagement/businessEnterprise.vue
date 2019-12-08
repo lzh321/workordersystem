@@ -46,16 +46,16 @@ export default {
       table.render({
         elem: "#demo",
         height: 485,
-        url: "/api/getOrganizationList", //数据接口
-        method: 'post',
-        parseData: function(res){ //res 即为原始返回的数据
-          return {
-            "code": res.retCode, //解析接口状态
-            "msg": res.retMsg, //解析提示文本
-            "count": res.body.list.length, //解析数据长度
-            "data": res.body.list //解析数据列表
-          };
-        },
+        url: "../../../static/table.json", //数据接口
+        // method: 'post',
+        // parseData: function(res){ //res 即为原始返回的数据
+        //   return {
+        //     "code": res.retCode, //解析接口状态
+        //     "msg": res.retMsg, //解析提示文本
+        //     "count": res.body.list.length, //解析数据长度
+        //     "data": res.body.list //解析数据列表
+        //   };
+        // },
         page: true, //开启分页
         limit: 10,
         cols: [
@@ -75,11 +75,11 @@ export default {
   },
   created(){
     this.type = this.$route.query.type
-    this.$axios.post('/api/getOrganizationList').then(res=>{
-      console.log(res)
-    }).catch(err=>{
-      console.log(err)
-    })
+    // this.$axios.post('/api/getOrganizationList').then(res=>{
+    //   console.log(res)
+    // }).catch(err=>{
+    //   console.log(err)
+    // })
   }
 }
 </script>
