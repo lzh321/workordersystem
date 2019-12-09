@@ -21,7 +21,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备型号</label>
         <div class="layui-input-block" layui-filter>
-          <select name="modelId" lay-verify="required">
+          <select name="modelId" lay-filter="seleModelType" lay-verify="required">
             <option value>请选择设备型号</option>
             <option v-for="(item) in DeviceModelType" :key="item.modelId" :value="item.modelId">{{item.modelType}}</option>
           </select>
@@ -31,7 +31,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
         <div class="layui-input-block" layui-filter>
-          <input type="text" name="inventoryName" lay-verify="required" placeholder="请输入存货名称" value="" class="layui-input" />
+          <input type="text" name="inventoryName" :value="inventoryName" id="" class="layui-input" disabled>
         </div>
       </div>
 
@@ -360,7 +360,8 @@ export default {
       customerNameList: [],
       networkList: [],
       regionName: '',
-      networAddress: ''
+      networAddress: '',
+      inventoryName: ''
     };
   },
   mounted() {
@@ -415,6 +416,17 @@ export default {
         if(data.value == ''){
           _this.regionName =''
           _this.networAddress = ''
+        }
+      });
+      form.on("select(seleModelType)", function(data) {
+        for(var i = 0; i < _this.DeviceModelType.length; i++){
+          console.log(data.value,_this.DeviceModelType)
+          if(data.value == _this.DeviceModelType[i].modelId){
+            _this.inventoryName = _this.DeviceModelType[i].modelName
+          }
+        }
+        if(data.value == ''){
+          _this.inventoryName =''
         }
       });
       // 监听radio
@@ -478,6 +490,7 @@ export default {
     send() {
       var userId = this.$store.state.userId
       this.$axios.post("/api/getDeviceModelList", userId).then(res => {  // 设备型号
+      console.log(res)
         this.DeviceModelType = res.data.body.modelList;
       });
       this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称

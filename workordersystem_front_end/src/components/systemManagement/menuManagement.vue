@@ -1,4 +1,5 @@
 <template>
+<!-- 菜单管理 -->
   <div class="menuManagement">
     <data-screening :type="type"></data-screening>
     <div class="dataList">
@@ -9,7 +10,7 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="menuManagement" lay-filter="menuManagement"></table>
+        <table id="menuManagement" lay-filter="menuManagement" lay-data="{id: 'serachData}"></table>
         <script id="barDemo" type="text/html">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
@@ -33,19 +34,30 @@ export default {
   },
   mounted() {
     var _this = this
-    layui.use("table", function() {
+    layui.use(["table","form"], function() {
       var table = layui.table;
+      var form = layui.form
+      form.render()
+      form.on('submit(serach)', function(data){
+        data.field.userId = _this.$store.state.userId
+          console.log(data.field)
+          table.reload('serachData',{
+            url: "/api/getMenuList",
+            where:data.field,
+            page:{curr: 1}
+          })
+        })
       //第一个实例
       table.render({
         elem: "#menuManagement",
-        height: 485,
         url: "/api/getMenuList", //数据接口
         method: 'post',
+        id: 'serachData',
         parseData: function(res){ //res 即为原始返回的数据
           return {
             "code": res.retCode, //解析接口状态
             "msg": res.retMsg, //解析提示文本
-            "count": res.body.totalPage, //解析数据长度
+            "count": res.body.totalCount, //解析数据长度
             "data": res.body.menuList //解析数据列表
           };
         },
@@ -61,9 +73,9 @@ export default {
             //表头
             
             { field: "xuhao", title: "序号", width:200, fixed: 'left', sort: true,align: "center",type: 'numbers'},
-            { field: "menuId", title: "序号", width:200, sort: true,align: "center", hide: true},
+            { field: "menuId", width:200, sort: true,align: "center", hide: true},
             { field: "menuNo", title: "菜单编号", width:200, sort: true,align: "center"},
-            { field: "menuOrder", title: "菜单类型", width:260, sort: true,align: "center"},
+            { field: "menuPno", title: "菜单类型", width:260, sort: true,align: "center",templet: function(d){return d.menuPno == 1 ? '父级菜单' : '子级菜单'}},
             { field: "menuName", title: "菜单名称",  sort: true,align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
@@ -75,6 +87,7 @@ export default {
           var data = obj.data;
           console.log(data)
           var menuId = data.menuId
+          var menuPno = data.menuPno
           if(obj.event === 'deletion'){
             layer.confirm('真的删除行么', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
@@ -94,8 +107,9 @@ export default {
               })
             });
           } else if(obj.event === 'edit'){ //编辑
-            // sessionStorage.setItem('listId',listId)
-            // _this.$router.push('/addInstitution')
+            sessionStorage.setItem('menuId',menuId)
+            sessionStorage.setItem('menuPno',menuPno)
+            _this.$router.push('/addMenu')
           }
         });
     });

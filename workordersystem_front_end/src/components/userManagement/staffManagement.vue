@@ -10,13 +10,13 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="staffManagement" lay-data="{id:'serachData'}"></table>
-        <div id="barDemo" style="display:none">
+        <table id="staffManagement" lay-filter="staffManagement" lay-data="{id:'serachData'}"></table>
+        <script type="text/html" id="barDemo">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
-          <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
+          <!-- <a class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
+          <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a> -->
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
-        </div>
+        </script>
       </div>
     </div>
   </div>
@@ -54,7 +54,7 @@ export default {
         })
       //第一个实例
       table.render({
-        elem: "#demo",
+        elem: "#staffManagement",
         url: "/api/getUserList", //数据接口
         method: 'post',
         id: 'serachData',
@@ -74,14 +74,14 @@ export default {
         cols: [
           [
             //表头
-            { field: "userName", title: "员工姓名", width:150, sort: true,align: "center"},
-            { field: "userSex", title: "性别", width:100, sort: true,align: "center"},
+            { field: "userName", title: "员工姓名",  sort: true,align: "center"},
+            { field: "userSex", title: "性别",  sort: true,align: "center"},
             { field: "companyName", title: "所属公司",  sort: true,align: "center" },
-            { field: "deptName", title: "所属部门", width:150, align: "center" },
+            { field: "deptName", title: "所属部门",  align: "center" },
             { field: "jobName", title: "当前职务", align: "center" },
-            { field: "userId", title: "登录账号", width:120, sort: true,align: "center" },
-            { field: "userPhone", title: "手机", width:200, sort: true,align: "center" },
-            { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
+            { field: "userId", title: "登录账号",  sort: true,align: "center" },
+            { field: "userPhone", title: "手机",  sort: true,align: "center" },
+            { field: "operation", title: "操作", width:210, align: "center", toolbar: '#barDemo' }
           ]
         ]
       });
@@ -132,7 +132,6 @@ export default {
     console.log(data)
     this.$axios.post('/api/getUserList',data).then(res=>{
       console.log(res)
-      console.log(JSON.parse(res.data.body.userList))
     }).catch(err=>{
       console.log(err)
     })

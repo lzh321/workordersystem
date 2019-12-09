@@ -1,5 +1,6 @@
 <template>
-  <div class="addRole">
+<!-- 新增权限按钮 -->
+  <div class="addPermissionButton">
     <form class="layui-form layui-form-pane" action>
       <div class="info">
         <span>基础信息</span>
@@ -7,11 +8,23 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">角色名称</label>
+        <label class="layui-form-label">菜单类型</label>
+        <div class="layui-input-block">
+          <select name="menuType" lay-verify="required">
+            <option value>请选择菜单类型</option>
+            <option value="1">父级菜单</option>
+            <option value="2">子级菜单</option>
+            <option value="3">其他</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="layui-form-item">
+        <label class="layui-form-label">菜单名称</label>
         <div class="layui-input-block">
           <input
             type="text"
-            name="roleName"
+            name="menuName"
             lay-verify="required"
             placeholder="请输入菜单名称"
             autocomplete="off"
@@ -22,7 +35,7 @@
       
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="addRole">确认</button>
+          <button class="layui-btn" lay-submit lay-filter="addPermissionButton">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
         </div>
@@ -33,13 +46,13 @@
 
 <script>
 export default {
-  name: "addRole",
+  name: "addPermissionButton",
   data() {
     return {};
   },
   methods:{
     cancel(){
-      this.$router.push('/roleManagement?type=roleManagement')
+      this.$router.push('/menuManagement?type=menuManagement')
     }
   },
   mounted() {
@@ -49,47 +62,41 @@ export default {
       var form = layui.form;
       form.render();
       //监听提交
-      form.on("submit(addRole)", function(data) {
-        var roleId = sessionStorage.getItem('roleId') ? sessionStorage.getItem('roleId') : ''
+      form.on("submit(addPermissionButton)", function(data) {
+        var menuId = sessionStorage.getItem('menuId') ? sessionStorage.getItem('menuId') : ''
         data.field.userId = _this.$store.state.userId
-        if(roleId === null || roleId === '' || roleId === undefined){
-          _this.$axios.post('/api/addRoleInfo',data.field).then(res=>{
+        if(menuId === null || menuId === '' || menuId === undefined){
+          _this.$axios.post('/api/addMenuInfo',data.field).then(res=>{
             console.log(res)
             if(res.data.retCode == '000000'){
               layer.msg(res.data.retMsg,{icon: 1})
               setTimeout(()=>{
-                _this.$router.push('/roleManagement?type=roleManagement')
+                _this.$router.push('/menuManagement?type=menuManagement')
               },3000)
             }else{
               layer.msg(res.data.retMsg,{icon: 2})
             }
           })
         }else{
-          data.field.roleId = roleId
-          _this.$axios.post('/api/alterRoleInfo',data.field).then(res=>{
-            console.log(res)
-            if(res.data.retCode == '000000'){
-              layer.msg(res.data.retMsg,{icon: 1})
-              setTimeout(()=>{
-                _this.$router.push('/roleManagement?type=roleManagement')
-              },3000)
-            }else{
-              layer.msg(res.data.retMsg,{icon: 2})
-            }
-          })
+
         }
         return false;
       });
     });
   },
+  created: {
+    send(){
+      
+    }
+  },
   beforeDestroy(){
-    sessionStorage.removeItem('roleId')
+    sessionStorage.removeItem('menuId')
   }
 };
 </script>
 
 <style scoped>
-.addRole{
+.addMenu{
   padding: 15px 15px 0;
 }
 .layui-btn {

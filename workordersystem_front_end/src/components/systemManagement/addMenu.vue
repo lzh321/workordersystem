@@ -1,4 +1,5 @@
 <template>
+<!-- 新增菜单 -->
   <div class="addMenu">
     <form class="layui-form layui-form-pane" action>
       <div class="info">
@@ -6,7 +7,7 @@
         <span>为必填项</span>
       </div>
 
-      <div class="layui-form-item">
+      <div class="layui-form-item" v-if="menuPno ? false : true">
         <label class="layui-form-label">菜单类型</label>
         <div class="layui-input-block">
           <select name="menuType" lay-verify="required">
@@ -18,6 +19,16 @@
         </div>
       </div>
 
+      <div class="layui-form-item" v-if="menuPno ? menuPno == 1 ? false : true : false">
+        <label class="layui-form-label">父级菜单</label>
+        <div class="layui-input-block">
+          <select name="menuPno" lay-verify="required">
+            <option value>请选择菜单类型</option>
+            <option v-for="(item) in menuList" :key="item.menuId" :value="item.menuNo">{{item.menuName}}</option>
+          </select>
+        </div>
+      </div>
+
       <div class="layui-form-item">
         <label class="layui-form-label">菜单名称</label>
         <div class="layui-input-block">
@@ -25,6 +36,20 @@
             type="text"
             name="menuName"
             lay-verify="required"
+            placeholder="请输入菜单名称"
+            autocomplete="off"
+            class="layui-input"
+          />
+        </div>
+      </div>
+
+      <div class="layui-form-item" v-if="menuPno == 1 ? false : true ">
+        <label class="layui-form-label">菜单URL</label>
+        <div class="layui-input-block">
+          <input
+            type="text"
+            name="menuUrl"
+            lay-verify=""
             placeholder="请输入菜单名称"
             autocomplete="off"
             class="layui-input"
@@ -47,9 +72,22 @@
 export default {
   name: "addMenu",
   data() {
-    return {};
+    return {
+      menuPno: '',
+      menuList: []
+    };
   },
   methods:{
+    send(){
+      var userId = this.$store.state.userId
+      var data = {
+        userId: userId,
+      }
+      this.$axios.post('/api/getFatherMenuList',userId).then(res=>{
+        console.log(res)
+        this.menuList = res.data.body.menuList
+      })
+    },
     cancel(){
       this.$router.push('/menuManagement?type=menuManagement')
     }
@@ -63,25 +101,55 @@ export default {
       //监听提交
       form.on("submit(addMenu)", function(data) {
         var menuId = sessionStorage.getItem('menuId') ? sessionStorage.getItem('menuId') : ''
+        var menuPno = sessionStorage.getItem('menuPno') ? sessionStorage.getItem('menuPno') : ''
         data.field.userId = _this.$store.state.userId
         if(menuId === null || menuId === '' || menuId === undefined){
           _this.$axios.post('/api/addMenuInfo',data.field).then(res=>{
             console.log(res)
             if(res.data.retCode == '000000'){
               layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/menuManagement?type=menuManagement')
+              },3000)
             }else{
               layer.msg(res.data.retMsg,{icon: 2})
             }
           })
         }else{
-
+          data.field.menuId = menuId
+          if(menuPno == 1){
+            data.field.menuPno = menuPno
+          }
+          console.log(data.field)
+          _this.$axios.post('/api/alterMenuInfo',data.field).then(res=>{
+            console.log(res)
+            if(res.data.retCode == '000000'){
+              layer.msg(res.data.retMsg,{icon: 1})
+              setTimeout(()=>{
+                _this.$router.push('/menuManagement?type=menuManagement')
+              },3000)
+            }else{
+              layer.msg(res.data.retMsg,{icon: 2})
+            }
+          })
         }
         return false;
       });
     });
   },
+  created(){
+    this.menuPno = sessionStorage.getItem('menuPno')
+    this.send()
+  },
   beforeDestroy(){
     sessionStorage.removeItem('menuId')
+    sessionStorage.removeItem('menuPno')
+  },
+  updated(){
+    layui.use("form",function(){
+      var form = layui.form
+      form.render()
+    })
   }
 };
 </script>

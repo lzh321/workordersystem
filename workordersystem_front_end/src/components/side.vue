@@ -70,9 +70,6 @@ export default {
             {
               title: "企业机构管理",
               path: "/businessEnterprise?type=businessEnterprise"
-            },{
-              title: "权限按钮",
-              path: "/permissionsButton?type=permissionsButton"
             },
             {
               title: "菜单管理",
@@ -81,6 +78,10 @@ export default {
             {
               title: "角色管理",
               path: "/roleManagement?type=roleManagement"
+            },
+            {
+              title: "权限按钮",
+              path: "/permissionsButton?type=permissionsButton"
             },
             {
               title: "消息模块管理",

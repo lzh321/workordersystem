@@ -1,4 +1,5 @@
 <template>
+<!-- 企业机构管理 -->
   <div class="businessEnterprise">
     <data-screening :type="type"></data-screening>
     <div class="dataList">
@@ -13,7 +14,7 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="businessEnterprise" lay-filter="businessEnterprise"></table>
+        <table id="businessEnterprise" lay-filter="businessEnterprise" lay-data="{id: 'serachData}"></table>
         <div id="barDemo" style="display:none">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
@@ -40,14 +41,26 @@ export default {
   },
   mounted() {
     var _this = this
-    layui.use("table", function() {
+    layui.use(["table","form"], function() {
       var table = layui.table;
+      var form = layui.form
+      form.render()
+      form.on('submit(serach)', function(data){
+        data.field.userId = _this.$store.state.userId
+          console.log(data.field)
+          table.reload('serachData',{
+            url: "/api/getOrganizationList",
+            where:data.field,
+            // page:{curr: 1}
+          })
+        })
       //第一个实例
       table.render({
         elem: "#businessEnterprise",
-        height: 485,
+        // height: 485,
         url: "/api/getOrganizationList", //数据接口
         method: 'post',
+        id: 'serachData',
         parseData: function(res){ //res 即为原始返回的数据
           return {
             "code": res.retCode, //解析接口状态
@@ -56,12 +69,11 @@ export default {
             "data": res.body.list //解析数据列表
           };
         },
-        page: true, //开启分页
-        limit: 10,
+        // page: true, //开启分页
+        // limit: 10,
         cols: [
           [
             //表头
-            {type: 'checkbox', fixed: 'left'},
             { field: "companyId", title: "公司编号", width:200, sort: true,align: "center"},
             { field: "companyName", title: "公司名称", width:260, sort: true,align: "center"},
             { field: "deptName", title: "部门",  sort: true,align: "center" },

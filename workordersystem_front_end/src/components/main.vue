@@ -7,7 +7,7 @@
           <span @click="Refresh">刷新</span>
         </div>
         <div class="content_main">
-          <router-view></router-view>
+          <router-view v-if="isRouterAlive"></router-view>
         </div>
       </div>
       <footer>footer</footer>
@@ -19,15 +19,27 @@
 export default {
   name: "Main",
   props: ['title'],
-  inject: ["reload"],
+  // inject: ["reload"],
+  provide(){
+    return {
+      reload: this.reload
+    }
+  },
   data() {
     return {
       // title: "",
+      isRouterAlive: true
     };
   },
   methods:{
     Refresh(){
       this.reload()
+    },
+    reload(){
+      this.isRouterAlive = false
+      this.$nextTick(function(){
+        this.isRouterAlive = true
+      })
     }
   },
   mounted(){

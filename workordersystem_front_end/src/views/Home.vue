@@ -11,7 +11,7 @@
           </ul>
         </li>
         <li class="header_nav_item">消息中心</li>
-        <li class="header_nav_item">退出</li>
+        <li @click="Logout" class="header_nav_item"><a >退出</a></li>
       </ul>
     </header>
     <div class="content">
@@ -42,6 +42,10 @@ export default {
   methods: {
     titleFn: function(data) {
       this.titleText = data
+    },
+    Logout: function(){
+      this.$router.push('/login')
+      sessionStorage.clear()
     }
   },
   created(){

@@ -34,14 +34,34 @@
           </p>
           <p>
             <span for>员工职务</span>
-            <select name="jobName">
+            <select name="selejobName">
               <option value>请选择</option>
               <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
             </select>
           </p>
           <p>
             <span for>所属部门</span>
-            <select name="deptName">
+            <select name="seleDeptName">
+              <option value>全部</option>
+              <option v-for="(item) in DeptList" :key="item.id" :value="item.deptName">{{item.deptName}}</option>
+            </select>
+          </p>
+        </div>
+        <div class="search_input" v-if="businessEnterprise">
+          <p>
+            <span for>输入查询</span>
+            <input type="text" name="seleCompanyName" value placeholder="请输入公司名称" />
+          </p>
+          <p>
+            <span for>员工职务</span>
+            <select name="seleJobName">
+              <option value>请选择</option>
+              <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
+            </select>
+          </p>
+          <p>
+            <span for>所属部门</span>
+            <select name="seleDeptName">
               <option value>全部</option>
               <option v-for="(item) in DeptList" :key="item.id" :value="item.deptName">{{item.deptName}}</option>
             </select>
@@ -55,13 +75,13 @@
               <option
                 v-for="(item) in customerNameList"
                 :key="item.customerId"
-                :value="item.customerId"
+                :value="item.customerName"
               >{{item.customerName}}</option>
             </select>
           </p>
           <p>
             <span for>投放点</span>
-            <input type="text" name="seleNetworkName" />
+            <input type="text" name="seleNetworkName" class="layui-input" />
           </p>
         </div>
         <div class="search_input" v-if="CustomerNameList">
@@ -105,7 +125,7 @@
           </p>
           <p>
             <span>存货名称</span>
-            <input type="text" lay-verify name="seleModelName" />
+            <input type="text" lay-verify name="seleModelName" placeholder="请输入存货名称"/>
           </p>
           <p>
             <span>设备型号</span>
@@ -114,7 +134,7 @@
               <option
                 v-for="(item) in DeviceModelType"
                 :key="item.modelId"
-                :value="item.modelId"
+                :value="item.modelType"
               >{{item.modelType}}</option>
             </select>
           </p>
@@ -127,24 +147,42 @@
               <option
                 v-for="(item) in DeviceModelType"
                 :key="item.modelId"
-                :value="item.modelId"
+                :value="item.modelType"
               >{{item.modelType}}</option>
             </select>
           </p>
           <p>
             <span for>存货名称</span>
-            <input type="text" name="seleModelName" />
+            <input type="text" name="seleModelName" placeholder="请输入存货名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="menuManagement">
           <p>
             <span for>菜单编号</span>
-            <input type="text" name="seleModelName" />
+            <input type="text" name="seleMenuNo" />
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleModelName" />
+            <input type="text" name="seleMenuName" />
+          </p>
+        </div>
+
+        <div class="search_input" v-if="roleManagement">
+          <p>
+            <span for>角色名称</span>
+            <input type="text" name="seleRoleName" />
+          </p>
+        </div>
+
+        <div class="search_input" v-if="permissionsButton">
+          <p>
+            <span for>按钮编号</span>
+            <input type="text" name="seleMenuNo" />
+          </p>
+          <p>
+            <span for>菜单名称</span>
+            <input type="text" name="seleMenuName" />
           </p>
         </div>
 
@@ -182,6 +220,8 @@ export default {
       equipmentList: "",
       equipmentType: "",
       menuManagement: "",
+      roleManagement: "",
+      permissionsButton: "",
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
@@ -216,8 +256,11 @@ export default {
   mounted() {},
   created() {
     console.log(this.type);
-    if (this.type == "staffManagement" || this.type == "businessEnterprise") {
+    if (this.type == "staffManagement") {
       this.staffManagement = this.type;
+    }
+    if (this.type == "businessEnterprise") {
+      this.businessEnterprise = this.type;
     }
     if (this.type == "workOrderManagement") {
       this.workOrderManagement = this.type;
@@ -243,6 +286,12 @@ export default {
     }
     if (this.type == "menuManagement") {
       this.menuManagement = this.type;
+    }
+    if (this.type == "roleManagement") {
+      this.roleManagement = this.type;
+    }
+    if (this.type == "permissionsButton") {
+      this.permissionsButton = this.type;
     }
     this.send()
   },
