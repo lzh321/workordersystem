@@ -4,6 +4,7 @@ import Login from '@/views/Login'
 import Home from '@/views/Home'
 import workTable from '@/components/workTable/workTable'
 import workOrderManagement from '@/components/workOrderManagement/workOrderManagement'
+import workOrderDetails from '@/components/workOrderManagement/workOrderDetails'
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
 import staffManagement from '@/components/userManagement/staffManagement'
 import NetworkList from '@/components/userManagement/NetworkList'
@@ -62,6 +63,11 @@ export default new Router({
           path: '/workOrderManagement',
           name: 'workOrderManagement',
           component: workOrderManagement
+        },
+        {
+          path: '/workOrderDetails',
+          name: 'workOrderDetails',
+          component: workOrderDetails
         },
         {
           path: '/synergyManagement',

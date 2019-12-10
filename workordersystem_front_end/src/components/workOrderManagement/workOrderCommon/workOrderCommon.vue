@@ -7,35 +7,21 @@
         <div class="layui-form-item">
           <label class="layui-form-label">客户名称</label>
           <div class="layui-input-block">
-            <select name="customerName" lay-verify="required">
-              <option value>请选择一个客户</option>
-              <option
-                v-for="(item) in customerNameList"
-                :key="item.customerId"
-                :value="item.customerId"
-              >{{item.customerName}}</option>
-            </select>
+            <input type="text" name="customerName" class="layui-input" disabled>
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">合同ID</label>
           <div class="layui-input-block">
-            <input type="text" name="agreenmentId" class="layui-input" />
+            <input type="text" name="agreenmentId" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">设备投放点</label>
           <div class="layui-input-block">
-            <select name="networkId" lay-filter="seleNetworkName" lay-verify="required">
-              <option value>请选择一个投放点</option>
-              <option
-                v-for="(item) in networkList"
-                :key="item.id"
-                :value="item.id"
-              >{{item.networName}}</option>
-            </select>
+            <input type="text" name="networkId" class="layui-input" disabled>
           </div>
         </div>
 
@@ -56,14 +42,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">联系人</label>
           <div class="layui-input-block">
-            <input type="text" name="contactName" class="layui-input" />
+            <input type="text" name="contactName" class="layui-input" disabled/>
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">联系电话</label>
           <div class="layui-input-block">
-            <input type="text" name="contactPhone" class="layui-input" />
+            <input type="text" name="contactPhone" class="layui-input" disabled/>
           </div>
         </div>
 
@@ -76,33 +62,21 @@
         <div class="layui-form-item">
           <label class="layui-form-label">工单来源</label>
           <div class="layui-input-block">
-            <select name="orderSource">
-              <option value>选择工单来源</option>
-              <option value="0">电话</option>
-              <option value="1">其他</option>
-            </select>
+            <input type="text" name="orderSource" class="layui-input" disabled/>
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">工单类型</label>
           <div class="layui-input-block">
-            <select name="orderType">
-              <option value>请选择工单类型</option>
-              <option value="0">设备保障</option>
-              <option value="1">差错账</option>
-            </select>
+            <input type="text" name="orderType" class="layui-input" disabled/>
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">紧急程度</label>
           <div class="layui-input-block">
-            <select name="orderUrgency">
-              <option value>请选择紧急程度</option>
-              <option value="0">一般</option>
-              <option value="1">紧急</option>
-            </select>
+            <input type="text" name="orderUrgency" class="layui-input" disabled/>
           </div>
         </div>
 
@@ -114,6 +88,7 @@
               name="reportedBarrierTime"
               class="layui-input"
               id="reportedBarrierTime"
+              disabled
             />
             <i></i>
           </div>
@@ -122,14 +97,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block">
-            <select name="modelId" lay-filter="seleModelType" lay-verify="required">
-              <option value>请选择设备型号</option>
-              <option
-                v-for="(item) in deviceInfoList"
-                :key="item.deviceId"
-                :value="item.modelId"
-              >{{item.modelType}}</option>
-            </select>
+            <input type="text" name="modelId" class="layui-input" disabled/>
           </div>
         </div>
 
@@ -149,23 +117,17 @@
         <div class="layui-form-item layui-form-text">
           <label class="layui-form-label">问题描述</label>
           <div class="layui-input-block">
-            <textarea name="problemDescription" placeholder="请输入内容" class="layui-textarea"></textarea>
+            <textarea name="problemDescription" placeholder="请输入内容" class="layui-textarea" disabled></textarea>
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">附件</label>
           <div id="affix">
-     
-            <div class="layui-input-block" id="btn">
-            <button type="button" class="layui-btn layui-input-inline" id="uploadPhoto">
-              <i class="layui-icon">&#xe64a;</i>选择图片
-            </button>
-              <button id="upload" type="button" class="layui-btn layui-input-inline">
-                <i class="layui-icon">&#xe67c;</i>上传图片
-              </button>
+            <div class="uploadImg">
+              <img src="" alt="">
+
             </div>
-            <div class="layui-form-mid layui-word-aux">支持格式 .png .jpg .jpeg。单个图片不超过2MB</div>
           </div>
         </div>
 
@@ -390,6 +352,8 @@ h2 {
   display: inline-block;
   width: 200px;
   height: 200px;
+  border: 1px solid red;
+
 }
 .uploadImg img {
   width: 100%;

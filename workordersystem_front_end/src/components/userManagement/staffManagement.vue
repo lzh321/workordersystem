@@ -75,7 +75,7 @@ export default {
           [
             //表头
             { field: "userName", title: "员工姓名",  sort: true,align: "center"},
-            { field: "userSex", title: "性别",  sort: true,align: "center"},
+            { field: "userSex", title: "性别",  sort: true,align: "center", templet: function(d){return d.userSex == 0 ? '男' : '女'}},
             { field: "companyName", title: "所属公司",  sort: true,align: "center" },
             { field: "deptName", title: "所属部门",  align: "center" },
             { field: "jobName", title: "当前职务", align: "center" },

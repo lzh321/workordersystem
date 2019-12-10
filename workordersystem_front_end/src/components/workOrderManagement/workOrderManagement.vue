@@ -13,23 +13,32 @@
         </li>
       </ul>
     </div>
-    <data-screening  :type="type"></data-screening>
+    <data-screening :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p>
-          <button>导出</button>
+          <button @click="derived">导出</button>
           <router-link to="/workOrderCreate" tag="button">创建</router-link>
         </p>
       </div>
-      <div class="dataList_table" >
-        <table id="demo" lay-filter="test"></table>
+      <div class="dataList_table">
+        <table
+          id="workOrderManagement"
+          lay-filter="workOrderManagement"
+          lay-data="{id: 'serachData'}"
+        ></table>
         <script id="barDemo" type="text/html">
-          <a href='' class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>
-          <a href='' class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
+          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a>
+          <a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a>
+          <a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a>
+          <a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>
+          <a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>
+          <a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a>
+          <a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>
+          <a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>
+          <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
         </script>
       </div>
     </div>
@@ -52,7 +61,7 @@ export default {
         { title: "待回访", num: 2 },
         { title: "已关单", num: 2 }
       ],
-      type: ''
+      type: ""
     };
   },
   components: {
@@ -61,39 +70,183 @@ export default {
   methods: {
     active: function(index) {
       this.num = index;
+    },
+    derived: function() {
+      table.exportFile();
     }
   },
   mounted() {
+    var _this = this
     layui.use("table", function() {
       var table = layui.table;
       //第一个实例
       table.render({
-        elem: "#demo",
-        height: 485,
-        url: "../../../static/table.json", //数据接口
+        elem: "#workOrderManagement",
+        method: "post",
+        url: "/api/getOrderInfoList", //数据接口
+        id: "serachData",
+        parseData: function(res) {
+          //res 即为原始返回的数据
+          return {
+            code: res.retCode, //解析接口状态
+            msg: res.retMsg, //解析提示文本
+            count: res.body.totalCount, //解析数据长度
+            data: res.body.orderInfoList //解析数据列表
+          };
+        },
+        request: {
+          pageName: "currentPage", //页码的参数名称，默认：page
+          limitName: "everyCount" //每页数据量的参数名，默认：limit
+        },
         page: true, //开启分页
-        limit: 10,
         cols: [
           [
             //表头
-            { field: "workOrderId", title: "工单编号", sort: true,width:160,align: "center" },
-            { field: "workOrderStatus", title: "工单状态", width:100, sort: true,align: "center"},
-            { field: "bankName", title: "银行名称",  sort: true,align: "center" },
-            { field: "subBranchName", title: "支行名称", align: "center" },
-            { field: "PriorityDescription", title: "紧急程度",width:80, align: "center" },
-            { field: "currentTotalTime", title: "当前总耗时（min）",  sort: true,align: "center" },
-            { field: "workOrderTime", title: "工单总耗时（min）", sort: true,align: "center" },
-            { field: "creator", title: "创建人",width:100, align: "center" },
-            { field: "creationTime", title: "创建时间", sort: true,align: "center" },
-            { field: "operation", title: "操作",width:260, align: "center", toolbar: '#barDemo'}
+            {
+              field: "orderInfoId",
+              title: "工单编号",
+              sort: true,
+              width: 160,
+              align: "center"
+            },
+            {
+              field: "orderStateName",
+              title: "工单状态",
+              width: 100,
+              sort: true,
+              align: "center"
+            },
+            {
+              field: "customerName",
+              title: "银行名称",
+              sort: true,
+              align: "center"
+            },
+            { field: "networName", title: "支行名称", align: "center" },
+            {
+              field: "orderUrgency",
+              title: "紧急程度",
+              width: 80,
+              align: "center",
+              templet: function(d) {
+                return d.orderUrgency == 0 ? "一般" : "紧急";
+              }
+            },
+            {
+              field: "expendTime",
+              title: "当前总耗时（min）",
+              sort: true,
+              align: "center"
+            },
+            {
+              field: "amountTime",
+              title: "工单总耗时（min）",
+              sort: true,
+              align: "center"
+            },
+            {
+              field: "createName",
+              title: "创建人",
+              width: 100,
+              align: "center"
+            },
+            {
+              field: "createTime",
+              title: "创建时间",
+              sort: true,
+              align: "center"
+            },
+            {
+              field: "orderState",
+              title: "操作",
+              width: 260,
+              align: "center",
+              // toolbar: "#barDemo",
+              templet: function(d) {
+                console.log(d.orderState)
+                if(d.orderState == 0) {  //待发单
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>'
+                }
+                if(d.orderState == 1) {  //待派单
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
+                }
+                if(d.orderState == 2) {  // 待受理
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a><a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>'
+                }
+                if(d.orderState == 3) {  // 处理中
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>'
+                }
+                if(d.orderState == 7) { //待回访
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
+                }
+                
+              }
+            }
           ]
         ]
       });
+
+      //监听行工具事件
+      table.on("tool(workOrderManagement)", function(obj) {
+        var data = obj.data;
+        console.log(data);
+        var orderState = data.orderState
+        console.log(orderState)
+        if (obj.event === "edit") {
+          //编辑
+          sessionStorage.setItem('orderState',orderState)
+          _this.$router.push('/workOrderDetails')
+          // _this.$router.push('/workOrderCreate')
+        } else if (obj.event === "reservation") {
+          //预约
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "Kuantan") {
+          //关单
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "synergy") {
+          //协同
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "finish") {
+          //完成
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "sendOrders") {
+          //派单
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "reject") {
+          //驳回
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "bill") {
+          //发单
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "acceptance") {
+          //受理
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        } else if (obj.event === "reassignment") {
+          //改派
+          // sessionStorage.setItem('orderState',orderState)
+          // _this.$router.push('/addCustomer')
+        }
+      });
     });
-    
   },
-  created(){
-    this.type = this.$route.query.type
+  created() {
+    this.type = this.$route.query.type;
+    var data = {
+      userId: this.$store.state.userId,
+      currentPage: 1,
+      everyCount: 10
+    };
+    this.$axios.post("/api/getOrderInfoList", data).then(res => {
+      console.log(res);
+    });
   }
 };
 </script>
@@ -157,15 +310,14 @@ export default {
   border: 1px solid #eee;
   color: #444;
 }
-.dataList .dataList_table{
+.dataList .dataList_table {
   padding: 0 15px;
 }
-.dataList .dataList_table td{
+.dataList .dataList_table td {
   font-size: 13px !important;
 }
-.dataList .dataList_table td .btn{
+.dataList .dataList_table td .btn {
   font-size: 13px !important;
   color: blue !important;
 }
-
 </style>

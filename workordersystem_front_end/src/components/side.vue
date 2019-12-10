@@ -120,6 +120,13 @@ export default {
     if (this.$route.query.type !== "workTable") {
       this.$router.push("/workTable?type=workTable");
     }
+    var data = {
+      userId: this.$store.state.userId,
+
+    }
+    this.$axios.post('/api/getFatherMenuList',this.$store.state.userId).then(res=>{
+      console.log(res)
+    })
   }
 };
 </script>

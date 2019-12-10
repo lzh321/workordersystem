@@ -13,7 +13,7 @@
             type="text"
             name="roleName"
             lay-verify="required"
-            placeholder="请输入菜单名称"
+            placeholder="请输入角色名称"
             autocomplete="off"
             class="layui-input"
           />
