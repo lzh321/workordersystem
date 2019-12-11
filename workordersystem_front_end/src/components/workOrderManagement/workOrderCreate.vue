@@ -155,21 +155,18 @@
 
         <div class="layui-form-item">
           <label class="layui-form-label">附件</label>
-          <div id="affix">
-     
-            <div class="layui-input-block" id="btn">
-            <button type="button" class="layui-btn layui-input-inline" id="uploadPhoto">
-              <i class="layui-icon">&#xe64a;</i>选择图片
-            </button>
-              <button id="upload" type="button" class="layui-btn layui-input-inline">
-                <i class="layui-icon">&#xe67c;</i>上传图片
-              </button>
-            </div>
-            <div class="layui-form-mid layui-word-aux">支持格式 .png .jpg .jpeg。单个图片不超过2MB</div>
+          <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
+          <div class="layui-upload">
+          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+            预览
+              <div class="layui-upload-list" id="imgBox"></div>
+              <input type="hidden" name="orderImg">
+            </blockquote>
           </div>
         </div>
 
         <div class="layui-form-item">
+          
           <label class="layui-form-label">指派给</label>
           <div class="layui-input-block">
             <select name="acceptUserId">
@@ -208,7 +205,7 @@ export default {
       userList: [],
       networAddress: "",
       deviceNumber: "",
-      imgUrl: ""
+      imgData: ""
     };
   },
   methods: {
@@ -240,8 +237,9 @@ export default {
   },
   mounted() {
     var _this = this;
-    layui.use(["form", "upload", "laydate"], function() {
+    layui.use(["form", "upload", "laydate","jquery"], function() {
       var form = layui.form;
+      var $ = layui.jquery
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
@@ -317,62 +315,50 @@ export default {
 
       //上传图片
       upload.render({
-        elem: "#uploadPhoto", //绑定元素
-        url: "../../assets/images/", //上传接口
-        auto: false, //选择文件后不自动上传
-        bindAction: "#upload", //指向一个按钮触发上传
-        size:2024,
-        multiple: true,
+        elem: "#uploadImage",
+        url: "/api/uploadImagesInfo",
+        method: "post",
+        multiple: true,   //是否多文件上传
+        accept: "images",  // 规定上传文件类型 ，images/file/video/audio
+        auto: true,  // 是否自动上传
+        field: 'image',   // 设定文件域字段
         choose: function(obj) {
-          //将每次选择的文件追加到文件队列
           var files = obj.pushFile();
-
-          //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
-          obj.preview(function(index, file, result) {
-            // console.log(index); //得到文件索引
-            // console.log(file); //得到文件对象
-            // console.log(result); //得到文件base64编码，比如图片
-            var affix = document.getElementById("affix");
-            var btn = document.getElementById("btn");
-            var uploadImg = document.createElement("div");
+          obj.preview(function(index, file, result) { 
+            var imgBox = document.getElementById("imgBox");
+            var imgUrl = document.getElementById("imgUrl")
             var img = document.createElement("img");
             img.src = result;
-            img.style = "width:100%;height:100%";
-            uploadImg.appendChild(img);
-            uploadImg.style =
-              "display:inline-block;width:200px;height:200px;float:left;margin-right:10px";
-            affix.insertBefore(uploadImg, btn);
-            // _this.imgUrl = result
-            //obj.resetFile(index, file, '123.jpg'); //重命名文件名，layui 2.3.0 开始新增
-
-            //这里还可以做一些 append 文件列表 DOM 的操作
-
-            //obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
-            //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+            img.className = "layui-upload-img";
+            img.alt = file.name;
+            img.style = "width:100px;height:100px";
+            imgBox.appendChild(img);
           });
         },
-        // before: function(obj) {
-        //   //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
-        //   layer.load(); //上传loading
-        // },
-        done: function(res) {
-          //上传完毕回调
+        before: function(obj) {
+          //预读本地文件示例，不支持ie8
+          
         },
-        error: function() {
-          //请求异常回调
+        done: function(res) {
+          //上传完毕
+          console.log(res)
+          $("input[name='orderImg']").val(res.body.url)
         }
       });
+
+      
+
     });
   },
   created() {
     this.send();
   },
   updated() {
-    setTimeout(function() {
+    // setTimeout(function() {
       layui.use(["form"], function() {
         layui.form.render();
       });
-    }, 10);
+    // }, 10);
   }
 };
 </script>

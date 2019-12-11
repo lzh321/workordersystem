@@ -1,30 +1,28 @@
 <template>
   <div class="side">
-    <ul class="side_nav">
-      <router-link
+    <ul class="side_nav layui-nav layui-nav-tree layui-nav-side">
+      <li
         v-for="(nav_item, index) in nav"
         :key="index"
         ref="nav"
-        :class="{active:index === num}"
         tag="li"
-        :to="nav_item.path ? nav_item.path : ''"
+        class="layui-nav-item"
       >
-        <span @click="active(index,nav_item.nav_title,nav)">{{nav_item.nav_title}}</span>
-        <div
+        <router-link :to="nav_item.path ? nav_item.path : ''" tag="a">{{nav_item.nav_title}}</router-link>
+        <dl
           v-if="nav_item.children ? true : false"
-          class="children_item"
-          :class="{active:index === num}"
+          class="layui-nav-child"
         >
           <router-link
-            tag="p"
+            tag="dd"
             v-for="(item,index)  in nav_item.children"
             :key="index"
             :to="item.path ? item.path : ''"
           >
-            <span @click="actives(item.title)">{{item.title}}</span>
+            <a>{{item.title}}</a>
           </router-link>
-        </div>
-      </router-link>
+        </dl>
+      </li>
     </ul>
   </div>
 </template>
@@ -46,7 +44,6 @@ export default {
         },
         {
           nav_title: "用户管理",
-          path: "/staffManagement?type=staffManagement",
           children: [
             {
               title: "员工管理",
@@ -65,7 +62,6 @@ export default {
         },
         {
           nav_title: "系统管理",
-          path: "/businessEnterprise?type=businessEnterprise",
           children: [
             {
               title: "企业机构管理",
@@ -95,7 +91,6 @@ export default {
         },
         {
           nav_title: "设备管理",
-          path: "/equipmentList?type=equipmentList",
           children: [
             { title: "设备列表", path: "/equipmentList?type=equipmentList" },
             { title: "设备类型管理", path: "/equipmentType?type=equipmentType" }
@@ -116,6 +111,13 @@ export default {
       console.log(title);
     }
   },
+  mounted(){
+    layui.use('element', function(){
+      var element = layui.element;
+      element.render()
+      //…
+    });
+  },
   created() {
     if (this.$route.query.type !== "workTable") {
       this.$router.push("/workTable?type=workTable");
@@ -135,13 +137,18 @@ export default {
 <style scoped>
 .side {
   width: 180px;
-  background: #28324b;
+  background: #393D49;
   height: 100%;
   color: aliceblue;
   overflow: hidden;
   overflow-y: scroll;
 }
-.side_nav li {
+.side_nav{
+  position: initial;
+  width: 180px;
+}
+
+/* .side_nav li {
   min-height: 70px;
   width: 100%;
   border-bottom: 1px solid #224977;
@@ -170,11 +177,10 @@ export default {
 }
 .side_nav li .children_item p:hover {
   background: #16266e;
-}
-.active {
-  background: #151f38;
+} */
+/* .active {
   display: block;
-}
+} */
 .side::-webkit-scrollbar {
   /*隐藏滚轮*/
   display: none;
