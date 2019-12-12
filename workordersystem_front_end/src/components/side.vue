@@ -140,12 +140,15 @@ export default {
   background: #393D49;
   height: 100%;
   color: aliceblue;
-  overflow: hidden;
-  overflow-y: scroll;
+  /* overflow: hidden;
+  overflow-y: scroll; */
 }
 .side_nav{
   position: initial;
   width: 180px;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 
 /* .side_nav li {
@@ -181,7 +184,7 @@ export default {
 /* .active {
   display: block;
 } */
-.side::-webkit-scrollbar {
+.side_nav::-webkit-scrollbar {
   /*隐藏滚轮*/
   display: none;
 }

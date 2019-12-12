@@ -109,12 +109,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">报障时间</label>
           <div class="layui-input-block">
-            <input
-              type="text"
-              name="reportedBarrierTime"
-              class="layui-input"
-              id="reportedBarrierTime"
-            />
+            <input type="text" name="reportTime" class="layui-input" id="reportedBarrierTime" />
             <i></i>
           </div>
         </div>
@@ -157,21 +152,24 @@
           <label class="layui-form-label">附件</label>
           <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
           <div class="layui-upload">
-          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-            预览
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+              预览
               <div class="layui-upload-list" id="imgBox"></div>
-              <input type="hidden" name="orderImg">
+              <input type="hidden" name="orderImg" />
             </blockquote>
           </div>
         </div>
 
         <div class="layui-form-item">
-          
           <label class="layui-form-label">指派给</label>
           <div class="layui-input-block">
             <select name="acceptUserId">
-              <option value>亲选择指派人</option>
-              <option value></option>
+              <option value>请选择指派人</option>
+              <option
+                v-for="(item) in userList"
+                :key="item.userId"
+                :value="item.userId"
+              >{{item.userName}}</option>
             </select>
           </div>
         </div>
@@ -205,7 +203,8 @@ export default {
       userList: [],
       networAddress: "",
       deviceNumber: "",
-      imgData: ""
+      imgData: "",
+      orderInfoId: ""
     };
   },
   methods: {
@@ -230,16 +229,27 @@ export default {
       });
       this.$axios.post("/api/getUserList", userId).then(res => {
         // 员工列表
-        // console.log(res)
-        // this.userList = res.data.body.networkList
+        console.log(res);
+        this.userList = res.data.body.userList;
       });
+
+      var date = new Date();
+      var m = date.getMonth();
+      var d = date.getDate();
+      var h = date.getHours();
+      var sec = date.getMinutes();
+      if (m < 10) m = "0" + m;
+      if (d < 10) d = "0" + d;
+      if (h < 10) h = "0" + h;
+      if (sec < 10) sec = "0" + sec;
+      this.orderInfoId = "PL" + date.getFullYear() + (m + 1) + d + h + sec;
     }
   },
   mounted() {
     var _this = this;
-    layui.use(["form", "upload", "laydate","jquery"], function() {
+    layui.use(["form", "upload", "laydate", "jquery"], function() {
       var form = layui.form;
-      var $ = layui.jquery
+      var $ = layui.jquery;
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
@@ -277,11 +287,14 @@ export default {
       //监听提交
       form.on("submit(workOrderCreate)", function(data) {
         console.log(data.field);
-        var alterId = sessionStorage.getItem("alterId")
-          ? sessionStorage.getItem("alterId")
+        
+        var orderState = sessionStorage.getItem("orderState")
+          ? sessionStorage.getItem("orderState")
           : "";
+
         data.field.userId = _this.$store.state.userId;
-        if (alterId === null || alterId === "" || alterId === undefined) {
+        if (orderState === null || orderState === "" || orderState === undefined) {
+          data.field.orderInfoId = _this.orderInfoId
           _this.$axios.post("/api/addOrderInfo", data.field).then(res => {
             console.log(res);
             if (res.data.retCode == "000000") {
@@ -312,42 +325,51 @@ export default {
         }
         return false;
       });
-
+      
       //上传图片
       upload.render({
         elem: "#uploadImage",
         url: "/api/uploadImagesInfo",
+        // bindAction:"#workOrderCreate",
         method: "post",
-        multiple: true,   //是否多文件上传
-        accept: "images",  // 规定上传文件类型 ，images/file/video/audio
-        auto: true,  // 是否自动上传
-        field: 'image',   // 设定文件域字段
+        multiple: false, //是否多文件上传
+        accept: "images", // 规定上传文件类型 ，images/file/video/audio
+        auto: true, // 是否自动上传
+        field: "file", // 设定文件域字段
         choose: function(obj) {
           var files = obj.pushFile();
-          obj.preview(function(index, file, result) { 
+          console.log(files)
+          obj.preview(function(index, file, result) {
+            console.log(file)
             var imgBox = document.getElementById("imgBox");
-            var imgUrl = document.getElementById("imgUrl")
+            var imgUrl = document.getElementById("imgUrl");
             var img = document.createElement("img");
             img.src = result;
             img.className = "layui-upload-img";
             img.alt = file.name;
             img.style = "width:100px;height:100px";
             imgBox.appendChild(img);
+            // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
+          for(var item in files){
+            console.log(item.split('-')[1])
+            this.data = {orderInfoId: _this.orderInfoId, soreId: item.split('-')[1]}
+          }
         },
         before: function(obj) {
           //预读本地文件示例，不支持ie8
-          
         },
+        // allDone:function(obj){
+        //   console.log(obj.total); //得到总文件数
+        //   console.log(obj.successful); //请求成功的文件数
+        //   console.log(obj.aborted); //请求失败的文件数
+        // },
         done: function(res) {
           //上传完毕
-          console.log(res)
-          $("input[name='orderImg']").val(res.body.url)
+          console.log(res);       
+          $("input[name='orderImg']").val(res.body.url);
         }
       });
-
-      
-
     });
   },
   created() {
@@ -355,9 +377,9 @@ export default {
   },
   updated() {
     // setTimeout(function() {
-      layui.use(["form"], function() {
-        layui.form.render();
-      });
+    layui.use(["form"], function() {
+      layui.form.render();
+    });
     // }, 10);
   }
 };

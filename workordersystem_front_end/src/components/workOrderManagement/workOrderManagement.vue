@@ -28,7 +28,7 @@
           lay-filter="workOrderManagement"
           lay-data="{id: 'serachData'}"
         ></table>
-        <script id="barDemo" type="text/html">
+        <!-- <script id="barDemo" type="text/html">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a>
           <a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a>
@@ -39,7 +39,7 @@
           <a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>
           <a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>
           <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
-        </script>
+        </script> -->
       </div>
     </div>
   </div>
@@ -77,8 +77,18 @@ export default {
   },
   mounted() {
     var _this = this
-    layui.use("table", function() {
+    layui.use(["table", "form"], function() {
       var table = layui.table;
+      var form = layui.form;
+      form.on('submit(serach)', function(data){
+        data.field.userId = _this.$store.state.userId
+        console.log(data.field)
+        table.reload('serachData',{
+          url: "/api/getOrderInfoList",
+          where:data.field,
+          page:{curr: 1, limit: 10}
+        })
+      })
       //第一个实例
       table.render({
         elem: "#workOrderManagement",
@@ -145,7 +155,7 @@ export default {
               align: "center"
             },
             {
-              field: "createName",
+              field: "userName",
               title: "创建人",
               width: 100,
               align: "center"
@@ -163,7 +173,7 @@ export default {
               align: "center",
               // toolbar: "#barDemo",
               templet: function(d) {
-                console.log(d.orderState)
+                // console.log(d.orderState)
                 if(d.orderState == 0) {  //待发单
                   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>'
                 }
@@ -191,12 +201,18 @@ export default {
         var data = obj.data;
         console.log(data);
         var orderState = data.orderState
+        var orderInfoId = data.orderInfoId
         console.log(orderState)
         if (obj.event === "edit") {
           //编辑
           sessionStorage.setItem('orderState',orderState)
-          _this.$router.push('/workOrderDetails')
-          // _this.$router.push('/workOrderCreate')
+          sessionStorage.setItem('orderInfoId',orderInfoId)
+          
+          if(orderState == 0) {
+            _this.$router.push('/workOrderCreate')
+          }else{
+            _this.$router.push('/workOrderDetails')
+          }
         } else if (obj.event === "reservation") {
           //预约
           // sessionStorage.setItem('orderState',orderState)

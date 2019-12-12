@@ -7,14 +7,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">客户名称</label>
           <div class="layui-input-block">
-            <input type="text" name="customerName" class="layui-input" disabled />
+            <input type="text" name="customerName" :value="workOrderInfo.customerName" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">合同ID</label>
           <div class="layui-input-block">
-            <input type="text" name="agreenmentId" class="layui-input" disabled />
+            <input type="text" name="agreenmentId"  class="layui-input" disabled />
           </div>
         </div>
 
@@ -125,7 +125,7 @@
           <label class="layui-form-label">附件</label>
           <div id="affix">
             <div class="uploadImg">
-              <img src alt />
+              <img :src="'require('+ workOrderInfo.orderPhoto +')'" alt />
             </div>
           </div>
         </div>
@@ -133,15 +133,19 @@
         <!-- 待派单组件 -->
         <waitSendOrders v-if="orderState == 1 ? true : false"></waitSendOrders>
       </div>
-      <inProcess></inProcess>
+      <inProcess v-if="orderState == 3 ? true : false"></inProcess>
       <div class="layui-form-item">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="finish" v-if="orderState == 3 ? true : false">完成</button>
           <button class="layui-btn" lay-submit lay-filter="bill" v-if="orderState == 0 ? true : false">发单</button>
           <button class="layui-btn" lay-submit lay-filter="sendOrders" v-if="orderState == 1 ? true : false">派单</button>
           <button class="layui-btn" lay-submit lay-filter="acceptance" v-if="orderState == 2 ? true : false">受理</button>
           <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reassignment" v-if="orderState == 2 ? true : false">改派</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">预约</button>
+          <button class="layui-btn" lay-submit lay-filter="finish" v-if="orderState == 3 ? true : false">完成</button>
+          <button class="layui-btn" lay-submit lay-filter="start" v-if="orderState == 3 ? true : false">出发</button>
+          <button class="layui-btn" lay-submit lay-filter="arrive" v-if="orderState == 3 ? true : false">到达</button>
+          <button class="layui-btn" lay-submit lay-filter="begin" v-if="orderState == 3 ? true : false">开始</button>
+          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">预约上门</button>
+          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">更改预约</button>
           <button class="layui-btn layui-btn-primary" lay-submit lay-filter="synergy" v-if="orderState == 3 ? true : false">发起协同</button>
           <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reject" v-if="orderState == 7 || 1 ? true : false">驳回</button>
           <button type="reset" class="layui-btn layui-btn-primary" lay-submit lay-filter="Kuantan" >关单</button>
@@ -159,7 +163,10 @@ export default {
   name: "workOrderCommon",
   data() {
     return {
-      orderState: ''
+      orderState: sessionStorage.getItem("orderState"),
+      orderInfoId: sessionStorage.getItem("orderInfoId"),
+      workOrderInfo: {},
+      userList: []
     };
   },
   components:{
@@ -170,11 +177,22 @@ export default {
     cancel() {
       this.$router.push("/workOrderManagement?type=workOrderManagement");
     },
+    send(){
+      var data={
+        userId: this.$store.state.userId,
+        orderInfoId: this.orderInfoId
+      }
+      this.$axios.post('/api/getOrderInfo',data).then(res=>{
+        console.log(res)
+        this.workOrderInfo = res.data.body
+      })
+    }
   },
   mounted() {
     var _this = this;
-    layui.use(["form", "upload", "laydate"], function() {
+    layui.use(["form", "upload", "laydate", "jquery" ], function() {
       var form = layui.form;
+      var $ = layui.jquery
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
@@ -185,48 +203,230 @@ export default {
         closeStop: "#reportedBarrierTime"
       });
 
-      //监听提交
+      // 完成
+      form.on("submit(finish)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+      // 发单
       form.on("submit(bill)", function(data) {
         console.log(data.field);
-        var alterId = sessionStorage.getItem("alterId")
-          ? sessionStorage.getItem("alterId")
-          : "";
-        data.field.userId = _this.$store.state.userId;
-        if (alterId === null || alterId === "" || alterId === undefined) {
-          _this.$axios.post("/api/addOrderInfo", data.field).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              setTimeout(() => {
-                _this.$router.push(
-                  "/workOrderManagement?type=workOrderManagement"
-                );
-              }, 2000);
-            } else {
-              layer.msg(res.data.retMsg, { icon: 2 });
-            }
-          });
-        } else {
-          _this.$axios.post("/api/alterUserInfo", data.field).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              setTimeout(() => {
-                _this.$router.push(
-                  "/workOrderManagement?type=workOrderManagement"
-                );
-              }, 2000);
-            } else {
-              layer.msg(res.data.retMsg, { icon: 2 });
-            }
-          });
-        }
+        return false;
+      });
+
+      // 派单
+      form.on("submit(sendOrders)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+      // 受理
+      form.on("submit(acceptance)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+      // 改派
+      form.on("submit(reassignment)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "填写改派说明",
+          area: ['600px', '400px'],
+          fixed: false, //不固定
+          maxmin: true,
+          content: `
+                      <div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="reassignment" placeholder="请输入改派说明" id="reassignment" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                    `,
+          btn:["确定","取消"],
+          success:function(){
+            form.render()
+          },
+          yes: function(index, layero){
+            var reassignment = $('#reassignment').val()
+            console.log(data.filed);
+            return false
+          },
+          btnAlign: "c"
+        });
+        return false;
+      });
+      // 出发
+      form.on("submit(start)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+
+      // 到达
+      form.on("submit(arrive)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+      // 开始
+      form.on("submit(begin)", function(data) {
+        console.log(data.field);
+        return false;
+      });
+      // 预约上门
+      form.on("submit(reservation)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "预约上门时间",
+          area: ["600px", "400px"],
+          fixed: false,
+          maxmin : true,
+          content:`<form class="layui-form layui-form-pane">
+                    <div style="padding:10px" class="layui-form-item">
+                      <label class="layui-form-label">选择时间</label>
+                      <div class="layui-input-block">
+                        <input type="text" id="reservation" name="reservation" class="layui-input" />
+                      </div>
+                    </div>
+                  </form>`,
+          success: function(){
+            form.render()
+            laydate.render({
+              // 维保开始时间
+              elem: "#reservation",
+              type: "datetime",
+              closeStop: "#reservation",
+              trigger: 'click'
+            });
+          },
+          btn:['确定','取消'],
+          btnAlign: 'c',
+          yes: function(){
+            var reservation = $("#reservation").val()
+            console.log(reservation)
+          }
+        })
+        return false;
+      });
+
+      // 发起协同
+      form.on("submit(synergy)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "发起协同作业",
+          area: ['600px', '400px'],
+          fixed: false, //不固定
+          maxmin: true,
+          content: `<form class="layui-form layui-form-pane">
+                      <ul style="padding: 10px">
+                        <li class="layui-form-item layui-form-text">
+                          <label class="layui-form-label">协同内容：</label>
+                          <div class="layui-input-block">
+                          <textarea name="synergyContent" placeholder="请输入驳回说明" id="synergyContent" row="50" class="layui-textarea"></textarea>
+                          </div>
+                        </li>
+                        <li class="layui-form-item">
+                          <label class="layui-form-label">紧急程度：</label>
+                          <div class="layui-input-block">
+                            <select name="degree" id="degree">
+                              <option value>请选择紧急程度</option>
+                              <option value="0">一般</option>
+                              <option value="1">紧急</option>
+                            </select>
+                          </div>
+                        </li>
+                        <li class="layui-form-item">
+                          <label class="layui-form-label">指派给</label>
+                          <div class="layui-input-block">
+                            <select name="acceptUserId" id="acceptUserId">
+                              <option value>请选择指派人</option>
+                            </select>
+                          </div>
+                        </li>
+                      </ul>
+                      </form>
+                    `,
+          btn:["确定","取消"],
+          success: function(){
+            
+            _this.$axios.post('/api/getUserList',_this.$store.state.userId).then(res=>{
+              console.log(res)
+              var userList = res.data.body.userList
+              for(var i = 0; i < userList.length; i++){
+                console.log(userList[i].userName)
+                $("#acceptUserId").append('<option value="'+ userList[i].userId +'">'+ userList[i].userName +'</option>')
+              }
+                console.log($("#acceptUserId"))
+                form.render()
+            })
+            
+          },
+          yes: function(index, layero){
+            var synergyContent = $('#synergyContent').val()
+            var degree = $('#degree option:selected').val()
+            var acceptUserId = $('#acceptUserId option:selected').val()
+            console.log(data.field,synergyContent,acceptUserId,degree);
+            return false
+          },
+          btnAlign: "c"
+        });
+        return false;
+      });
+
+      // 驳回
+      form.on("submit(reject)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "是否驳回此工单？",
+          area: ['600px', '400px'],
+          fixed: false, //不固定
+          maxmin: true,
+          content: `
+                      <div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="reject" placeholder="请输入驳回说明" id="reject" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                    `,
+          btn:["确定","取消"],
+          success:function(){
+            form.render()
+          },
+          yes: function(index, layero){
+            var reject = $('#reject').val()
+            console.log(data.filed,reject);
+            return false
+          },
+          btnAlign: "c"
+        });
+        return false;
+      });
+
+      // 关单
+      form.on("submit(Kuantan)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "是否关闭此工单？",
+          area: ['600px', '400px'],
+          fixed: false, //不固定
+          maxmin: true,
+          content: `<div style="padding:10px" class="layui-form-item layui-form-text">
+                      <textarea name="Kuantan" placeholder="请输入关单说明" id="Kuantan" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                    </div>
+                    `,
+          btn:["确定","取消"],
+          success:function(){
+            form.render()
+          },
+          yes: function(index, layero){
+            var aaa = $('#Kuantan').val()
+            console.log(data.field,index,layero,aaa);
+            return false
+          },
+          btnAlign: "c"
+        });
         return false;
       });
     });
   },
   created() {
-    this.orderState = sessionStorage.getItem("orderState")
+    this.send()
   },
   updated() {
     setTimeout(function() {
@@ -234,7 +434,8 @@ export default {
         layui.form.render();
       });
     }, 10);
-  }
+  },
+  
 };
 </script>
 

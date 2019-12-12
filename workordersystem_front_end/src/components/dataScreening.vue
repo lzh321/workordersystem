@@ -8,23 +8,23 @@
         <div class="search_input" v-if="workOrderManagement">
           <p>
             <span for>工单编号</span>
-            <input type="text" name="workId" value placeholder />
+            <input type="text" name="seleOrderInfoId" value placeholder />
           </p>
           <p>
             <span for>工单状态</span>
-            <select name="workType" class="">
+            <select name="seleorderState" class="">
               <option value>全部</option>
-              <option value="1">待发单</option>
-              <option value="2">待派单</option>
-              <option value="3">待受理</option>
-              <option value="4">处理中</option>
-              <option value="5">待回访</option>
-              <option value="6">已关单</option>
+              <option value="0">待发单</option>
+              <option value="1">待派单</option>
+              <option value="2">待受理</option>
+              <option value="3">处理中</option>
+              <option value="7">待回访</option>
+              <option value="8">已关单</option>
             </select>
           </p>
           <p>
             <span for>创建时间</span>
-            <input type="text" name="createTime" id="createTime" />
+            <input type="text" name="selecreateTime" id="createTime" />
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
@@ -261,7 +261,8 @@ export default {
         // 创建时间
         elem: "#createTime",
         type: "datetime",
-        closeStop: "#createTime"
+        closeStop: "#createTime",
+        trigger: "click"
       });
       form.render()
     })

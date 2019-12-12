@@ -67,7 +67,7 @@ export default new Router({
         {
           path: '/workOrderDetails',
           name: 'workOrderDetails',
-          component: workOrderDetails
+          component: workOrderDetails,
         },
         {
           path: '/synergyManagement',
@@ -114,6 +114,7 @@ export default new Router({
           name: 'workOrderCreate',
           component: workOrderCreate
         },
+        
         {
           path: '/addUser',
           name: 'addUser',

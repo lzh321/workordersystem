@@ -20,9 +20,10 @@ export default {
     progressBar,
     workOrderLog
   },
-  
   beforeDestroy(){
+    console.log('组件销毁')
     sessionStorage.removeItem("orderState")
+    sessionStorage.removeItem("orderInfoId")
   }
 }
 </script>
