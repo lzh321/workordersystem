@@ -28,7 +28,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备投放点</label>
           <div class="layui-input-block">
-            <select name="networkId" lay-filter="seleNetworkName" lay-verify="required">
+            <select name="networkId" lay-filter="seleNetworkName" id="networkId" lay-verify="required">
               <option value>请选择一个投放点</option>
               <option
                 v-for="(item) in networkList"
@@ -201,10 +201,11 @@ export default {
       networkList: [],
       deviceInfoList: [],
       userList: [],
+      orderInfo: [],
       networAddress: "",
       deviceNumber: "",
       imgData: "",
-      orderInfoId: ""
+      orderInfoId: "",
     };
   },
   methods: {
@@ -229,9 +230,11 @@ export default {
       });
       this.$axios.post("/api/getUserList", userId).then(res => {
         // 员工列表
-        console.log(res);
+        // console.log(res);
         this.userList = res.data.body.userList;
       });
+
+      
 
       var date = new Date();
       var m = date.getMonth();
@@ -246,18 +249,41 @@ export default {
     }
   },
   mounted() {
+
     var _this = this;
+
+    
     layui.use(["form", "upload", "laydate", "jquery"], function() {
       var form = layui.form;
       var $ = layui.jquery;
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
+      var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : "";
+      if(orderInfoId !== null || orderInfoId !== '' || orderInfoId !== undefined) {
+        var data = {userId: _this.$store.state.userId, orderInfoId: orderInfoId}
+        _this.$axios.post("/api/getOrderInfo",data).then(res=>{
+          console.log(res)
+          _this.orderInfo = res.data.body
+          var networkId = 11
+          var networkIdLen = $("#networkId option").length
+          console.log(networkId,networkIdLen)
+          for(var i = 0; i < networkIdLen; i++){
+            var networkIdVal = this.$("#networkId option").eq(i).val()
+            console.log(networkIdVal)
+            if(networkId == networkIdVal){
+              $("#networkId option").eq(i).attr("selected","selected")
+            }
+          }
+        })
+      }
+
       laydate.render({
         // 维保开始时间
         elem: "#reportedBarrierTime",
         type: "datetime",
-        closeStop: "#reportedBarrierTime"
+        closeStop: "#reportedBarrierTime",
+        trigger: "click"
       });
       // select监听
       form.on("select(seleNetworkName)", function(data) {
@@ -286,14 +312,14 @@ export default {
 
       //监听提交
       form.on("submit(workOrderCreate)", function(data) {
-        console.log(data.field);
+        console.log(data.field,orderInfoId);
         
-        var orderState = sessionStorage.getItem("orderState")
-          ? sessionStorage.getItem("orderState")
-          : "";
+        // var orderInfoId = sessionStorage.getItem("orderInfoId")
+        //   ? sessionStorage.getItem("orderInfoId")
+        //   : "";
 
         data.field.userId = _this.$store.state.userId;
-        if (orderState === null || orderState === "" || orderState === undefined) {
+        if (orderInfoId === null || orderInfoId === "" || orderInfoId === undefined) {
           data.field.orderInfoId = _this.orderInfoId
           _this.$axios.post("/api/addOrderInfo", data.field).then(res => {
             console.log(res);
@@ -309,7 +335,8 @@ export default {
             }
           });
         } else {
-          _this.$axios.post("/api/alterUserInfo", data.field).then(res => {
+          data.field.orderInfoId = orderInfoId
+          _this.$axios.post("/api/alterOrderInfo", data.field).then(res => {
             console.log(res);
             if (res.data.retCode == "000000") {
               layer.msg(res.data.retMsg, { icon: 1 });
@@ -353,7 +380,7 @@ export default {
           });
           for(var item in files){
             console.log(item.split('-')[1])
-            this.data = {orderInfoId: _this.orderInfoId, soreId: item.split('-')[1]}
+            this.data = {orderInfoId: _this.orderInfoId, soreId: item.split('-')[1] + 1}
           }
         },
         before: function(obj) {

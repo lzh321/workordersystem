@@ -7,20 +7,20 @@
         ref="nav"
         tag="li"
         class="layui-nav-item"
+        @click="active(nav_item.nav_title)"
       >
         <router-link :to="nav_item.path ? nav_item.path : ''" tag="a">{{nav_item.nav_title}}</router-link>
         <dl
           v-if="nav_item.children ? true : false"
           class="layui-nav-child"
         >
-          <router-link
-            tag="dd"
+          <dd
             v-for="(item,index)  in nav_item.children"
-            :key="index"
-            :to="item.path ? item.path : ''"
+            :key="index"        
+            @click="actives(item.title)"
           >
-            <a>{{item.title}}</a>
-          </router-link>
+            <router-link :to="item.path ? item.path : ''" tag="a">{{item.title}}</router-link>
+          </dd>
         </dl>
       </li>
     </ul>
@@ -31,7 +31,6 @@ export default {
   name: "Side",
   data() {
     return {
-      num: 0,
       nav: [
         { nav_title: "工作台", path: "/workTable?type=workTable" },
         {
@@ -101,14 +100,13 @@ export default {
     };
   },
   methods: {
-    active: function(index, title) {
-      this.num = index;
+    active: function(title) {
       this.$emit("titleFn", title);
       // console.log(title)
     },
     actives: function(title) {
+      // console.log(title);
       this.$emit("titleFn", title);
-      console.log(title);
     }
   },
   mounted(){

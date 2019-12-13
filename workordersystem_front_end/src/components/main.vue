@@ -3,7 +3,9 @@
     <div class="content">
       <div class="content_all">
         <div class="content_header">
-          <span>{{title}}</span>
+          <span>
+            {{title}}
+          </span>
           <span @click="Refresh">刷新</span>
         </div>
         <div class="content_main">
@@ -43,7 +45,7 @@ export default {
     }
   },
   mounted(){
-    
+
   }
 };
 </script>

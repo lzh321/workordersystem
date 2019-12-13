@@ -4,7 +4,7 @@
       <label class="layui-form-label">指派给</label>
       <div class="layui-input-block">
         <select name="acceptUserId">
-          <option value>亲选择指派人</option>
+          <option value>请选择指派人</option>
           <option v-for="item in userList" :key="item.userId" :value="item.userId">{{item.userName}}</option>
         </select>
       </div>

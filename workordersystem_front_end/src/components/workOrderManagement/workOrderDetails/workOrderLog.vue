@@ -26,13 +26,18 @@ export default {
     }
   },
   mounted(){
+    var _this = this
     layui.use("table",function(){
       var table = layui.table
       //第一个实例
       table.render({
         elem: "#workOrderLog",
         method: "post",
-        url: "/api/getOrderInfoList", //数据接口
+        url: "/api/getRemarListByOrderInfoId", //数据接口
+        where:{
+          userId: _this.$store.state.userId,
+          seleOrderInfoId: sessionStorage.getItem("orderInfoId")
+        },
         id: "serachData",
         parseData: function(res) {
           //res 即为原始返回的数据
@@ -40,7 +45,7 @@ export default {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
             count: res.body.totalCount, //解析数据长度
-            data: res.body.orderInfoList //解析数据列表
+            data: res.body.remarList //解析数据列表
           };
         },
         request: {
@@ -51,10 +56,10 @@ export default {
         cols: [
           [
             //表头
-            {field: "orderInfoId",title: "操作",sort: true,align: "center"},
-            {field: "orderInfoId",title: "操作时间",sort: true,align: "center"},
-            {field: "orderInfoId",title: "操作人",sort: true,align: "center"},
-            {field: "orderInfoId",title: "操作说明",sort: true,align: "center"},
+            {field: "handleStateName",title: "操作",sort: true,align: "center"},
+            {field: "operationTime",title: "操作时间",sort: true,align: "center"},
+            {field: "handleUserName",title: "操作人",sort: true,align: "center"},
+            {field: "remarkDetail",title: "操作说明",sort: true,align: "center"},
           ]
         ]
       });

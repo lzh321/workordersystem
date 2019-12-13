@@ -1,45 +1,37 @@
 <template>
   <div class="workOrderManagement">
-    <div class="work_type">
-      <ul>
+    <div class="layui-tab layui-tab-brief" lay-filter="workOrderManagement">
+      <ul class="layui-tab-title">
         <li
           v-for="(item,index) in workType"
           @click="active(index)"
-          :class="{active:index === num}"
+          :class="index == num ? 'layui-this ' : ''"
           :key="index"
         >
-          <i v-if="item.num ? true : false">{{item.num}}</i>
-          <span>{{item.title}}</span>
+          <a>
+            {{item.title}}
+            <span v-if="item.num" class="layui-badge">{{item.num}}</span>
+          </a>
         </li>
       </ul>
-    </div>
-    <data-screening :type="type"></data-screening>
-    <div class="dataList">
-      <div class="dataList_top">
-        <h2>数据列表</h2>
-        <p>
-          <button @click="derived">导出</button>
-          <router-link to="/workOrderCreate" tag="button">创建</router-link>
-        </p>
-      </div>
-      <div class="dataList_table">
-        <table
-          id="workOrderManagement"
-          lay-filter="workOrderManagement"
-          lay-data="{id: 'serachData'}"
-        ></table>
-        <!-- <script id="barDemo" type="text/html">
-          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a>
-          <a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a>
-          <a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a>
-          <a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>
-          <a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>
-          <a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a>
-          <a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>
-          <a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>
-          <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
-        </script> -->
+      <div class="layui-tab-content">
+        <data-screening :type="type"></data-screening>
+        <div class="dataList">
+          <div class="dataList_top">
+            <h2>数据列表</h2>
+            <p>
+              <button @click="derived">导出</button>
+              <router-link to="/workOrderCreate" tag="button">创建</router-link>
+            </p>
+          </div>
+          <div class="dataList_table">
+            <table
+              id="workOrderManagement"
+              lay-filter="workOrderManagement"
+              lay-data="{id: 'serachData'}"
+            ></table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -76,19 +68,20 @@ export default {
     }
   },
   mounted() {
-    var _this = this
-    layui.use(["table", "form"], function() {
+    var _this = this;
+    layui.use(["table", "form","element"], function() {
       var table = layui.table;
+      var element = layui.element
       var form = layui.form;
-      form.on('submit(serach)', function(data){
-        data.field.userId = _this.$store.state.userId
-        console.log(data.field)
-        table.reload('serachData',{
+      form.on("submit(serach)", function(data) {
+        data.field.userId = _this.$store.state.userId;
+        console.log(data.field);
+        table.reload("serachData", {
           url: "/api/getOrderInfoList",
-          where:data.field,
-          page:{curr: 1, limit: 10}
-        })
-      })
+          where: data.field,
+          page: { curr: 1, limit: 10 }
+        });
+      });
       //第一个实例
       table.render({
         elem: "#workOrderManagement",
@@ -174,22 +167,50 @@ export default {
               // toolbar: "#barDemo",
               templet: function(d) {
                 // console.log(d.orderState)
-                if(d.orderState == 0) {  //待发单
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>'
+                if (d.orderState == 0) {
+                  //待发单
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>';
                 }
-                if(d.orderState == 1) {  //待派单
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
+                if (d.orderState == 1) {
+                  //待派单
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
                 }
-                if(d.orderState == 2) {  // 待受理
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a><a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>'
+                if (d.orderState == 2) {
+                  // 待受理
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a><a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>';
                 }
-                if(d.orderState == 3) {  // 处理中
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>'
+                if (d.orderState == 3) {
+                  // 处理中
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
                 }
-                if(d.orderState == 7) { //待回访
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
+                if (d.orderState == 4) {
+                  // 已预约
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="start">出发</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >更改预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
                 }
-                
+                if (d.orderState == 5) {
+                  // 已出发
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="reach">到达</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
+                }
+                if (d.orderState == 6) {
+                  // 已开始
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
+                }
+                if (d.orderState == 7) {
+                  //待回访
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
+                }
+                if (d.orderState == 8) {
+                  //已关单
+                  return ;
+                }
+                if (d.orderState == 9) {
+                  // 已到达
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
+                }
+                if (d.orderState == 10) {
+                  // 已到达
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">完成</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
+                }
               }
             }
           ]
@@ -200,18 +221,18 @@ export default {
       table.on("tool(workOrderManagement)", function(obj) {
         var data = obj.data;
         console.log(data);
-        var orderState = data.orderState
-        var orderInfoId = data.orderInfoId
-        console.log(orderState)
+        var orderState = data.orderState;
+        var orderInfoId = data.orderInfoId;
+        console.log(orderState);
         if (obj.event === "edit") {
           //编辑
-          sessionStorage.setItem('orderState',orderState)
-          sessionStorage.setItem('orderInfoId',orderInfoId)
-          
-          if(orderState == 0) {
-            _this.$router.push('/workOrderCreate')
-          }else{
-            _this.$router.push('/workOrderDetails')
+          sessionStorage.setItem("orderState", orderState);
+          sessionStorage.setItem("orderInfoId", orderInfoId);
+
+          if (orderState == 0) {
+            _this.$router.push("/workOrderCreate");
+          } else {
+            _this.$router.push("/workOrderDetails");
           }
         } else if (obj.event === "reservation") {
           //预约
@@ -263,6 +284,8 @@ export default {
     this.$axios.post("/api/getOrderInfoList", data).then(res => {
       console.log(res);
     });
+    sessionStorage.removeItem("orderState");
+    sessionStorage.removeItem("orderInfoId");
   }
 };
 </script>
@@ -271,11 +294,11 @@ export default {
 .workOrderManagement {
   height: 100%;
 }
-.active {
+/* .active {
   border-bottom: 2px solid #445eee;
   color: #445eee;
-}
-.work_type ul {
+} */
+/* .work_type ul {
   display: flex;
   align-items: center;
   padding: 10px 15px 20px;
@@ -297,7 +320,7 @@ export default {
   top: 8px;
   line-height: 15px;
   right: 0px;
-}
+} */
 .dataList .dataList_top {
   display: flex;
   align-items: center;

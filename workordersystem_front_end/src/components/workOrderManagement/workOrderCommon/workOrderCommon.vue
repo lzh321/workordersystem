@@ -7,21 +7,21 @@
         <div class="layui-form-item">
           <label class="layui-form-label">客户名称</label>
           <div class="layui-input-block">
-            <input type="text" name="customerName" :value="workOrderInfo.customerName" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.customerName ? workOrderInfo.customerName : null" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">合同ID</label>
           <div class="layui-input-block">
-            <input type="text" name="agreenmentId"  class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.agreenmentId" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">设备投放点</label>
           <div class="layui-input-block">
-            <input type="text" name="networkId" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.networName" class="layui-input" disabled />
           </div>
         </div>
 
@@ -30,10 +30,10 @@
           <div class="layui-input-block">
             <input
               type="text"
-              name="networAddress"
+              name=""
               autocomplete="off"
               class="layui-input"
-              value=""
+              :value="workOrderInfo.networAddress"
               disabled
             />
           </div>
@@ -42,14 +42,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">联系人</label>
           <div class="layui-input-block">
-            <input type="text" name="contactName" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.contactName" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">联系电话</label>
           <div class="layui-input-block">
-            <input type="text" name="contactPhone" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.contactPhone" class="layui-input" disabled />
           </div>
         </div>
 
@@ -62,21 +62,21 @@
         <div class="layui-form-item">
           <label class="layui-form-label">工单来源</label>
           <div class="layui-input-block">
-            <input type="text" name="orderSource" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.orderSource == 0 ? '电话' : '其他'" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">工单类型</label>
           <div class="layui-input-block">
-            <input type="text" name="orderType" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.orderStateName" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">紧急程度</label>
           <div class="layui-input-block">
-            <input type="text" name="orderUrgency" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.orderUrgency == 0 ? '一般' : '紧急'" class="layui-input" disabled />
           </div>
         </div>
 
@@ -85,9 +85,10 @@
           <div class="layui-input-block">
             <input
               type="text"
-              name="reportedBarrierTime"
+              name=""
               class="layui-input"
               id="reportedBarrierTime"
+              :value="workOrderInfo.reportTime"
               disabled
             />
             <i></i>
@@ -97,7 +98,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block">
-            <input type="text" name="modelId" class="layui-input" disabled />
+            <input type="text" name="" :value="workOrderInfo.modelType" class="layui-input" disabled />
           </div>
         </div>
 
@@ -106,8 +107,8 @@
           <div class="layui-input-block">
             <input
               type="text"
-              name="deviceNumber"
-              value=""
+              name=""
+              :value="workOrderInfo.deviceNumber"
               class="layui-input"
               disabled
             />
@@ -117,7 +118,7 @@
         <div class="layui-form-item layui-form-text">
           <label class="layui-form-label">问题描述</label>
           <div class="layui-input-block">
-            <textarea name="problemDescription" placeholder="请输入内容" class="layui-textarea" disabled></textarea>
+            <textarea name="" :value="workOrderInfo.problemDescription" placeholder="请输入内容" class="layui-textarea" disabled></textarea>
           </div>
         </div>
 
@@ -125,31 +126,37 @@
           <label class="layui-form-label">附件</label>
           <div id="affix">
             <div class="uploadImg">
-              <img :src="'require('+ workOrderInfo.orderPhoto +')'" alt />
+              <img :src="imgUrl" alt />
             </div>
           </div>
         </div>
 
         <!-- 待派单组件 -->
         <waitSendOrders v-if="orderState == 1 ? true : false"></waitSendOrders>
+        <!-- 待受理 -->
+        <waitAcceptance v-if="orderState == 2  ? true : false"></waitAcceptance>
+        <!-- 预约 -->
+        <reservation :workOrderInfo="workOrderInfo" v-if="orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10 ? true : false"></reservation>
+        <!-- 协同 -->
+        <synergy :workOrderInfo="workOrderInfo" v-if="orderState == 6 ? true : false"></synergy>
+        <!-- 故障处理中 -->
+        <waitReturnVisit :workOrderInfo="workOrderInfo" v-if="orderState == 7 ? true : false"></waitReturnVisit>
       </div>
-      <inProcess v-if="orderState == 3 ? true : false"></inProcess>
+      <inProcess :orderState="orderState" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
       <div class="layui-form-item">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="bill" v-if="orderState == 0 ? true : false">发单</button>
-          <button class="layui-btn" lay-submit lay-filter="sendOrders" v-if="orderState == 1 ? true : false">派单</button>
-          <button class="layui-btn" lay-submit lay-filter="acceptance" v-if="orderState == 2 ? true : false">受理</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reassignment" v-if="orderState == 2 ? true : false">改派</button>
-          <button class="layui-btn" lay-submit lay-filter="finish" v-if="orderState == 3 ? true : false">完成</button>
-          <button class="layui-btn" lay-submit lay-filter="start" v-if="orderState == 3 ? true : false">出发</button>
-          <button class="layui-btn" lay-submit lay-filter="arrive" v-if="orderState == 3 ? true : false">到达</button>
-          <button class="layui-btn" lay-submit lay-filter="begin" v-if="orderState == 3 ? true : false">开始</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">预约上门</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">更改预约</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="synergy" v-if="orderState == 3 ? true : false">发起协同</button>
-          <button class="layui-btn layui-btn-primary" lay-submit lay-filter="reject" v-if="orderState == 7 || 1 ? true : false">驳回</button>
-          <button type="reset" class="layui-btn layui-btn-primary" lay-submit lay-filter="Kuantan" >关单</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="sendOrders" v-if="orderState == 1 ? true : false">派单</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="acceptance" v-if="orderState == 2 ? true : false">受理</button>
+          <button type="button" class="layui-btn layui-btn-primary" lay-submit lay-filter="reassignment" v-if="orderState == 2 ? true : false">改派</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="finish" v-if="orderState == 3 || orderState == 10 ? true : false">完成</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="start" v-if="orderState == 4 ? true : false">出发</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="arrive" v-if="orderState == 5 ? true : false">到达</button>
+          <button type="button" class="layui-btn" lay-submit lay-filter="begin" v-if="orderState == 9 ? true : false">开始</button>
+          <button type="button" class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 3 ? true : false">预约上门</button>
+          <button type="button" class="layui-btn layui-btn-primary" lay-submit lay-filter="reservation" v-if="orderState == 4 ? true : false">更改预约</button>
+          <button type="button" class="layui-btn layui-btn-primary" lay-submit  lay-filter="synergy" v-if="orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false">发起协同</button>
+          <button type="button" class="layui-btn layui-btn-primary" lay-submit lay-filter="reject" v-if="orderState == 7 || orderState == 1 ? true : false">驳回</button>
+          <button  type="button" class="layui-btn layui-btn-primary" lay-submit lay-filter="Kuantan" >关单</button>
         </div>
       </div>
     </form>
@@ -158,6 +165,10 @@
 
 <script>
 import waitSendOrders from '../workOrderDetails/waitSendOrders'
+import waitAcceptance from '../workOrderDetails/waitAcceptance'
+import reservation from '../workOrderDetails/reservation'
+import synergy from '../workOrderDetails/synergy'
+import waitReturnVisit from '../workOrderDetails/waitReturnVisit'
 import inProcess from '../workOrderDetails/inProcess'
 export default {
   name: "workOrderCommon",
@@ -166,12 +177,19 @@ export default {
       orderState: sessionStorage.getItem("orderState"),
       orderInfoId: sessionStorage.getItem("orderInfoId"),
       workOrderInfo: {},
-      userList: []
+      userList: [],
+      imgUrl: '',
+      userId: sessionStorage.getItem("userId") ? sessionStorage.getItem("userId") : "",
+      orderInfoId: sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : "",
     };
   },
   components:{
     waitSendOrders,
-    inProcess
+    inProcess,
+    waitAcceptance,
+    reservation,
+    synergy,
+    waitReturnVisit
   },
   methods: {
     cancel() {
@@ -185,6 +203,7 @@ export default {
       this.$axios.post('/api/getOrderInfo',data).then(res=>{
         console.log(res)
         this.workOrderInfo = res.data.body
+        this.imgUrl = 'http://192.168.1.245/' + res.data.body.orderPhoto.split(',')[0]
       })
     }
   },
@@ -196,37 +215,67 @@ export default {
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
-      laydate.render({
-        // 维保开始时间
-        elem: "#reportedBarrierTime",
-        type: "datetime",
-        closeStop: "#reportedBarrierTime"
-      });
 
       // 完成
       form.on("submit(finish)", function(data) {
+        data.field.userId = _this.userId
+        data.field.orderInfoId = _this.orderInfoId
         console.log(data.field);
+        _this.$axios.post("/api/finishOrderInfo",data.field).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg(res.data.retMsg,{icon:1})
+            setTimeout(()=>{
+              _this.$router.push('/workOrderManagement?type=workOrderManagement')
+            },3000)
+          }else{
+            layer.msg(res.data.retMsg,{icon:2})
+          }
+        })
         return false;
       });
-      // 发单
-      form.on("submit(bill)", function(data) {
-        console.log(data.field);
-        return false;
-      });
+ 
 
       // 派单
       form.on("submit(sendOrders)", function(data) {
+        data.field.userId = _this.userId
+        data.field.orderInfoId= _this.orderInfoId
+        data.field.handleState= 1
         console.log(data.field);
+        _this.$axios.post("/api/handleOrderInfo",data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
         return false;
       });
       // 受理
       form.on("submit(acceptance)", function(data) {
+        data.field.userId = _this.userId
+        data.field.orderInfoId= _this.orderInfoId
+        data.field.handleState= 2
         console.log(data.field);
+        _this.$axios.post("/api/handleOrderInfo",data.field).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
         return false;
       });
       // 改派
-      form.on("submit(reassignment)", function(data) {
-        console.log(data.field);
+      form.on("submit(reassignment)",function(data) {
         layer.open({
           type: 1,
           title: "填写改派说明",
@@ -243,32 +292,95 @@ export default {
             form.render()
           },
           yes: function(index, layero){
-            var reassignment = $('#reassignment').val()
-            console.log(data.filed);
-            return false
+            var content = $('#reassignment').val()
+            var data = {
+              userId: _this.userId,
+              orderInfoId: _this.orderInfoId,
+              handleState: 10,
+              content: content
+            }
+            console.log(data)
+            _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
+            layer.close(index)
           },
           btnAlign: "c"
         });
         return false;
       });
       // 出发
-      form.on("submit(start)", function(data) {
-        console.log(data.field);
+      form.on("submit(start)", function() {
+        var data ={
+          userId: _this.userId,
+          orderInfoId: _this.orderInfoId,
+          handleState: 4
+        }
+        _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg(res.data.retMsg,{icon:1})
+            setTimeout(()=>{
+              _this.$router.push('/workOrderManagement?type=workOrderManagement')
+            },3000)
+          }else{
+            layer.msg(res.data.retMsg,{icon:2})
+          }
+        })
         return false;
       });
 
       // 到达
-      form.on("submit(arrive)", function(data) {
-        console.log(data.field);
+      form.on("submit(arrive)", function() {
+        var data ={
+          userId: _this.userId,
+          orderInfoId: _this.orderInfoId,
+          handleState: 5
+        }
+        _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg(res.data.retMsg,{icon:1})
+            setTimeout(()=>{
+              _this.$router.push('/workOrderManagement?type=workOrderManagement')
+            },3000)
+          }else{
+            layer.msg(res.data.retMsg,{icon:2})
+          }
+        })
         return false;
       });
       // 开始
-      form.on("submit(begin)", function(data) {
-        console.log(data.field);
+      form.on("submit(begin)", function() {
+        var data ={
+          userId: _this.userId,
+          orderInfoId: _this.orderInfoId,
+          handleState: 6
+        }
+        _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            layer.msg(res.data.retMsg,{icon:1})
+            setTimeout(()=>{
+              _this.$router.push('/workOrderManagement?type=workOrderManagement')
+            },3000)
+          }else{
+            layer.msg(res.data.retMsg,{icon:2})
+          }
+        })
+        
         return false;
       });
       // 预约上门
-      form.on("submit(reservation)", function(data) {
+      form.on("submit(reservation)",function(data) {
         console.log(data.field);
         layer.open({
           type: 1,
@@ -296,16 +408,39 @@ export default {
           },
           btn:['确定','取消'],
           btnAlign: 'c',
-          yes: function(){
-            var reservation = $("#reservation").val()
-            console.log(reservation)
+          yes: function(index,layero){
+            var appoinmentTime = $("#reservation").val()
+            if(_this.orderState == 4){
+              var handleState = 12
+            }else {
+              var handleState = 3
+            }
+             var data = {
+              userId: _this.userId,
+              orderInfoId: _this.orderInfoId,
+              handleState: handleState,
+              appoinmentTime: appoinmentTime
+            }
+            console.log(data)
+            _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                })
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
+            layer.close(index)
           }
         })
         return false;
       });
 
       // 发起协同
-      form.on("submit(synergy)", function(data) {
+      form.on("submit(synergy)",function(data) {
         console.log(data.field);
         layer.open({
           type: 1,
@@ -362,6 +497,7 @@ export default {
             var degree = $('#degree option:selected').val()
             var acceptUserId = $('#acceptUserId option:selected').val()
             console.log(data.field,synergyContent,acceptUserId,degree);
+            layer.close(index)
             return false
           },
           btnAlign: "c"
@@ -370,8 +506,7 @@ export default {
       });
 
       // 驳回
-      form.on("submit(reject)", function(data) {
-        console.log(data.field);
+      form.on("submit(reject)",function(data) {
         layer.open({
           type: 1,
           title: "是否驳回此工单？",
@@ -388,8 +523,26 @@ export default {
             form.render()
           },
           yes: function(index, layero){
-            var reject = $('#reject').val()
-            console.log(data.filed,reject);
+            var content = $("#reject").val()
+            var data = {
+              userId: _this.userId,
+              orderInfoId: _this.orderInfoId,
+              handleState: 9,
+              content: content
+            }
+            console.log(data)
+            _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                })
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
+            layer.close(index)
             return false
           },
           btnAlign: "c"
@@ -398,8 +551,8 @@ export default {
       });
 
       // 关单
-      form.on("submit(Kuantan)", function(data) {
-        console.log(data.field);
+      form.on("submit(Kuantan)",function() {
+        // console.log(data.field);
         layer.open({
           type: 1,
           title: "是否关闭此工单？",
@@ -415,9 +568,26 @@ export default {
             form.render()
           },
           yes: function(index, layero){
-            var aaa = $('#Kuantan').val()
-            console.log(data.field,index,layero,aaa);
-            return false
+            var content = $('#Kuantan').val()
+            var data = {
+              userId: _this.userId,
+              orderInfoId: _this.orderInfoId,
+              handleState: 8,
+              content: content
+            }
+            console.log(data)
+            _this.$axios.post("/api/handleOrderInfo",data).then(res=>{
+              console.log(res)
+              if(res.data.retCode == "000000"){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/workOrderManagement?type=workOrderManagement')
+                })
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            })
+            layer.close(index)
           },
           btnAlign: "c"
         });
@@ -435,7 +605,10 @@ export default {
       });
     }, 10);
   },
-  
+  beforeDestroy(){
+    // sessionStorage.removeItem("orderState")
+    // sessionStorage.removeItem("orderInfoId")
+  }
 };
 </script>
 
@@ -452,7 +625,7 @@ h2 {
   display: inline-block;
   width: 100px;
   height: 100px;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 .uploadImg img {
   width: 100%;

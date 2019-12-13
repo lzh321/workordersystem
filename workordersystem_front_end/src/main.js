@@ -8,11 +8,13 @@ import Axios from 'axios'
 import store from './store'
 import qs from 'qs'
 import VueResource from 'vue-resource'
+import jquery from 'jquery'
 
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)
 Vue.use(VueResource)
 Vue.prototype.$axios = Axios
+Vue.prototype.$ = jquery
 
 // 实例对象
 Axios.create({
