@@ -88,6 +88,9 @@ export default {
         method: "post",
         url: "/api/getOrderInfoList", //数据接口
         id: "serachData",
+        where:{
+          userId: _this.$store.state.userId
+        },
         parseData: function(res) {
           //res 即为原始返回的数据
           return {
@@ -110,7 +113,10 @@ export default {
               title: "工单编号",
               sort: true,
               width: 160,
-              align: "center"
+              align: "center",
+              templet: function(d){
+                return '<a href="javascript:;" lay-event="edit">'+d.orderInfoId+'</a>'
+              }
             },
             {
               field: "orderStateName",
@@ -201,7 +207,7 @@ export default {
                 }
                 if (d.orderState == 8) {
                   //已关单
-                  return ;
+                  return "";
                 }
                 if (d.orderState == 9) {
                   // 已到达
@@ -228,8 +234,9 @@ export default {
           //编辑
           sessionStorage.setItem("orderState", orderState);
           sessionStorage.setItem("orderInfoId", orderInfoId);
-
-          if (orderState == 0) {
+          if(orderState == 8){
+            _this.$router.push("/Kuantan");
+          }else if (orderState == 0) {
             _this.$router.push("/workOrderCreate");
           } else {
             _this.$router.push("/workOrderDetails");
@@ -276,14 +283,14 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-    var data = {
-      userId: this.$store.state.userId,
-      currentPage: 1,
-      everyCount: 10
-    };
-    this.$axios.post("/api/getOrderInfoList", data).then(res => {
-      console.log(res);
-    });
+    // var data = {
+    //   userId: this.$store.state.userId,
+    //   currentPage: 1,
+    //   everyCount: 10
+    // };
+    // this.$axios.post("/api/getOrderInfoList", data).then(res => {
+    //   console.log(res);
+    // });
     sessionStorage.removeItem("orderState");
     sessionStorage.removeItem("orderInfoId");
   }

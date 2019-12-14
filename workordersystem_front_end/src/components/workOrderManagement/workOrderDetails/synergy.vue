@@ -36,10 +36,10 @@
 </template>
 <script>
 export default {
-  name: "inProcess",
+  name: "synergy",
+
   data() {
     return {
-      
     }
   },
   mounted(){
@@ -47,6 +47,19 @@ export default {
       var element = layui.element
       element.render()
     })
+  },
+  created(){
+    var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
+    if(orderInfoId){
+      var data = {
+        userId: this.$store.state.userId,
+        orderInfoId: orderInfoId
+      }
+      this.$axios.post("/api/getOrderCoordinateList",data).then(res=>{
+        console.log(res)
+      })
+
+    }
   }
 };
 </script>

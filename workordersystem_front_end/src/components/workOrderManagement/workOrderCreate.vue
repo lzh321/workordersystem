@@ -7,7 +7,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">客户名称</label>
           <div class="layui-input-block">
-            <select name="customerName" lay-verify="required">
+            <select name="customerName" id="customerName" lay-verify="required">
               <option value>请选择一个客户</option>
               <option
                 v-for="(item) in customerNameList"
@@ -21,7 +21,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">合同ID</label>
           <div class="layui-input-block">
-            <input type="text" name="agreenmentId" class="layui-input" />
+            <input type="text" name="agreenmentId" :value="orderInfo.agreenmentId ? orderInfo.agreenmentId : ''" class="layui-input" />
           </div>
         </div>
 
@@ -47,7 +47,7 @@
               name="networAddress"
               autocomplete="off"
               class="layui-input"
-              :value="networAddress"
+              :value="networAddress ? networAddress : orderInfo.networAddress "
               disabled
             />
           </div>
@@ -56,14 +56,14 @@
         <div class="layui-form-item">
           <label class="layui-form-label">联系人</label>
           <div class="layui-input-block">
-            <input type="text" name="contactName" class="layui-input" />
+            <input type="text" name="contactName" :value="orderInfo.contactName ? orderInfo.contactName : ''" class="layui-input" />
           </div>
         </div>
 
         <div class="layui-form-item">
           <label class="layui-form-label">联系电话</label>
           <div class="layui-input-block">
-            <input type="text" name="contactPhone" class="layui-input" />
+            <input type="text" name="contactPhone" :value="orderInfo.contactPhone ? orderInfo.contactPhone : ''" class="layui-input" />
           </div>
         </div>
 
@@ -76,7 +76,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">工单来源</label>
           <div class="layui-input-block">
-            <select name="orderSource">
+            <select name="orderSource" id="orderSource">
               <option value>选择工单来源</option>
               <option value="0">电话</option>
               <option value="1">其他</option>
@@ -87,7 +87,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">工单类型</label>
           <div class="layui-input-block">
-            <select name="orderType">
+            <select name="orderType" id="orderType">
               <option value>请选择工单类型</option>
               <option value="0">设备保障</option>
               <option value="1">差错账</option>
@@ -98,7 +98,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">紧急程度</label>
           <div class="layui-input-block">
-            <select name="orderUrgency">
+            <select name="orderUrgency" id="orderUrgency">
               <option value>请选择紧急程度</option>
               <option value="0">一般</option>
               <option value="1">紧急</option>
@@ -109,7 +109,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">报障时间</label>
           <div class="layui-input-block">
-            <input type="text" name="reportTime" class="layui-input" id="reportedBarrierTime" />
+            <input type="text" name="reportTime" :value="orderInfo.reportTime ? orderInfo.reportTime : ''" class="layui-input" id="reportedBarrierTime" />
             <i></i>
           </div>
         </div>
@@ -117,7 +117,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block">
-            <select name="modelId" lay-filter="seleModelType" lay-verify="required">
+            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
               <option value>请选择设备型号</option>
               <option
                 v-for="(item) in deviceInfoList"
@@ -134,7 +134,7 @@
             <input
               type="text"
               name="deviceNumber"
-              :value="deviceNumber"
+              :value="deviceNumber ? deviceNumber : orderInfo.deviceNumber"
               class="layui-input"
               disabled
             />
@@ -144,7 +144,7 @@
         <div class="layui-form-item layui-form-text">
           <label class="layui-form-label">问题描述</label>
           <div class="layui-input-block">
-            <textarea name="problemDescription" placeholder="请输入内容" class="layui-textarea"></textarea>
+            <textarea name="problemDescription" :value="orderInfo.problemDescription ? orderInfo.problemDescription : ''" placeholder="请输入内容" class="layui-textarea"></textarea>
           </div>
         </div>
 
@@ -154,8 +154,10 @@
           <div class="layui-upload">
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
               预览
-              <div class="layui-upload-list" id="imgBox"></div>
-              <input type="hidden" name="orderImg" />
+              <div class="layui-upload-list" id="imgBox">
+
+              </div>
+              <input type="hidden" name="orderImg" :value="orderInfo.orderPhoto ? orderInfo.orderPhoto : ''"/>
             </blockquote>
           </div>
         </div>
@@ -163,7 +165,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">指派给</label>
           <div class="layui-input-block">
-            <select name="acceptUserId">
+            <select name="acceptUserId" id="acceptUserId">
               <option value>请选择指派人</option>
               <option
                 v-for="(item) in userList"
@@ -177,7 +179,7 @@
         <div class="layui-form-item layui-form-text">
           <label class="layui-form-label">备注</label>
           <div class="layui-input-block">
-            <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
+            <textarea name="remark" :value="orderInfo.remark ? orderInfo.remark : ''" placeholder="请输入内容" class="layui-textarea"></textarea>
           </div>
         </div>
       </div>
@@ -201,7 +203,7 @@ export default {
       networkList: [],
       deviceInfoList: [],
       userList: [],
-      orderInfo: [],
+      orderInfo: {},
       networAddress: "",
       deviceNumber: "",
       imgData: "",
@@ -246,13 +248,91 @@ export default {
       if (h < 10) h = "0" + h;
       if (sec < 10) sec = "0" + sec;
       this.orderInfoId = "PL" + date.getFullYear() + (m + 1) + d + h + sec;
+    },
+    workValuation(){
+      var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : "";
+      if(orderInfoId) {
+        var data = {userId: this.$store.state.userId, orderInfoId: orderInfoId}
+        this.$axios.post("/api/getOrderInfo",data).then(res=>{
+          console.log(res)
+          this.orderInfo = res.data.body
+          this.$("#imgBox").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />')
+          // 设备投放点
+          var networkId = res.data.body.networkId
+          var networkIdLen = this.$("#networkId option").length
+          for(var i = 0; i < networkIdLen; i++){
+            var networkIdVal = this.$("#networkId option").eq(i).val()
+            if(networkId == networkIdVal){
+              this.$("#networkId option").eq(i).attr("selected","selected")
+            }
+          }
+
+          // 客户名称
+          var customerName = res.data.body.customerName
+          var customerNameLen = this.$("#customerName option").length
+          for(var i = 0; i < customerNameLen; i++){
+            var customerNameText = this.$("#customerName option").eq(i).text()
+            if(customerName == customerNameText){
+              this.$("#customerName option").eq(i).attr("selected","selected")
+            }
+          }
+          
+
+          //设备型号
+          var modelType = res.data.body.modelType
+          var modelTypeLen = this.$("#modelType option").length
+          for(var i = 0; i < modelTypeLen; i++){
+            var networkIdText = this.$("#modelType option").eq(i).text()
+            if(modelType == networkIdText){
+              this.$("#modelType option").eq(i).attr("selected","selected")
+            }
+          }
+          //工单来源
+          var orderSource = res.data.body.orderSource
+          var orderSourceLen = this.$("#orderSource  option").length
+          for(var i = 0; i < orderSourceLen; i++){
+            var orderSourceVal = this.$("#orderSource option").eq(i).val()
+            if(orderSource == orderSourceVal){
+              this.$("#orderSource option").eq(i).attr("selected","selected")
+            }
+          }
+          // //工单类型
+          var orderType = res.data.body.orderType
+          var orderTypeLen = this.$("#orderType option").length
+          for(var i = 0; i < orderTypeLen; i++){
+            var orderTypeVal = this.$("#orderType option").eq(i).val()
+      
+            if(orderType == orderTypeVal){
+              this.$("#orderType option").eq(i).attr("selected","selected")
+            }
+          }
+          //紧急程度
+          var orderUrgency = res.data.body.orderUrgency
+          var orderUrgencyLen = this.$("#orderUrgency option").length
+          for(var i = 0; i < orderUrgencyLen; i++){
+            var orderUrgencyVal = this.$("#orderUrgency option").eq(i).val()
+            if(orderUrgency == orderUrgencyVal){
+              this.$("#orderUrgency option").eq(i).attr("selected","selected")
+            }
+          }
+          //指派给
+          var acceptUserId = res.data.body.userId
+          var acceptUserIdLen = this.$("#acceptUserId option").length
+          for(var i = 0; i < acceptUserIdLen; i++){
+            var acceptUserIdVal = this.$("#acceptUserId option").eq(i).val()
+            if(acceptUserId == acceptUserIdVal){
+              this.$("#acceptUserId option").eq(i).attr("selected","selected")
+            }
+          }
+        })
+      }
     }
   },
   mounted() {
-
     var _this = this;
-
-    
+    setTimeout(()=>{
+       this.workValuation()
+    },100)
     layui.use(["form", "upload", "laydate", "jquery"], function() {
       var form = layui.form;
       var $ = layui.jquery;
@@ -260,24 +340,7 @@ export default {
       var laydate = layui.laydate;
       form.render();
       var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : "";
-      if(orderInfoId !== null || orderInfoId !== '' || orderInfoId !== undefined) {
-        var data = {userId: _this.$store.state.userId, orderInfoId: orderInfoId}
-        _this.$axios.post("/api/getOrderInfo",data).then(res=>{
-          console.log(res)
-          _this.orderInfo = res.data.body
-          var networkId = 11
-          var networkIdLen = $("#networkId option").length
-          console.log(networkId,networkIdLen)
-          for(var i = 0; i < networkIdLen; i++){
-            var networkIdVal = this.$("#networkId option").eq(i).val()
-            console.log(networkIdVal)
-            if(networkId == networkIdVal){
-              $("#networkId option").eq(i).attr("selected","selected")
-            }
-          }
-        })
-      }
-
+      
       laydate.render({
         // 维保开始时间
         elem: "#reportedBarrierTime",
@@ -364,24 +427,12 @@ export default {
         auto: true, // 是否自动上传
         field: "file", // 设定文件域字段
         choose: function(obj) {
-          var files = obj.pushFile();
-          console.log(files)
           obj.preview(function(index, file, result) {
-            console.log(file)
-            var imgBox = document.getElementById("imgBox");
-            var imgUrl = document.getElementById("imgUrl");
-            var img = document.createElement("img");
-            img.src = result;
-            img.className = "layui-upload-img";
-            img.alt = file.name;
-            img.style = "width:100px;height:100px";
-            imgBox.appendChild(img);
+            console.log(index,file)
+            $("#imgBox").html('<img class="layui-upload-img" style="width:100px;height:100px" src="'+ result +'" alt />');
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
-          for(var item in files){
-            console.log(item.split('-')[1])
-            this.data = {orderInfoId: _this.orderInfoId, soreId: item.split('-')[1] + 1}
-          }
+          this.data = {orderInfoId: _this.orderInfoId, soreId: 1}
         },
         before: function(obj) {
           //预读本地文件示例，不支持ie8
@@ -398,16 +449,18 @@ export default {
         }
       });
     });
+    
   },
   created() {
     this.send();
+    
   },
   updated() {
-    // setTimeout(function() {
+    setTimeout(function() {
     layui.use(["form"], function() {
       layui.form.render();
     });
-    // }, 10);
+    }, 10);
   }
 };
 </script>

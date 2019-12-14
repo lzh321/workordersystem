@@ -27,6 +27,25 @@
             <input type="text" name="selecreateTime" id="createTime" />
           </p>
         </div>
+        <div class="search_input" v-if="synergyManagement">
+          <p>
+            <span for>协同编号</span>
+            <input type="text" name="seleOrderInfoId" value placeholder="协同编号" />
+          </p>
+          <p>
+            <span for>协同状态</span>
+            <select name="seleorderState" class="">
+              <option value>全部</option>
+              <option value="0">待受理</option>
+              <option value="1">处理中</option>
+              <option value="2">已完成</option>
+            </select>
+          </p>
+          <p>
+            <span for>创建时间</span>
+            <input type="text" name="selecreateTime" id="createTime" />
+          </p>
+        </div>
         <div class="search_input" v-if="staffManagement">
           <p>
             <span for>输入查询</span>
@@ -222,6 +241,7 @@ export default {
       menuManagement: "",
       roleManagement: "",
       permissionsButton: "",
+      synergyManagement: "",
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
@@ -305,6 +325,9 @@ export default {
     }
     if (this.type == "permissionsButton") {
       this.permissionsButton = this.type;
+    }
+    if (this.type == "synergyManagement") {
+      this.synergyManagement = this.type;
     }
     this.send()
   },

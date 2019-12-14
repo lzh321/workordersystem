@@ -5,6 +5,7 @@ import Home from '@/views/Home'
 import workTable from '@/components/workTable/workTable'
 import workOrderManagement from '@/components/workOrderManagement/workOrderManagement'
 import workOrderDetails from '@/components/workOrderManagement/workOrderDetails'
+import Kuantan from '@/components/workOrderManagement/workOrderDetails/Kuantan'
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
 import staffManagement from '@/components/userManagement/staffManagement'
 import NetworkList from '@/components/userManagement/NetworkList'
@@ -31,7 +32,6 @@ import addEquipment from '@/components/equipmentManagement/addEquipment'
 import checkEquipmentInfo from '@/components/equipmentManagement/checkEquipmentInfo'
 import bulkImport from '@/components/equipmentManagement/bulkImport'
 import addEquipmentType from '@/components/equipmentManagement/addEquipmentType'
-
 Vue.use(Router)
 
 
@@ -68,6 +68,11 @@ export default new Router({
           path: '/workOrderDetails',
           name: 'workOrderDetails',
           component: workOrderDetails,
+        },
+        {
+          path: '/Kuantan',
+          name: 'Kuantan',
+          component: Kuantan,
         },
         {
           path: '/synergyManagement',

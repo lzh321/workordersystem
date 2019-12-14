@@ -50,12 +50,7 @@
       </div>
     </div>
 
-    <div class="layui-form-item layui-form-text">
-      <label class="layui-form-label">备注</label>
-      <div class="layui-input-block">
-        <textarea name="remark" placeholder="请输入内容" class="layui-textarea"></textarea>
-      </div>
-    </div>
+    
   </div>
 </template>
 <script>
@@ -83,24 +78,14 @@ export default {
         auto: true, // 是否自动上传
         field: "file", // 设定文件域字段
         choose: function(obj) {
-          var files = obj.pushFile();
-          console.log(files)
+
           obj.preview(function(index, file, result) {
             console.log(file)
-            var imgBox = document.getElementById("imgBox");
-            var imgUrl = document.getElementById("imgUrl");
-            var img = document.createElement("img");
-            img.src = result;
-            img.className = "layui-upload-img";
-            img.alt = file.name;
-            img.style = "width:100px;height:100px";
-            imgBox.appendChild(img);
+            $("#imgBox").html('<img class="layui-upload-img" style="width:100px;height:100px" src="'+ result +'" alt />');
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
-          for(var item in files){
-            console.log(item.split('-')[1])
-            this.data = {orderInfoId: _this.orderInfoId, soreId: item.split('-')[1] + 1}
-          }
+          this.data = {orderInfoId: _this.orderInfoId, soreId: 1}
+
         },
         before: function(obj) {
           //预读本地文件示例，不支持ie8
