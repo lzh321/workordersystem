@@ -5,27 +5,48 @@
     <div class="layui-form-item">
       <label class="layui-form-label">上门时间</label>
       <div class="layui-input-block">
-        <input type="text" name="" class="layui-input" :value="workOrderInfo.appoinmentTime" id="reportedBarrierTime" disabled/>
+        <input
+          type="text"
+          name
+          class="layui-input"
+          :value="workOrderInfo.appoinmentTime"
+          id="reportedBarrierTime"
+          disabled
+        />
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">工程师</label>
       <div class="layui-input-block">
-        <input type="text" name="" class="layui-input" :value="workOrderInfo.userName" id="reportedBarrierTime" disabled/>
+        <input
+          type="text"
+          name
+          class="layui-input"
+          :value="workOrderInfo.userName"
+          id="reportedBarrierTime"
+          disabled
+        />
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">联系电话</label>
       <div class="layui-input-block">
-        <input type="text" name="" class="layui-input" :value="workOrderInfo.userPhone" id="reportedBarrierTime" disabled/>
+        <input
+          type="text"
+          name
+          class="layui-input"
+          :value="workOrderInfo.userPhone"
+          id="reportedBarrierTime"
+          disabled
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  name: "reseration",
-  props:["workOrderInfo"],
+  name: "reservAtion",
+  props: ["workOrderInfo"],
   data() {
     return {};
   },

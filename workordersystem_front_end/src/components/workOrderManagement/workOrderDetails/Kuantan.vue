@@ -192,7 +192,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.deviceNumber"
+              :value="workOrderInfo.isFinish == 0 ? '已解决' : '未解决'"
               class="layui-input"
               disabled
             />
@@ -204,7 +204,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.deviceNumber"
+              :value="workOrderInfo.satisfiedState == 0 ? '满意' : (workOrderInfo.satisfiedState == 1 ? '基本满意' : (workOrderInfo.satisfiedState == 2 ? '不满意' : ''))"
               class="layui-input"
               disabled
             />
@@ -215,7 +215,7 @@
           <div class="layui-input-block">
             <textarea
               name
-              :value="workOrderInfo.problemDescription"
+              :value="workOrderInfo.adviseContent"
               placeholder="请输入内容"
               class="layui-textarea"
               disabled
@@ -228,7 +228,7 @@
   </div>
 </template>
 <script>
-import reservation from "./reservation";
+// import reservation from "./reservation";
 import synergy from "./synergy";
 import processingRecord from "./processingRecord";
 export default {
@@ -239,7 +239,7 @@ export default {
     }
   },
   components:{
-    reservation,
+    // reservation,
     synergy,
     processingRecord
   },

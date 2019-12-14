@@ -191,7 +191,7 @@
         </div>
       </div>
       <!-- 故障处理记录 详情 -->
-      <processingRecord :workOrderInfo="workOrderInfo" v-if="orderState == 7"></processingRecord>
+      <processingRecord :workOrderInfo="workOrderInfo" v-if="orderState == 7 ? true : false"></processingRecord>
       <!-- 待派单组件 -->
       <waitSendOrders v-if="orderState == 1 ? true : false"></waitSendOrders>
       <!-- 预约 -->
@@ -315,7 +315,6 @@ export default {
   data() {
     return {
       orderState: sessionStorage.getItem("orderState"),
-      orderInfoId: sessionStorage.getItem("orderInfoId"),
       workOrderInfo: {},
       userList: [],
       imgUrl: "",
@@ -796,8 +795,8 @@ export default {
                   layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
-              layer.close(index);
             }
+            layer.close(index);
           },
           btnAlign: "c"
         });

@@ -16,7 +16,8 @@
           <div class="dataList_table">
             <table id="synergyManagement" lay-filter="synergyManagement" lay-data="{id:'serachData'}"></table>
             <div id="barDemo" style="display:none">
-              <a class="layui-btn layui-btn-xs" lay-event="edit">受理</a>
+              <a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a>
+              <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
             </div>
           </div>
         </div>
@@ -84,7 +85,10 @@ export default {
                 field: "id",
                 title: "协同编号",
                 sort: true,
-                align: "center"
+                align: "center",
+                templet:function(d){
+                  return '<a href="javascript:;" lay-event="edit">'+d.id+'</a>'
+                }
               },
               {
                 field: "coordinateState",
@@ -93,7 +97,7 @@ export default {
                 align: "center"
               },
               {
-                field: "orderInfoId",
+                field: "orderId",
                 title: "工单编号",
                 sort: true,
                 align: "center"
@@ -114,7 +118,15 @@ export default {
                 field: "orderUrgency",
                 title: "紧急程度",
                 sort: true,
-                align: "center"
+                align: "center",
+                templet: function(d){
+                  if(d.orderUrgency == 0){
+                    return "一般" 
+                  }else{
+                    return "紧急"
+                  }
+                 
+                }
               },
               {
                 field: "createrUserName",
@@ -137,28 +149,16 @@ export default {
         table.on("tool(synergyManagement)", function(obj) {
           var data = obj.data;
           console.log(data);
-          var modelId = data.modelId;
-          if (obj.event === "deletion") {
-            layer.confirm("真的删除行么", function(index) {
-              obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-              layer.close(index);
-              //向服务端发送删除指令
-              var delParam = {
-                userId: _this.$store.state.userId,
-                modelId: modelId
-              };
-              _this.$axios
-                .post("/api/deleDeviceModelInfo", delParam)
-                .then(res => {
-                  console.log(res);
-                  if (res.data.retCode == "000000") {
-                    layer.msg(res.data.retMsg, { icon: 1 });
-                  }
-                });
-            });
-          } else if (obj.event === "edit") {
-            sessionStorage.setItem("modelId", modelId);
-            _this.$router.push("/addEquipmentType");
+          var id = data.id;
+          var coordinateState = data.coordinateState;
+          if (obj.event === "Accepted") { // 受理
+            sessionStorage.setItem("id",id)
+            sessionStorage.setItem("coordinateState",coordinateState)
+            _this.$router.push("/synergyInfo");
+          } else if (obj.event === "finish") { //完成
+            sessionStorage.setItem("id",id)
+            sessionStorage.setItem("coordinateState",coordinateState)
+            _this.$router.push("/synergyInfo");
           }
         });
       });

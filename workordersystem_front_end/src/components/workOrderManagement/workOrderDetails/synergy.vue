@@ -1,30 +1,30 @@
 <template>
   <!-- 处理中 协同作业 -->
-  <div>
+  <div v-if="Object.keys(coordinateList).length !== 0">
     <h2>协同作业</h2>
     <div class="layui-form-item">
       <div class="layui-collapse">
-        <div class="layui-colla-item">
-          <h2 class="layui-colla-title">协同人员：杜甫</h2>
+        <div v-for="item in coordinateList" :key="item.id" class="layui-colla-item">
+          <h2 class="layui-colla-title">协同人员：{{item.responsibleName}}</h2>
           <div class="layui-colla-content">
             <ul>
               <li class="layui-form-item layui-form-text">
                 <label class="">协同内容：</label>
                 <span class="">
-                  打算吃顿饭
+                  {{item.content}}
                 </span>
               </li>
               <li class="layui-form-item">
                 <label class="">紧急程度：</label>
-                <span class="">一般</span>
+                <span class="">{{item.orderUrgency == 0 ? '一般' : '紧急'}}</span>
               </li>
               <li class="layui-form-item">
                 <label class="">状态：</label>
-                <span>待受理</span>
+                <span>{{item.coordinateState == 0 ? '待受理' : (item.coordinateState == 1 ? '处理中' : item.coordinateState == 2 ? '已完成' : '')}}</span>
               </li>
               <li class="layui-form-item">
                 <label class="">编号：</label>
-                <span class="">PL10632562</span>
+                <span class="">{{item.id}}</span>
               </li>
             </ul>
           </div>
@@ -37,9 +37,9 @@
 <script>
 export default {
   name: "synergy",
-
   data() {
     return {
+      coordinateList: {}
     }
   },
   mounted(){
@@ -57,10 +57,13 @@ export default {
       }
       this.$axios.post("/api/getOrderCoordinateList",data).then(res=>{
         console.log(res)
+        if(res.data.retCode == '000000'){
+          this.coordinateList = res.data.body.coordinateList 
+        }
       })
 
     }
-  }
+  },
 };
 </script>
 <style scoped>

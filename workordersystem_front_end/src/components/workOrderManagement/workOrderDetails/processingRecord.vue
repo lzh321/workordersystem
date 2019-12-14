@@ -1,18 +1,18 @@
 <template>
 <!-- 故障处理记录  详情 -->
   <div>
-    <h2>故障处理记录</h2>
+    <h2 v-if="workOrderInfo.appoinmentTime ? false :true">故障处理记录</h2>
     <reservation :workOrderInfo="workOrderInfo" v-if="workOrderInfo.appoinmentTime"></reservation>
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
       <div class="layui-input-block">
-        <input type="text" name :value="workOrderInfo.deviceNumber" class="layui-input" disabled />
+        <input type="text" name :value="workOrderInfo.recordType == 0 ? '硬件' : (workOrderInfo.recordType == 1 ? '软件' : (workOrderInfo.recordType == 2 ? '辅助' : ''))" class="layui-input" disabled />
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">故障模块</label>
       <div class="layui-input-block">
-        <input type="text" name :value="workOrderInfo.deviceNumber" class="layui-input" disabled />
+        <input type="text" name :value="workOrderInfo.recordModel == 0 ? '显示屏' : (workOrderInfo.recordModel == 1 ? '密码键盘' : '')" class="layui-input" disabled />
       </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -20,7 +20,7 @@
       <div class="layui-input-block">
         <textarea
           name
-          :value="workOrderInfo.problemDescription"
+          :value="workOrderInfo.recordContent"
           placeholder="请输入内容"
           class="layui-textarea"
           disabled
@@ -32,7 +32,7 @@
       <div class="layui-input-block">
         <textarea
           name
-          :value="workOrderInfo.problemDescription"
+          :value="workOrderInfo.recordSettle"
           placeholder="请输入内容"
           class="layui-textarea"
           disabled
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import reservation from "./reservation"
 export default {
   name: "processingRecord",
   props: ["workOrderInfo"],
@@ -51,6 +52,9 @@ export default {
       
     }
   },
+  components:{
+    reservation
+  }
 }
 </script>
 

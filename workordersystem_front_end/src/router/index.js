@@ -7,6 +7,7 @@ import workOrderManagement from '@/components/workOrderManagement/workOrderManag
 import workOrderDetails from '@/components/workOrderManagement/workOrderDetails'
 import Kuantan from '@/components/workOrderManagement/workOrderDetails/Kuantan'
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
+import synergyInfo from '@/components/synergyManagement/synergyInfo'
 import staffManagement from '@/components/userManagement/staffManagement'
 import NetworkList from '@/components/userManagement/NetworkList'
 import roleManagement from '@/components/systemManagement/roleManagement'
@@ -78,6 +79,11 @@ export default new Router({
           path: '/synergyManagement',
           name: 'synergyManagement',
           component: synergyManagement
+        },
+        {
+          path: '/synergyInfo',
+          name: 'synergyInfo',
+          component: synergyInfo
         },
         {
           path: '/staffManagement',
