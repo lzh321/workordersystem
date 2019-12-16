@@ -16,7 +16,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">创建人</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.createrName" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.createrId" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
@@ -40,7 +40,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">受理人</label>
         <div class="layui-input-block">
-          <input type="text" name class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.responsibleId" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
@@ -50,7 +50,7 @@
         </div>
       </div>
 
-      <div v-if="coordinateState == 2" class="layui-form-item layui-form-text">
+      <div v-if="coordinateState == 1" class="layui-form-item layui-form-text">
         <label class="layui-form-label">处理结果</label>
         <div class="layui-input-block">
           <textarea
@@ -64,8 +64,9 @@
       </div>
 
       <div class="layui-form-item">
-        <button v-if="coordinateState == 1" type="button" class="layui-btn" @click="Accepted">受理</button>
-        <button v-if="coordinateState == 2" type="button" class="layui-btn" @click="finish">完成</button>
+        <button v-if="coordinateState == 0" type="button" class="layui-btn" @click="Accepted">受理</button>
+        <button v-if="coordinateState == 0" type="button" class="layui-btn" @click="reject">驳回</button>
+        <button v-if="coordinateState == 1" type="button" class="layui-btn" @click="finish">完成</button>
       </div>
     </form>
   </div>
@@ -104,8 +105,58 @@ export default {
       };
       this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
         console.log(res);
-        this.synergyInfo = res.data.body;
+        if(res.data.retCode == '000000'){
+          layer.msg(res.data.retMsg,{icon: 1})
+          setTimeout(()=>{
+            this.$router.push('/synergyManagement?type=synergyManagement')
+          },3000)
+        }else{
+          layer.msg(res.data.retMsg,{icon: 2})
+        }
       });
+    },
+    reject(){
+      var _this = this
+      layer.open({
+          type: 1,
+          title: "是否驳回此工单？",
+          area: ["600px", "400px"],
+          fixed: false, //不固定
+          maxmin: true,
+          content: `
+                      <div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="reject" placeholder="请输入驳回说明" id="reject" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                    `,
+          btn: ["确定", "取消"],
+          // success: function() {
+          //   form.render();
+          // },
+          yes: function(index, layero) {
+            var content = _this.$("#reject").val();
+            var data = {
+              userId: _this.$store.state.userId,
+              id: _this.id,
+              handleState: 3,
+              rejectContent: content
+            };
+            _this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
+              console.log(res);
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.$router.push('/synergyManagement?type=synergyManagement')
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            });
+            layer.close(index);
+            return false;
+          },
+          btnAlign: "c"
+        });
+
     },
     finish() {
       var data = {
@@ -116,9 +167,16 @@ export default {
       };
       this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
         console.log(res);
-        this.synergyInfo = res.data.body;
+        if(res.data.retCode == '000000'){
+          layer.msg(res.data.retMsg,{icon: 1})
+          setTimeout(()=>{
+            this.$router.push('/synergyManagement?type=synergyManagement')
+          },3000)
+        }else{
+          layer.msg(res.data.retMsg,{icon: 2})
+        }
       });
-    }
+    },
   },
   mounted(){
     this.getSynergyInfo();
@@ -126,12 +184,11 @@ export default {
   created() {
     
   },
-  beforeDestroy(){
-    sessionStorage.removeItem("id")
-    sessionStorage.removeItem("coordinateState")
-  }
 };
 </script>
 
 <style scoped>
+.synergyInfo{
+  padding: 15px 15px 0;
+}
 </style>

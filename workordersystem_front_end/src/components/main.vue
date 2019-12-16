@@ -21,7 +21,6 @@
 export default {
   name: "Main",
   props: ['title'],
-  // inject: ["reload"],
   provide(){
     return {
       reload: this.reload

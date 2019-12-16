@@ -41,19 +41,21 @@
 import dataScreening from "../dataScreening";
 export default {
   name: "workOrderManagement",
+  inject: ["reload"],
   data() {
     return {
       num: 0,
       workType: [
         { title: "全部" },
-        { title: "待发单", num: 2 },
-        { title: "待派单", num: 2 },
-        { title: "待受理", num: 2 },
-        { title: "处理中", num: 2 },
-        { title: "待回访", num: 2 },
-        { title: "已关单", num: 2 }
+        { title: "待发单", num: 0 },
+        { title: "待派单", num: 0 },
+        { title: "待受理", num: 0 },
+        { title: "处理中", num: 0 },
+        { title: "待回访", num: 0 },
+        { title: "已关单", num: 0 }
       ],
-      type: ""
+      type: "",
+      workOrderInfo: {}
     };
   },
   components: {
@@ -65,14 +67,84 @@ export default {
     },
     derived: function() {
       table.exportFile();
+    },
+    send(orderInfoId) {
+      var data = {
+        userId: this.$store.state.userId,
+        orderInfoId: orderInfoId
+      };
+      this.$axios.post("/api/getOrderInfo", data).then(res => {
+        console.log(res);
+        this.workOrderInfo = res.data.body;
+      });
+    },
+    getOrderInfoNum() {
+      var userId = this.$store.state.userId;
+      this.$axios.post("/api/getOrderInfoNum", userId).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          // this.workType[0].num = res.data.body.allNum
+          this.workType[1].num = res.data.body.sendNum;
+          this.workType[2].num = res.data.body.sellNum;
+          this.workType[3].num = res.data.body.acceptNum;
+          this.workType[4].num = res.data.body.processingNum;
+          this.workType[5].num = res.data.body.finishNum;
+          this.workType[6].num = res.data.body.closeNum;
+        }
+      });
+    },
+    Reservation(userId, orderInfoId, handleState) {
+      // 预约出发到达开始
+      var data = {
+        userId: userId,
+        orderInfoId: orderInfoId,
+        handleState: handleState
+      };
+      this.$axios.post("/api/handleOrderInfo", data).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
+          setTimeout(() => {
+            this.reload();
+          }, 3000);
+        } else {
+          layer.msg(res.data.retMsg, { icon: 2 });
+        }
+      });
     }
   },
   mounted() {
     var _this = this;
-    layui.use(["table", "form","element"], function() {
+    layui.use(["table", "form", "element", "laydate", "jquery"], function() {
       var table = layui.table;
-      var element = layui.element
+      var element = layui.element;
+      var laydate = layui.laydate;
+      var $ = layui.jquery;
       var form = layui.form;
+      element.on("tab(workOrderManagement)", function(data) {
+        console.log(this); //当前Tab标题所在的原始DOM元素
+        console.log(data.index); //得到当前Tab的所在下标
+        var seleorderState = data.index - 1;
+        if (data.index == 0) {
+          seleorderState = "";
+        }
+
+        if (data.index == 5) {
+          var seleorderState = 7;
+        }
+        if (data.index == 6) {
+          var seleorderState = 8;
+        }
+        var dataTab = {
+          userId: _this.$store.state.userId,
+          seleorderState: seleorderState
+        };
+        table.reload("serachData", {
+          url: "/api/getOrderInfoList",
+          where: dataTab,
+          page: { curr: 1, limit: 10 }
+        });
+      });
       form.on("submit(serach)", function(data) {
         data.field.userId = _this.$store.state.userId;
         console.log(data.field);
@@ -88,7 +160,7 @@ export default {
         method: "post",
         url: "/api/getOrderInfoList", //数据接口
         id: "serachData",
-        where:{
+        where: {
           userId: _this.$store.state.userId
         },
         parseData: function(res) {
@@ -114,8 +186,12 @@ export default {
               sort: true,
               width: 160,
               align: "center",
-              templet: function(d){
-                return '<a href="javascript:;" lay-event="edit">'+d.orderInfoId+'</a>'
+              templet: function(d) {
+                return (
+                  '<a href="javascript:;" lay-event="edit">' +
+                  d.orderInfoId +
+                  "</a>"
+                );
               }
             },
             {
@@ -168,7 +244,7 @@ export default {
             {
               field: "orderState",
               title: "操作",
-              width: 260,
+              width: 315,
               align: "center",
               // toolbar: "#barDemo",
               templet: function(d) {
@@ -197,10 +273,6 @@ export default {
                   // 已出发
                   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="reach">到达</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
                 }
-                if (d.orderState == 6) {
-                  // 已开始
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                }
                 if (d.orderState == 7) {
                   //待回访
                   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
@@ -214,8 +286,8 @@ export default {
                   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
                 }
                 if (d.orderState == 10) {
-                  // 已到达
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">完成</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
+                  // 完成
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
                 }
               }
             }
@@ -234,9 +306,9 @@ export default {
           //编辑
           sessionStorage.setItem("orderState", orderState);
           sessionStorage.setItem("orderInfoId", orderInfoId);
-          if(orderState == 8){
+          if (orderState == 8) {
             _this.$router.push("/Kuantan");
-          }else if (orderState == 0) {
+          } else if (orderState == 0) {
             _this.$router.push("/workOrderCreate");
           } else {
             _this.$router.push("/workOrderDetails");
@@ -245,38 +317,311 @@ export default {
           //预约
           // sessionStorage.setItem('orderState',orderState)
           // _this.$router.push('/addCustomer')
+          layer.open({
+            type: 1,
+            title: "预约上门时间",
+            area: ["600px", "400px"],
+            fixed: false,
+            maxmin: true,
+            content: `<form class="layui-form layui-form-pane">
+                    <div style="padding:10px" class="layui-form-item">
+                      <label class="layui-form-label">选择时间</label>
+                      <div class="layui-input-block">
+                        <input type="text" id="reservation" name="reservation" class="layui-input" />
+                      </div>
+                    </div>
+                  </form>`,
+            success: function() {
+              form.render();
+              laydate.render({
+                // 维保开始时间
+                elem: "#reservation",
+                type: "datetime",
+                closeStop: "#reservation",
+                trigger: "click"
+              });
+            },
+            btn: ["确定", "取消"],
+            btnAlign: "c",
+            yes: function(index, layero) {
+              var appoinmentTime = _this.$("#reservation").val();
+              if (_this.orderState == 4) {
+                var handleState = 12;
+              } else {
+                var handleState = 3;
+              }
+              var data = {
+                userId: _this.userId,
+                orderInfoId: orderInfoId,
+                handleState: handleState,
+                appoinmentTime: appoinmentTime
+              };
+              console.log(data);
+              _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.reload();
+                  }, 3000);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+              layer.close(index);
+            }
+          });
+        } else if (obj.event === "start") {
+          // 出发
+          _this.Reservation(_this.userId, orderInfoId, 4);
+        } else if (obj.event === "reach") {
+          // 到达
+          _this.Reservation(_this.userId, orderInfoId, 5);
+        } else if (obj.event === "begin") {
+          // 开始
+          _this.Reservation(_this.userId, orderInfoId, 6);
         } else if (obj.event === "Kuantan") {
           //关单
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          if (orderState == 7) {
+            sessionStorage.setItem("orderState", orderState);
+            sessionStorage.setItem("orderInfoId", orderInfoId);
+            _this.$router.push("/workOrderDetails");
+          } else {
+            layer.open({
+              type: 1,
+              title: "是否关闭此工单？",
+              area: ["600px", "400px"],
+              fixed: false, //不固定
+              maxmin: true,
+              content: `<div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="Kuantan" placeholder="请输入关单说明" id="Kuantan" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                      `,
+              btn: ["确定", "取消"],
+              success: function() {
+                form.render();
+              },
+              yes: function(index, layero) {
+                var content = _this.$("#Kuantan").val();
+                var datas = {
+                  userId: _this.userId,
+                  orderInfoId: orderInfoId,
+                  handleState: 8,
+                  content: content
+                };
+                console.log(datas);
+                _this.$axios.post("/api/handleOrderInfo", datas).then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    setTimeout(() => {
+                      _this.reload();
+                    });
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+                layer.close(index);
+              },
+              btnAlign: "c"
+            });
+          }
         } else if (obj.event === "synergy") {
           //协同
           // sessionStorage.setItem('orderState',orderState)
           // _this.$router.push('/addCustomer')
+          _this.send(orderInfoId);
+          layer.open({
+            type: 1,
+            title: "发起协同作业",
+            area: ["600px", "400px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `<form class="layui-form layui-form-pane">
+                      <ul style="padding: 10px">
+                        <li class="layui-form-item layui-form-text">
+                          <label class="layui-form-label">协同内容：</label>
+                          <div class="layui-input-block">
+                          <textarea name="content" placeholder="请输入驳回说明" id="synergyContent" row="50" class="layui-textarea"></textarea>
+                          </div>
+                        </li>
+                        <li class="layui-form-item">
+                          <label class="layui-form-label">紧急程度：</label>
+                          <div class="layui-input-block">
+                            <select name="degree" id="degree">
+                              <option value>请选择紧急程度</option>
+                              <option value="0">一般</option>
+                              <option value="1">紧急</option>
+                            </select>
+                          </div>
+                        </li>
+                        <li class="layui-form-item">
+                          <label class="layui-form-label">指派给</label>
+                          <div class="layui-input-block">
+                            <select name="acceptUserId" id="acceptUserId">
+                              <option value>请选择指派人</option>
+                            </select>
+                          </div>
+                        </li>
+                      </ul>
+                      </form>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              form.render();
+              _this.$axios
+                .post("/api/getUserList", _this.$store.state.userId)
+                .then(res => {
+                  console.log(res);
+                  var userList = res.data.body.userList;
+                  for (var i = 0; i < userList.length; i++) {
+                    console.log(userList[i].userName);
+                    $("#acceptUserId").append(
+                      '<option value="' +
+                        userList[i].userId +
+                        '">' +
+                        userList[i].userName +
+                        "</option>"
+                    );
+                  }
+                  console.log($("#acceptUserId"));
+                  form.render();
+                });
+            },
+            yes: function(index, layero) {
+              var content = _this.$("#synergyContent").val();
+              var orderUrgency = _this.$("#degree option:selected").val();
+              var responsibleId = _this
+                .$("#acceptUserId option:selected")
+                .val();
+              var datas = {
+                userId: _this.userId,
+                orderInfoId: orderInfoId,
+                content: content,
+                orderUrgency: orderUrgency,
+                responsibleId: responsibleId,
+                createrId: _this.workOrderInfo.userId
+              };
+              console.log(datas);
+              _this.$axios.post("/api/addCoordinateInfo", datas).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.reload();
+                  }, 3000);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+              layer.close(index);
+              return false;
+            },
+            btnAlign: "c"
+          });
         } else if (obj.event === "finish") {
           //完成
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          sessionStorage.setItem("orderState", orderState);
+          sessionStorage.setItem("orderInfoId", orderInfoId);
+          _this.$router.push("/workOrderDetails");
         } else if (obj.event === "sendOrders") {
           //派单
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          sessionStorage.setItem("orderState", orderState);
+          sessionStorage.setItem("orderInfoId", orderInfoId);
+          _this.$router.push("/workOrderDetails");
         } else if (obj.event === "reject") {
           //驳回
           // sessionStorage.setItem('orderState',orderState)
           // _this.$router.push('/addCustomer')
+          layer.open({
+            type: 1,
+            title: "是否驳回此工单？",
+            area: ["600px", "400px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `
+                      <div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="reject" placeholder="请输入驳回说明" id="reject" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              form.render();
+            },
+            yes: function(index, layero) {
+              var content = _this.$("#reject").val();
+              var data = {
+                userId: _this.userId,
+                orderInfoId: orderInfoId,
+                handleState: 9,
+                content: content
+              };
+              console.log(data);
+              _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.reload();
+                  });
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+              layer.close(index);
+              return false;
+            },
+            btnAlign: "c"
+          });
         } else if (obj.event === "bill") {
           //发单
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          sessionStorage.setItem("orderState", orderState);
+          sessionStorage.setItem("orderInfoId", orderInfoId);
+          _this.$router.push("/workOrderCreate");
         } else if (obj.event === "acceptance") {
           //受理
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          _this.Reservation(_this.userId, orderInfoId, 2);
         } else if (obj.event === "reassignment") {
           //改派
-          // sessionStorage.setItem('orderState',orderState)
-          // _this.$router.push('/addCustomer')
+          layer.open({
+            type: 1,
+            title: "填写改派说明",
+            area: ["600px", "400px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `
+                      <div style="padding:10px" class="layui-form-item layui-form-text">
+                        <textarea name="reassignment" placeholder="请输入改派说明" id="reassignment" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                      </div>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              form.render();
+            },
+            yes: function(index, layero) {
+              var content = _this$("#reassignment").val();
+              var data = {
+                userId: _this.userId,
+                orderInfoId: orderInfoId,
+                handleState: 10,
+                content: content
+              };
+              console.log(data);
+              _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.reload();
+                  }, 3000);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+              layer.close(index);
+            },
+            btnAlign: "c"
+          });
         }
       });
     });
@@ -293,6 +638,7 @@ export default {
     // });
     sessionStorage.removeItem("orderState");
     sessionStorage.removeItem("orderInfoId");
+    this.getOrderInfoNum();
   }
 };
 </script>

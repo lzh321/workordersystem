@@ -110,6 +110,15 @@
               <option value>请选择工单类型</option>
               <option value="0">设备保障</option>
               <option value="1">差错账</option>
+              <option value="2">钞空/存满</option>
+              <option value="3">吞卡</option>
+              <option value="4">通讯中断</option>
+              <option value="5">卡钞</option>
+              <option value="6">PM</option>
+              <option value="7">软硬件升级</option>
+              <option value="8">咨询</option>
+              <option value="9">设备确认</option>
+              <option value="10">其他</option>
             </select>
           </div>
         </div>
@@ -257,11 +266,7 @@ export default {
         this.$axios.post("/api/getOrderInfo", data).then(res => {
           console.log(res);
           this.orderInfo = res.data.body;
-          this.$("#imgBox").html(
-            '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-              res.data.body.orderPhoto.split(",")[0] +
-              '" alt />'
-          );
+          this.$(".uploadImg").html(res.data.body.orderPhoto ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />' : '')
           // 设备投放点
           var networkId = res.data.body.networkId;
           var networkIdLen = this.$("#networkId option").length;

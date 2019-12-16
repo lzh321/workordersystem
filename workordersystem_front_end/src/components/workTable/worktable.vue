@@ -2,6 +2,7 @@
   <div class="workTable">
     <div class="workTable_top">
       <h2>工单状态统计图</h2>
+      <div class="workTable_content">
       <ul>
         <li>
           <span class="active">今日</span>
@@ -13,16 +14,30 @@
           <span>本月</span>
         </li>
         <li>
-          <p>
-            <input type="text" />
+          
+        </li>
+      </ul>
+      <div class="selectTime"><p>
+            <input
+              type="text"
+              class="layui-input"
+              placeholder="开始时间"
+              name="seleBeginTime"
+              id="seleBeginTime"
+            />
             <i></i>
           </p>—
           <p>
-            <input type="text" />
+            <input
+              type="text"
+              class="layui-input"
+              placeholder="结束时间"
+              name="seleEngTime"
+              id="seleEngTime"
+            />
             <i></i>
-          </p>
-        </li>
-      </ul>
+          </p></div>
+          </div>
     </div>
     <div class="Echarts">
       <chart :options="options" :auto-resize="true"></chart>
@@ -47,6 +62,25 @@ export default {
     };
   },
   mounted() {
+    layui.use(["form", "laydate"], function() {
+      var form = layui.form;
+      var laydate = layui.laydate;
+      form.render();
+      laydate.render({
+        // 开始时间
+        elem: "#seleBeginTime",
+        type: "datetime",
+        closeStop: "#seleBeginTime",
+        trigger: "click"
+      });
+      laydate.render({
+        // 结束时间
+        elem: "#seleEngTime",
+        type: "datetime",
+        closeStop: "#seleEngTime",
+        trigger: "click"
+      });
+    });
     this.options = {
       // 标题
       title: {
@@ -68,10 +102,10 @@ export default {
         show: true,
         x: "center",
         bottom: 10,
-        data: ["待发单", "待派单", "待受理", "处理中", "待回访","已关单"],
+        data: ["待发单", "待派单", "待受理", "处理中", "待回访", "已关单"],
         textStyle: {
           color: "#444",
-          fontSize: 14,
+          fontSize: 14
         }
       },
       // 各个部分的颜色
@@ -150,10 +184,13 @@ export default {
   justify-content: space-between;
   height: 50px;
 }
-.Echarts{
+.workTable_content{
+  display: flex
+}
+.Echarts {
   flex: 1;
   display: flex;
-  padding-top: 30px; 
+  padding-top: 30px;
   justify-content: center;
 }
 .workTable_top h2 {
@@ -166,6 +203,12 @@ export default {
 }
 .workTable_top ul li {
   /* padding: 0 20px; */
+  display: flex;
+  align-items: center;
+  height: 45px;
+  padding-left: 5px;
+}
+.selectTime{
   display: flex;
   align-items: center;
   height: 45px;

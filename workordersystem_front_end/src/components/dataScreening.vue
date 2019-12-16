@@ -24,26 +24,29 @@
           </p>
           <p>
             <span for>创建时间</span>
-            <input type="text" name="selecreateTime" id="createTime" />
+            <input class="Times" type="text" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
+            <input class="Times" type="text" name="seleEngTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="synergyManagement">
           <p>
             <span for>协同编号</span>
-            <input type="text" name="seleOrderInfoId" value placeholder="协同编号" />
+            <input type="text" name="seleID" value placeholder="协同编号" />
           </p>
           <p>
             <span for>协同状态</span>
-            <select name="seleorderState" class="">
+            <select name="seleCoordinateState" class="">
               <option value>全部</option>
               <option value="0">待受理</option>
               <option value="1">处理中</option>
               <option value="2">已完成</option>
+              <option value="3">已驳回</option>
             </select>
           </p>
           <p>
             <span for>创建时间</span>
-            <input type="text" name="selecreateTime" id="createTime" />
+            <input class="Times" type="text" name="selecreateTime" id="startTime" placeholder="开始时间" />-
+            <input class="Times" type="text" name="selecreateTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
@@ -277,11 +280,20 @@ export default {
     layui.use(["laydate","form"], function(){
       var laydate = layui.laydate
       var form = layui.form
+      
+
       laydate.render({
         // 创建时间
-        elem: "#createTime",
+        elem: "#startTime",
         type: "datetime",
-        closeStop: "#createTime",
+        closeStop: "#startTime",
+        trigger: "click"
+      });
+      laydate.render({
+        // 创建时间
+        elem: "#endTime",
+        type: "datetime",
+        closeStop: "#endTime",
         trigger: "click"
       });
       form.render()
@@ -373,7 +385,7 @@ export default {
 .data_screening_search p input {
   border: 1px solid #e6e6e6;
   border-radius: 2px;
-  width: 240px;
+  width: 220px;
   height: 38px;
   padding-left: 5px;
   color: #444;
@@ -390,6 +402,10 @@ export default {
 } */
 .data_screening_search button {
   margin-bottom: 0;
+}
+
+.Times{
+  width: 40% !important;
 }
 /* .data_screening_search p button{
   border: none;

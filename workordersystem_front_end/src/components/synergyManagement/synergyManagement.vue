@@ -15,10 +15,10 @@
           </div>
           <div class="dataList_table">
             <table id="synergyManagement" lay-filter="synergyManagement" lay-data="{id:'serachData'}"></table>
-            <div id="barDemo" style="display:none">
+            <!-- <div id="barDemo" style="display:none">
               <a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a>
               <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -30,6 +30,7 @@
 import dataScreening from "../dataScreening";
 export default {
   name: "equipmentType",
+  inject: ["reload"],
   data() {
     return {
       type: ""
@@ -94,7 +95,21 @@ export default {
                 field: "coordinateState",
                 title: "协同状态",
                 sort: true,
-                align: "center"
+                align: "center",
+                templet: function(d){
+                  if(d.coordinateState == 0){
+                    return "待受理"
+                  }
+                  if(d.coordinateState == 1){
+                    return "处理中"
+                  }
+                  if(d.coordinateState == 2){
+                    return "已完成"
+                  }
+                  if(d.coordinateState == 3){
+                    return "已驳回"
+                  }
+                }
               },
               {
                 field: "orderId",
@@ -140,7 +155,17 @@ export default {
                 sort: true,
                 align: "center"
               },
-              { title: "操作", align: "center", toolbar: "#barDemo" }
+              { title: "操作", align: "center", templet: function(d){
+                if(d.coordinateState == 0){
+                  return '<a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
+                }else if(d.coordinateState == 1){
+                  return '<a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>'
+                }else if(d.coordinateState == 2){
+                  return ''
+                }else if(d.coordinateState == 3){
+                  return ''
+                }
+              } }
             ]
           ]
         });
@@ -152,10 +177,67 @@ export default {
           var id = data.id;
           var coordinateState = data.coordinateState;
           if (obj.event === "Accepted") { // 受理
+            var data = {
+              userId: _this.$store.state.userId,
+              id: id,
+              handleState: 1
+            };
+            _this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
+              console.log(res);
+              if(res.data.retCode == '000000'){
+                layer.msg(res.data.retMsg,{icon: 1})
+                setTimeout(()=>{
+                  _this.reload()
+                },3000)
+              }else{
+                layer.msg(res.data.retMsg,{icon: 2})
+              }
+            });
+          }else if(obj.event === "reject"){
+            layer.open({
+              type: 1,
+              title: "是否驳回此工单？",
+              area: ["600px", "400px"],
+              fixed: false, //不固定
+              maxmin: true,
+              content: `
+                          <div style="padding:10px" class="layui-form-item layui-form-text">
+                            <textarea name="reject" placeholder="请输入驳回说明" id="reject" row="50" style="min-height:260px" class="layui-textarea"></textarea>
+                          </div>
+                        `,
+              btn: ["确定", "取消"],
+              // success: function() {
+              //   form.render();
+              // },
+              yes: function(index, layero) {
+                var content = _this.$("#reject").val();
+                var data = {
+                  userId: _this.$store.state.userId,
+                  id: id,
+                  handleState: 3,
+                  rejectContent: content
+                };
+                _this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
+                  console.log(res);
+                  if(res.data.retCode == '000000'){
+                    layer.msg(res.data.retMsg,{icon: 1})
+                    setTimeout(()=>{
+                      _this.reload()
+                    },3000)
+                  }else{
+                    layer.msg(res.data.retMsg,{icon: 2})
+                  }
+                });
+                layer.close(index);
+                return false;
+              },
+              btnAlign: "c"
+            });
+          } else if (obj.event === "finish") { //完成
             sessionStorage.setItem("id",id)
             sessionStorage.setItem("coordinateState",coordinateState)
             _this.$router.push("/synergyInfo");
-          } else if (obj.event === "finish") { //完成
+          }else if (obj.event === "edit"){ // 编辑
             sessionStorage.setItem("id",id)
             sessionStorage.setItem("coordinateState",coordinateState)
             _this.$router.push("/synergyInfo");
@@ -169,7 +251,8 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-
+    sessionStorage.removeItem("id")
+    sessionStorage.removeItem("coordinateState")
   }
 };
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div class="Kuantan">
     <form action class="layui-form layui-form-pane">
+      <progressBar></progressBar>
       <div class="customerInfo">
         <h2>客户信息</h2>
         <!-- <div class="customerInfo_content information"> -->
@@ -231,6 +232,7 @@
 // import reservation from "./reservation";
 import synergy from "./synergy";
 import processingRecord from "./processingRecord";
+import progressBar from '../../progressBar'
 export default {
   name: "Kuantan",
   data() {
@@ -241,7 +243,8 @@ export default {
   components:{
     // reservation,
     synergy,
-    processingRecord
+    processingRecord,
+    progressBar
   },
   methods:{
     workValuation(){
@@ -254,7 +257,7 @@ export default {
         this.$axios.post("/api/getOrderInfo", data).then(res => {
           console.log(res);
           this.workOrderInfo = res.data.body;
-          this.$(".uploadImg").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />')
+          this.$(".uploadImg").html(res.data.body.orderPhoto ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />' : '')
         });
       }
     }

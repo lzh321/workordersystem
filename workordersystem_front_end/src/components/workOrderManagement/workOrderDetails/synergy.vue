@@ -42,27 +42,39 @@ export default {
       coordinateList: {}
     }
   },
+  methods:{
+    getOrderCoordinateList(){
+      var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
+      if(orderInfoId){
+        var data = {
+          userId: this.$store.state.userId,
+          orderInfoId: orderInfoId
+        }
+        this.$axios.post("/api/getOrderCoordinateList",data).then(res=>{
+          console.log(res)
+          if(res.data.retCode == '000000'){
+            this.coordinateList = res.data.body.coordinateList 
+          }
+        })
+
+      }
+    }
+  },
   mounted(){
+    this.getOrderCoordinateList()
     layui.use("element",function(){
       var element = layui.element
       element.render()
     })
   },
   created(){
-    var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
-    if(orderInfoId){
-      var data = {
-        userId: this.$store.state.userId,
-        orderInfoId: orderInfoId
-      }
-      this.$axios.post("/api/getOrderCoordinateList",data).then(res=>{
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.coordinateList = res.data.body.coordinateList 
-        }
-      })
-
-    }
+    this.$emit("getcoordinateList", this.coordinateList)
+  },
+  updated() {
+    layui.use("element",function(){
+      var element = layui.element
+      element.render()
+    })
   },
 };
 </script>

@@ -184,7 +184,7 @@
             <label class="layui-form-label">附件</label>
             <div id="affix">
               <div class="uploadImg">
-                <img :src="imgUrl" alt />
+
               </div>
             </div>
           </div>
@@ -202,7 +202,7 @@
       <!-- 故障处理中 -->
       <inProcess :orderState="orderState" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
       <!-- 协同 -->
-      <synergy v-if="orderState == 7 || orderState == 3 ? true : false"></synergy>
+      <synergy v-if="orderState == 7 || orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false"></synergy>
       <!-- 待回访 -->
       <waitReturnVisit :workOrderInfo="workOrderInfo" v-if="orderState == 7 ? true : false"></waitReturnVisit>
       <div class="layui-form-item layui-form-text">
@@ -317,7 +317,6 @@ export default {
       orderState: sessionStorage.getItem("orderState"),
       workOrderInfo: {},
       userList: [],
-      imgUrl: "",
       userId: sessionStorage.getItem("userId")
         ? sessionStorage.getItem("userId")
         : "",
@@ -339,16 +338,18 @@ export default {
     cancel() {
       this.$router.push("/workOrderManagement?type=workOrderManagement");
     },
+    getcoordinateList(data){
+      console.log(data)
+    },
     send() {
       var data = {
-        userId: this.$store.state.userId,
+        userId: this.userId,
         orderInfoId: this.orderInfoId
       };
       this.$axios.post("/api/getOrderInfo", data).then(res => {
         console.log(res);
         this.workOrderInfo = res.data.body;
-        this.imgUrl =
-          "http://192.168.1.245/" + res.data.body.orderPhoto.split(",")[0];
+        this.$(".uploadImg").html(res.data.body.orderPhoto ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />' : '')
       });
     }
   },
@@ -588,7 +589,7 @@ export default {
                   _this.$router.push(
                     "/workOrderManagement?type=workOrderManagement"
                   );
-                });
+                },3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
               }
@@ -676,6 +677,11 @@ export default {
               console.log(res);
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.push(
+                    "/workOrderManagement?type=workOrderManagement"
+                  );
+                },3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
               }
@@ -707,11 +713,23 @@ export default {
           },
           yes: function(index, layero) {
             var content = $("#reject").val();
+            if(_this.orderState == 7){
+              var handleState = 13
+              if(_this.workOrderInfo.appoinmentTime == "" || _this.workOrderInfo.appoinmentTime == null){
+                var isAppoint = 0
+              }else{
+                var isAppoint = 1
+              }
+            }else{
+              var handleState = 9
+            }
+            
             var data = {
               userId: _this.userId,
               orderInfoId: _this.orderInfoId,
-              handleState: 9,
-              content: content
+              handleState: handleState,
+              content: content,
+              isAppoint: isAppoint
             };
             console.log(data);
             _this.$axios.post("/api/handleOrderInfo", data).then(res => {
