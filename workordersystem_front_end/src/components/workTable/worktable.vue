@@ -1,20 +1,17 @@
 <template>
-  <div class="workTable">
+  <div class="workTable layui-tab layui-tab-brief" lay-filter="workTable">
     <div class="workTable_top">
       <h2>工单状态统计图</h2>
       <div class="workTable_content">
-      <ul>
-        <li>
-          <span class="active">今日</span>
+      <ul class="layui-tab-title">
+        <li class="layui-this">
+          <span>今日</span>
         </li>
         <li>
           <span>本周</span>
         </li>
         <li>
           <span>本月</span>
-        </li>
-        <li>
-          
         </li>
       </ul>
       <div class="selectTime"><p>
@@ -39,8 +36,10 @@
           </p></div>
           </div>
     </div>
-    <div class="Echarts">
-      <chart :options="options" :auto-resize="true"></chart>
+    <div class="Echarts layui-tab-content">
+      <div class="layui-tab-item layui-show">
+        <chart :options="options" :auto-resize="true"></chart>
+      </div>
     </div>
   </div>
 </template>
@@ -58,14 +57,33 @@ export default {
   name: "workTable",
   data() {
     return {
-      options: {}
+      options: {},
     };
   },
   mounted() {
-    layui.use(["form", "laydate"], function() {
+    this.$axios.post("/api/getOrderInfoNum",{userId: this.$store.state.userId}).then(res=>{
+      console.log(res)
+      var chartData = [
+        {value: res.data.body.sendNum, name: "待发单"},
+        {value: res.data.body.sellNum, name: "待派单"},
+        {value: res.data.body.acceptNum, name: "待受理"},
+        {value: res.data.body.processingNum, name: "处理中"},
+        {value: res.data.body.finishNum, name: "待回访"},
+        {value: res.data.body.closeNum, name: "已关单"}
+      
+      ]
+      this.options.series[0].data = chartData
+    })
+
+    layui.use(["form", "laydate","element"], function() {
       var form = layui.form;
+      var element = layui.element
       var laydate = layui.laydate;
       form.render();
+      element.render();
+      element.on("tab(workTable)",function(data){
+        console.log(data)
+      })
       laydate.render({
         // 开始时间
         elem: "#seleBeginTime",
@@ -157,17 +175,13 @@ export default {
           radius: "70%",
           center: ["50%", "50%"],
           // 数据
-          data: [
-            { value: 335, name: "待发单" },
-            { value: 310, name: "待派单" },
-            { value: 234, name: "待受理" },
-            { value: 135, name: "处理中" },
-            { value: 1048, name: "待回访" },
-            { value: 420, name: "已关单" }
-          ]
+          data: []
         }
       ]
     };
+  },
+  created(){
+
   }
 };
 </script>

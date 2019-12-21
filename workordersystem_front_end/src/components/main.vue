@@ -6,13 +6,16 @@
           <span>
             {{title}}
           </span>
-          <span @click="Refresh">刷新</span>
+          <div class="content_header_btn">
+            <span @click="Refresh">刷新</span>
+          </div>
+          
         </div>
         <div class="content_main">
           <router-view v-if="isRouterAlive"></router-view>
         </div>
       </div>
-      <footer>footer</footer>
+      <footer>票联金融工单系统</footer>
     </div>
   </main>
 </template>
@@ -23,13 +26,14 @@ export default {
   props: ['title'],
   provide(){
     return {
-      reload: this.reload
+      reload: this.reload,
+      
     }
   },
   data() {
     return {
       // title: "",
-      isRouterAlive: true
+      isRouterAlive: true,
     };
   },
   methods:{
@@ -41,7 +45,7 @@ export default {
       this.$nextTick(function(){
         this.isRouterAlive = true
       })
-    }
+    },
   },
   mounted(){
 
@@ -94,7 +98,7 @@ main {
   display: flex;
   align-items: center;
 }
-.content_header span:nth-child(1):before {
+.content_header>span:nth-child(1):before {
   content: "";
   display: inline-block;
   width: 4px;
@@ -103,7 +107,12 @@ main {
   margin-right: 5px;
 }
 
-.content_header span:nth-child(2) {
+
+.content_header_btn{
+  display: flex
+}
+
+.content_header_btn span{
   padding: 5px 10px;
   font-size: 12px;
   margin-right: 20px;

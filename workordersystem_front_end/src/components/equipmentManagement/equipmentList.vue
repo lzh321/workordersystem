@@ -100,10 +100,10 @@ export default {
               { field: "modelType", title: "设备型号",  sort: true,align: "center" },
               { field: "seviceBegintime", title: "维保开始时间",  align: "center" },
               { field: "seviceEndtime", title: "维保结束时间",  align: "center" },
-              { field: "customerName", title: "银行名称",sort: true,align: "center" },
-              { field: "networkName", title: "网点名称", sort: true,align: "center" },
+              { field: "customerName", title: "客户名称",sort: true,align: "center" },
+              { field: "networkName", title: "投放点", sort: true,align: "center" },
               { field: "region", title: "所在城市", width: 100, align: "center"},
-              { field: "networkAddress", title: "网点地址", align: "center"},
+              { field: "networkAddress", title: "投放点地址", align: "center"},
               { field: "operation", title: "操作",width: 165, align: "center", toolbar: '#barDemo' }
             ]
           ]
@@ -145,7 +145,7 @@ export default {
           console.log(data)
           var deviceId = data.deviceId
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令
@@ -162,6 +162,7 @@ export default {
             });
           } else if(obj.event === 'edit'){;
             sessionStorage.setItem('deviceId',deviceId)
+            sessionStorage.setItem('data',JSON.stringify(data))
             _this.$router.push('/addEquipment')
           }else if(obj.event === 'detail'){
             sessionStorage.setItem('deviceId',deviceId)
@@ -179,11 +180,13 @@ export default {
   created(){
     this.type = this.$route.query.type
 
-    this.$axios.post('/api/getDeviceInfoList').then((res)=>{
-      console.log(res.data)
-    }).catch(err=>{
-      console.log(err)
-    })
+    // this.$axios.post('/api/getDeviceInfoList').then((res)=>{
+    //   console.log(res.data)
+    // }).catch(err=>{
+    //   console.log(err)
+    // })
+    sessionStorage.removeItem("deviceId");
+    sessionStorage.removeItem("data");
   }
 }
 </script>

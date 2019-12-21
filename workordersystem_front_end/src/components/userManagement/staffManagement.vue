@@ -45,6 +45,9 @@ export default {
         form.render()
         form.on('submit(serach)', function(data){
           data.field.userId = _this.$store.state.userId
+          data.field.seleUserName = data.field.val
+          data.field.seleUserPhone = data.field.val
+          data.field.seleUserId = data.field.val
           console.log(data.field)
           table.reload('serachData',{
             url: "/api/getUserList",
@@ -92,7 +95,7 @@ export default {
           var alterId = data.userId
           console.log(alterId)
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令

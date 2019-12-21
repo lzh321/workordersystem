@@ -1,8 +1,7 @@
 <template>
   <!-- 处理中 故障处理记录 -->
   <div>
-    <h2>故障处理记录</h2>
-    <div class="layui-form-item">
+    <div v-if="workOrderInfo.appoinmentTime ? true : false" class="layui-form-item">
       <label class="layui-form-label">上门时间</label>
       <div class="layui-input-block">
         <input

@@ -1,7 +1,11 @@
 <template>
   <div class="addUser">
     <form class="layui-form layui-form-pane" action>
-      <div class="info">基础信息</div>
+      <div class="info">
+        <span>基础信息</span>
+        <span>为必填项</span>
+      </div>
+      <div class="basicInfo">
       <div class="layui-form-item">
         <label class="layui-form-label">公司名称</label>
         <div class="layui-input-block">
@@ -147,6 +151,7 @@
             class="layui-input"
           />
         </div>
+      </div>
       </div>
       <div class="info">辅助信息</div>
       <div class="layui-form-item">
@@ -371,6 +376,9 @@ export default {
         }
       })
     },
+    getUserInfo(){
+      
+    },
     cancel(){
       this.$router.push('/staffManagement?type=staffManagement')
     }
@@ -404,9 +412,38 @@ export default {
   padding: 15px;
 }
 .info{
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
 }
-
+.info span{
+  display: flex;
+  align-items: center;
+  font-weight: 600
+}
+.basicInfo .layui-form-label::before {
+  content: "*";
+  font-size: 20px;
+  display: inline-block;
+  color: red;
+  line-height: 30px;
+  height: 20px;
+}
+.layui-form-label {
+  display: flex;
+  align-items: center;
+}
+.info span:nth-child(2){
+  font-weight: 400;
+  color: #c2c2c2;
+}
+.info span:nth-child(2)::before{
+  content: "*";
+  font-size: 20px;
+  display: inline-block;
+  color: red;
+  line-height: 30px;
+  height: 20px;
+}
 </style>

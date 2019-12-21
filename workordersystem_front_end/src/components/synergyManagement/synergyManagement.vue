@@ -2,10 +2,17 @@
   <div class="synergyManagement">
     <div class="layui-tab layui-tab-brief" lay-filter="synergyManagement">
       <ul class="layui-tab-title">
-        <li class="layui-this">全部</li>
-        <li>待受理</li>
-        <li>处理中</li>
-        <li>已完成</li>
+        <li
+          v-for="(item,index) in workType"
+          @click="active(index)"
+          :class="index == num ? 'layui-this ' : ''"
+          :key="index"
+        >
+          <a>
+            {{item.title}}
+            <span v-if="item.num" class="layui-badge">{{item.num}}</span>
+          </a>
+        </li>
       </ul>
       <div class="layui-tab-content">
         <data-screening :type="type"></data-screening>
@@ -14,11 +21,15 @@
             <h2>数据列表</h2>
           </div>
           <div class="dataList_table">
-            <table id="synergyManagement" lay-filter="synergyManagement" lay-data="{id:'serachData'}"></table>
+            <table
+              id="synergyManagement"
+              lay-filter="synergyManagement"
+              lay-data="{id:'serachData'}"
+            ></table>
             <!-- <div id="barDemo" style="display:none">
               <a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a>
               <a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>
-            </div> -->
+            </div>-->
           </div>
         </div>
       </div>
@@ -33,6 +44,14 @@ export default {
   inject: ["reload"],
   data() {
     return {
+      num: 0,
+      workType: [
+        { title: "全部" },
+        { title: "待受理", num: 0 },
+        { title: "处理中", num: 0 },
+        { title: "已完成", num: 0 },
+        { title: "已驳回", num: 0 }
+      ],
       type: ""
     };
   },
@@ -40,19 +59,57 @@ export default {
     dataScreening
   },
   methods: {
+    active: function(index) {
+      this.num = index;
+    },
+
+    derived: function() {
+      table.exportFile();
+    },
+    getOrderInfoNum() {
+      var userId = this.$store.state.userId;
+      this.$axios.post("/api/getCoordinateListNum", { userId }).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          // this.workType[0].num = res.data.body.allNum
+          this.workType[1].num = res.data.body.acceptNum;
+          this.workType[2].num = res.data.body.processingNum;
+          this.workType[3].num = res.data.body.finishNum;
+          this.workType[4].num = res.data.body.rejectNum;
+        }
+      });
+    },
     layui: function() {
       var _this = this;
-      layui.use(["table", "form"], function() {
+      layui.use(["table", "form", "element"], function() {
         var table = layui.table;
         var form = layui.form;
+        var element = layui.element;
         form.render();
+        element.on("tab(synergyManagement)", function(data) {
+          console.log(this); //当前Tab标题所在的原始DOM元素
+          console.log(data.index); //得到当前Tab的所在下标
+          var seleCoordinateState = data.index - 1;
+          if (data.index == 0) {
+            seleCoordinateState = "";
+          }
+          var dataTab = {
+            userId: _this.$store.state.userId,
+            seleCoordinateState: seleCoordinateState
+          };
+          table.reload("serachData", {
+            url: "/api/getCoordinateInfoList",
+            where: dataTab,
+            page: { curr: 1, limit: 10 }
+          });
+        });
         form.on("submit(serach)", function(data) {
           console.log(data.field);
           data.field.userId = _this.$store.state.userId;
           table.reload("serachData", {
             url: "/api/getCoordinateInfoList",
             where: data.field,
-            page:{curr: 1}
+            page: { curr: 1 }
           });
         });
         //第一个实例
@@ -61,7 +118,7 @@ export default {
           url: "/api/getCoordinateInfoList", //数据接口
           method: "post",
           where: {
-            userId: _this.$store.state.userId,
+            userId: _this.$store.state.userId
           },
           parseData: function(res) {
             //res 即为原始返回的数据
@@ -87,8 +144,10 @@ export default {
                 title: "协同编号",
                 sort: true,
                 align: "center",
-                templet:function(d){
-                  return '<a href="javascript:;" lay-event="edit">'+d.id+'</a>'
+                templet: function(d) {
+                  return (
+                    '<a href="javascript:;" lay-event="edit">' + d.id + "</a>"
+                  );
                 }
               },
               {
@@ -96,18 +155,18 @@ export default {
                 title: "协同状态",
                 sort: true,
                 align: "center",
-                templet: function(d){
-                  if(d.coordinateState == 0){
-                    return "待受理"
+                templet: function(d) {
+                  if (d.coordinateState == 0) {
+                    return "待受理";
                   }
-                  if(d.coordinateState == 1){
-                    return "处理中"
+                  if (d.coordinateState == 1) {
+                    return "处理中";
                   }
-                  if(d.coordinateState == 2){
-                    return "已完成"
+                  if (d.coordinateState == 2) {
+                    return "已完成";
                   }
-                  if(d.coordinateState == 3){
-                    return "已驳回"
+                  if (d.coordinateState == 3) {
+                    return "已驳回";
                   }
                 }
               },
@@ -134,13 +193,12 @@ export default {
                 title: "紧急程度",
                 sort: true,
                 align: "center",
-                templet: function(d){
-                  if(d.orderUrgency == 0){
-                    return "一般" 
-                  }else{
-                    return "紧急"
+                templet: function(d) {
+                  if (d.orderUrgency == 0) {
+                    return "一般";
+                  } else {
+                    return "紧急";
                   }
-                 
                 }
               },
               {
@@ -155,17 +213,21 @@ export default {
                 sort: true,
                 align: "center"
               },
-              { title: "操作", align: "center", templet: function(d){
-                if(d.coordinateState == 0){
-                  return '<a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>'
-                }else if(d.coordinateState == 1){
-                  return '<a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>'
-                }else if(d.coordinateState == 2){
-                  return ''
-                }else if(d.coordinateState == 3){
-                  return ''
+              {
+                title: "操作",
+                align: "center",
+                templet: function(d) {
+                  if (d.coordinateState == 0) {
+                    return '<a class="layui-btn layui-btn-xs" lay-event="Accepted">受理</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
+                  } else if (d.coordinateState == 1) {
+                    return '<a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
+                  } else if (d.coordinateState == 2) {
+                    return "";
+                  } else if (d.coordinateState == 3) {
+                    return "";
+                  }
                 }
-              } }
+              }
             ]
           ]
         });
@@ -176,7 +238,8 @@ export default {
           console.log(data);
           var id = data.id;
           var coordinateState = data.coordinateState;
-          if (obj.event === "Accepted") { // 受理
+          if (obj.event === "Accepted") {
+            // 受理
             var data = {
               userId: _this.$store.state.userId,
               id: id,
@@ -184,16 +247,16 @@ export default {
             };
             _this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
               console.log(res);
-              if(res.data.retCode == '000000'){
-                layer.msg(res.data.retMsg,{icon: 1})
-                setTimeout(()=>{
-                  _this.reload()
-                },3000)
-              }else{
-                layer.msg(res.data.retMsg,{icon: 2})
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.reload();
+                }, 3000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
               }
             });
-          }else if(obj.event === "reject"){
+          } else if (obj.event === "reject") {
             layer.open({
               type: 1,
               title: "是否驳回此工单？",
@@ -217,29 +280,33 @@ export default {
                   handleState: 3,
                   rejectContent: content
                 };
-                _this.$axios.post("/api/handleCoordinateInfo", data).then(res => {
-                  console.log(res);
-                  if(res.data.retCode == '000000'){
-                    layer.msg(res.data.retMsg,{icon: 1})
-                    setTimeout(()=>{
-                      _this.reload()
-                    },3000)
-                  }else{
-                    layer.msg(res.data.retMsg,{icon: 2})
-                  }
-                });
+                _this.$axios
+                  .post("/api/handleCoordinateInfo", data)
+                  .then(res => {
+                    console.log(res);
+                    if (res.data.retCode == "000000") {
+                      layer.msg(res.data.retMsg, { icon: 1 });
+                      setTimeout(() => {
+                        _this.reload();
+                      }, 3000);
+                    } else {
+                      layer.msg(res.data.retMsg, { icon: 2 });
+                    }
+                  });
                 layer.close(index);
                 return false;
               },
               btnAlign: "c"
             });
-          } else if (obj.event === "finish") { //完成
-            sessionStorage.setItem("id",id)
-            sessionStorage.setItem("coordinateState",coordinateState)
+          } else if (obj.event === "finish") {
+            //完成
+            sessionStorage.setItem("id", id);
+            sessionStorage.setItem("coordinateState", coordinateState);
             _this.$router.push("/synergyInfo");
-          }else if (obj.event === "edit"){ // 编辑
-            sessionStorage.setItem("id",id)
-            sessionStorage.setItem("coordinateState",coordinateState)
+          } else if (obj.event === "edit") {
+            // 编辑
+            sessionStorage.setItem("id", id);
+            sessionStorage.setItem("coordinateState", coordinateState);
             _this.$router.push("/synergyInfo");
           }
         });
@@ -251,14 +318,15 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-    sessionStorage.removeItem("id")
-    sessionStorage.removeItem("coordinateState")
+    sessionStorage.removeItem("id");
+    sessionStorage.removeItem("coordinateState");
+    this.getOrderInfoNum();
   }
 };
 </script>
 
 <style scoped>
-.synergyManagement{
+.synergyManagement {
   padding: 15px 15px 0;
 }
 .dataList .dataList_top {

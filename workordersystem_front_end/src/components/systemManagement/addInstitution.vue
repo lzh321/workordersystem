@@ -8,16 +8,20 @@
       <div class="layui-form-item">
         <label class="layui-form-label">公司名称</label>
         <div class="layui-input-block">
-          <select name="companyId" lay-verify="required">
+          <select name="companyId" id="companyId" lay-verify="required">
             <option value>请选择公司</option>
-            <option v-for="(item) in companyList" :key="item.id" :value="item.id">{{item.companyName}}</option>
+            <option
+              v-for="(item) in companyList"
+              :key="item.id"
+              :value="item.id"
+            >{{item.companyName}}</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">部门名称</label>
         <div class="layui-input-block">
-          <select name="deptId" lay-verify="required">
+          <select name="deptId" id="deptId" lay-verify="required">
             <option value>请选择部门</option>
             <option v-for="(item) in DeptList" :key="item.id" :value="item.deptId">{{item.deptName}}</option>
           </select>
@@ -27,7 +31,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">职务名称</label>
         <div class="layui-input-block">
-          <select name="jobId" lay-verify="required">
+          <select name="jobId" id="jobId" lay-verify="required">
             <option value>请选择一个职务</option>
             <option v-for="(item) in JobList" :key="item.id" :value="item.id">{{item.jobName}}</option>
           </select>
@@ -52,95 +56,153 @@ export default {
     return {
       companyList: [],
       DeptList: [],
-      JobList: []
+      JobList: [],
+      Institution: sessionStorage.getItem("data")
+        ? JSON.parse(sessionStorage.getItem("data"))
+        : ""
     };
   },
   mounted() {
     //Demo
-    var _this = this
+    // setTimeout(() => {
+    //   this.getInstitution();
+    // },100);
+    var _this = this;
     layui.use("form", function() {
       var form = layui.form;
+      this.getInstitution();
       form.render();
       //监听提交
       form.on("submit(addInstitution)", function(data) {
         // layer.msg(JSON.stringify(data.field));
-        var listId = sessionStorage.getItem('listId') ? sessionStorage.getItem('listId') : ''
-        data.field.userId = _this.$store.state.userId
-        if(listId === null || listId === '' || listId ===undefined){
-          _this.$axios.post('/api/addOrganizationInfo',data.field).then(res=>{
-            console.log(res)
-            if(res.data.retCode == '000000'){
-              layer.msg(res.data.retMsg,{icon: 1})
-              setTimeout(()=>{
-                _this.$router.push('/businessEnterprise?type=businessEnterprise')
-              },3000)
-            }else{
-              layer.msg(res.data.retMsg,{icon: 2})
-            }
-          })
-        }else{
-          data.field.listId = listId
-          console.log(data.field)
-          _this.$axios.post('/api/alterOrganizationInfo',data.field).then(res=>{
-            console.log(res)
-            if(res.data.retCode == '000000'){
-              layer.msg(res.data.retMsg,{icon: 1})
-              setTimeout(()=>{
-                _this.$router.push('/businessEnterprise?type=businessEnterprise')
-              },3000)
-            }else{
-              layer.msg(res.data.retMsg,{icon: 2})
-            }
-          })
+        var listId = sessionStorage.getItem("listId")
+          ? sessionStorage.getItem("listId")
+          : "";
+        data.field.userId = _this.$store.state.userId;
+        if (listId === null || listId === "" || listId === undefined) {
+          _this.$axios
+            .post("/api/addOrganizationInfo", data.field)
+            .then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.push(
+                    "/businessEnterprise?type=businessEnterprise"
+                  );
+                }, 3000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
+              }
+            });
+        } else {
+          data.field.listId = listId;
+          console.log(data.field);
+          _this.$axios
+            .post("/api/alterOrganizationInfo", data.field)
+            .then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.push(
+                    "/businessEnterprise?type=businessEnterprise"
+                  );
+                }, 3000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
+              }
+            });
         }
         return false;
       });
     });
   },
-  methods:{
-    send(){
-      var userId = this.$store.state.userId
-      this.$axios.post('/api/getCompanyList',userId).then(res=>{ //公司列表
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.companyList = res.data.body.list
+  methods: {
+    send() {
+      var userId = this.$store.state.userId;
+      this.$axios.post("/api/getCompanyList", userId).then(res => {
+        //公司列表
+        // console.log(res)
+        if (res.data.retCode == "000000") {
+          this.companyList = res.data.body.list;
         }
-      })
-      this.$axios.post('/api/getDeptList',userId).then(res=>{  //部门列表
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.DeptList = res.data.body.list
+      });
+      this.$axios.post("/api/getDeptList", userId).then(res => {
+        //部门列表
+        // console.log(res)
+        if (res.data.retCode == "000000") {
+          this.DeptList = res.data.body.list;
         }
-      })
-      this.$axios.post('/api/getJobList',userId).then(res=>{  //职务列表
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.JobList = res.data.body.list
+      });
+      this.$axios.post("/api/getJobList", userId).then(res => {
+        //职务列表
+        // console.log(res)
+        if (res.data.retCode == "000000") {
+          this.JobList = res.data.body.list;
         }
-      })
+      });
     },
-    cancel(){
-      this.$router.push('/businessEnterprise?type=businessEnterprise')
+    getInstitution() {
+      // 公司
+      var companyId = this.companyId;
+      var companyIdLen = this.$("#companyId option").length;
+      console.log(companyIdLen);
+      for (var i = 0; i < companyIdLen; i++) {
+        var companyIdVal = this.$("#companyId option")
+          .eq(i)
+          .val();
+        if (companyId == companyIdVal) {
+          this.$("#companyId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
+      // 部门
+      var deptId = this.deptId;
+      var deptIdLen = this.$("#deptId option").length;
+      for (var i = 0; i < deptIdLen; i++) {
+        var deptIdVal = this.$("#deptId option")
+          .eq(i)
+          .val();
+        if (deptId == deptIdVal) {
+          this.$("#deptId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
+      // 职务
+      var jobId = this.jobId;
+      var jobIdLen = this.$("#jobId option").length;
+      for (var i = 0; i < jobIdLen; i++) {
+        var jobIdVal = this.$("#jobId option")
+          .eq(i)
+          .val();
+        if (jobId == jobIdVal) {
+          this.$("#jobId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
+    },
+    cancel() {
+      this.$router.push("/businessEnterprise?type=businessEnterprise");
     }
   },
-  created(){
-    this.send()
+  created() {
+    this.send();
   },
   updated() {
-    setTimeout(function() {
-      layui.use("form", function() {
-        layui.form.render();
-      });
-    }, 10);
+    layui.use("form", function() {
+      layui.form.render();
+    });
   },
-  beforeDestroy(){
-    sessionStorage.removeItem('listId')
-  }
+  beforeDestroy() {}
 };
 </script>
 
 <style scoped>
-.addInstitution{
+.addInstitution {
   padding: 15px 15px 0;
 }
 .layui-btn {
@@ -158,22 +220,22 @@ export default {
   line-height: 30px;
   height: 20px;
 }
-.info{
+.info {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
 }
-.info span{
+.info span {
   display: flex;
   align-items: center;
-  font-weight: 600
+  font-weight: 600;
 }
-.info span:nth-child(2){
+.info span:nth-child(2) {
   font-weight: 400;
   color: #c2c2c2;
 }
-.info span:nth-child(2)::before{
+.info span:nth-child(2)::before {
   content: "*";
   font-size: 20px;
   display: inline-block;

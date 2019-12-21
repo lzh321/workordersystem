@@ -212,7 +212,7 @@ export default {
 </script>
 
 <style scoped>
-.addEquipment {
+.checkEquipmentInfo {
   padding: 15px 15px 0 15px;
 }
 .info {

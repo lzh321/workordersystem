@@ -124,7 +124,7 @@ export default {
       userId: this.$store.state.userId,
 
     }
-    this.$axios.post('/api/getFatherMenuList',this.$store.state.userId).then(res=>{
+    this.$axios.post('/api/getFatherMenuList',data).then(res=>{
       console.log(res)
     })
   }

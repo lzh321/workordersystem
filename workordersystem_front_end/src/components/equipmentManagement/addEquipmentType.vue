@@ -9,20 +9,21 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备类型</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" name="modelType" placeholder="请输入设备类型">
+          <input type="text" class="layui-input" lay-verify="required" :value="echoContent.modelType ? echoContent.modelType : ''" name="modelType" placeholder="请输入设备类型">
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" name="modelName" placeholder="请输入存货名称">
+          <input type="text" class="layui-input" lay-verify="required" :value="echoContent.modelName ? echoContent.modelName : ''" name="modelName" placeholder="请输入存货名称">
         </div>
       </div>
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
+          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
           <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
@@ -34,11 +35,17 @@
 export default {
   name: "addEquipmentType",
   data() {
-    return {};
+    return {
+      echoContent:{}
+    };
   },
   methods:{
     cancel(){
       this.$router.push('/equipmentType?type=equipmentType')
+    },
+    setEcho(){
+      var data = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {};
+      this.echoContent = data
     }
   },
   mounted() {
@@ -82,8 +89,11 @@ export default {
       });
     });
   },
+  created(){
+    this.setEcho()
+  },
   beforeDestroy(){
-    sessionStorage.removeItem("modelId")
+    
   }
 };
 </script>

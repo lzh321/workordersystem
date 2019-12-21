@@ -89,7 +89,7 @@ export default {
           var menuId = data.menuId
           var menuPno = data.menuPno
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？',{icon: 3, title:'提示'}, function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令

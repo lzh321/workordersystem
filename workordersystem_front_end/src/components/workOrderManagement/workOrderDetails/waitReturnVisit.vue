@@ -39,4 +39,10 @@ h2 {
   font-weight: 600;
   margin-bottom: 20px;
 }
+.layui-form-label{
+  width: 130px;
+}
+.layui-input-block{
+  margin-left: 130px;
+}
 </style>

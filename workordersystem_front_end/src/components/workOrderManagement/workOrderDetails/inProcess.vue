@@ -58,7 +58,9 @@ export default {
   name: "inProcess",
   props:["orderState"],
   data() {
-    return {};
+    return {
+      orderInfoId: sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
+    };
   },
   mounted() {
     var _this = this

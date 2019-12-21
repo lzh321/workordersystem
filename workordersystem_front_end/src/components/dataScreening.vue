@@ -18,8 +18,13 @@
               <option value="1">待派单</option>
               <option value="2">待受理</option>
               <option value="3">处理中</option>
+              <option value="4">已预约</option>
+              <option value="5">已出发</option>
+              <option value="6">已开始</option>
               <option value="7">待回访</option>
               <option value="8">已关单</option>
+              <option value="9">已到达</option>
+              <option value="10">故障处理中</option>
             </select>
           </p>
           <p>
@@ -45,19 +50,19 @@
           </p>
           <p>
             <span for>创建时间</span>
-            <input class="Times" type="text" name="selecreateTime" id="startTime" placeholder="开始时间" />-
-            <input class="Times" type="text" name="selecreateTime" id="endTime" placeholder="结束时间" /> 
+            <input class="Times" type="text" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
+            <input class="Times" type="text" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
           <p>
             <span for>输入查询</span>
-            <input type="text" name="seleUserPhone" value placeholder />
+            <input type="text" name="val" value placeholder="姓名/账号/手机"/>
           </p>
           <p>
             <span for>员工职务</span>
             <select name="selejobName">
-              <option value>请选择</option>
+              <option value>全部</option>
               <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
             </select>
           </p>
@@ -77,7 +82,7 @@
           <p>
             <span for>员工职务</span>
             <select name="seleJobName">
-              <option value>请选择</option>
+              <option value>全部</option>
               <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
             </select>
           </p>
@@ -93,7 +98,7 @@
           <p>
             <span for>客户名称</span>
             <select name="seleCustomerName" lay-verify="">
-              <option value>请选择一个客户</option>
+              <option value>全部</option>
               <option
                 v-for="(item) in customerNameList"
                 :key="item.customerId"
@@ -103,14 +108,14 @@
           </p>
           <p>
             <span for>投放点</span>
-            <input type="text" name="seleNetworkName" class="layui-input" />
+            <input type="text" name="seleNetworkName" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
         <div class="search_input" v-if="CustomerNameList">
           <p>
             <span for>客户名称</span>
             <select name="seleCustomerName" lay-verify="">
-              <option value>请选择一个客户</option>
+              <option value>全部</option>
               <option
                 v-for="(item) in customerNameList"
                 :key="item.customerId"
@@ -122,15 +127,15 @@
         <div class="search_input" v-if="messageModule">
           <p v-if="messagePushList">
             <span for>接收手机</span>
-            <input type="text" />
+            <input type="text" placeholder="请输入接收手机"/>
           </p>
           <p>
             <span for>模板编号</span>
-            <input type="text" />
+            <input type="text" placeholder="请输入模板编号"/>
           </p>
           <p>
             <span for>模板名称</span>
-            <input type="text" />
+            <input type="text" placeholder="请输入模板名称"/>
           </p>
         </div>
         <div class="search_input" v-if="equipmentList">
@@ -182,29 +187,29 @@
         <div class="search_input" v-if="menuManagement">
           <p>
             <span for>菜单编号</span>
-            <input type="text" name="seleMenuNo" />
+            <input type="text" name="seleMenuNo" placeholder="请输入菜单编号"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" />
+            <input type="text" name="seleMenuName" placeholder="请输入菜单名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="roleManagement">
           <p>
             <span for>角色名称</span>
-            <input type="text" name="seleRoleName" />
+            <input type="text" name="seleRoleName" placeholder="请输入角色名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="permissionsButton">
           <p>
             <span for>按钮编号</span>
-            <input type="text" name="seleMenuNo" />
+            <input type="text" name="seleMenuNo" placeholder="请输入按钮编号"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" />
+            <input type="text" name="seleMenuName" placeholder="请输入菜单名称"/>
           </p>
         </div>
 

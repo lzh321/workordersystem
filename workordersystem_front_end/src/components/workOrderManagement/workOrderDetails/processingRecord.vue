@@ -1,8 +1,8 @@
 <template>
 <!-- 故障处理记录  详情 -->
   <div>
-    <h2 v-if="workOrderInfo.appoinmentTime ? false :true">故障处理记录</h2>
-    <reservation :workOrderInfo="workOrderInfo" v-if="workOrderInfo.appoinmentTime"></reservation>
+    <h2>故障处理记录</h2>
+    <reservation :workOrderInfo="workOrderInfo"></reservation>
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
       <div class="layui-input-block">
@@ -21,7 +21,7 @@
         <textarea
           name
           :value="workOrderInfo.recordContent"
-          placeholder="请输入内容"
+          placeholder=""
           class="layui-textarea"
           disabled
         ></textarea>
@@ -33,7 +33,7 @@
         <textarea
           name
           :value="workOrderInfo.recordSettle"
-          placeholder="请输入内容"
+          placeholder=""
           class="layui-textarea"
           disabled
         ></textarea>

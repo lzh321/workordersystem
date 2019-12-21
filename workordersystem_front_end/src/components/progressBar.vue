@@ -68,15 +68,15 @@ export default {
           this.$(".progressBar").children().slice(0,23).find("i").css("background", "blue")
           this.$(".progressBar").children().slice(0,22).find("span").css("border", "1px solid blue")
         }
-        if(orderState == 8){ //已到达
+        if(orderState == 8){ //已关单
           this.$(".progressBar").children().slice(0,24).find("i").css("background", "blue")
           this.$(".progressBar").children().slice(0,25).find("span").css("border", "1px solid blue")
         }
-        if(orderState == 9){
+        if(orderState == 9){ //已到达
           this.$(".progressBar").children().slice(0,20).find("i").css("background", "blue")
           this.$(".progressBar").children().slice(0,19).find("span").css("border", "1px solid blue")
         }
-        if(orderState == 10){
+        if(orderState == 10){ // 完成
           this.$(".progressBar").children().slice(0,23).find("i").css("background", "blue")
           this.$(".progressBar").children().slice(0,24).find("span").css("border", "1px solid blue")
         }

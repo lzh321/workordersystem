@@ -55,7 +55,6 @@ export default {
         { title: "已关单", num: 0 }
       ],
       type: "",
-      workOrderInfo: {}
     };
   },
   components: {
@@ -65,22 +64,13 @@ export default {
     active: function(index) {
       this.num = index;
     },
+
     derived: function() {
       table.exportFile();
     },
-    send(orderInfoId) {
-      var data = {
-        userId: this.$store.state.userId,
-        orderInfoId: orderInfoId
-      };
-      this.$axios.post("/api/getOrderInfo", data).then(res => {
-        console.log(res);
-        this.workOrderInfo = res.data.body;
-      });
-    },
     getOrderInfoNum() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getOrderInfoNum", userId).then(res => {
+      this.$axios.post("/api/getOrderInfoNum", {userId}).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
           // this.workType[0].num = res.data.body.allNum
@@ -128,7 +118,9 @@ export default {
         if (data.index == 0) {
           seleorderState = "";
         }
-
+        if (data.index == 4) {
+          var seleorderState = 99
+        }
         if (data.index == 5) {
           var seleorderState = 7;
         }
@@ -184,7 +176,7 @@ export default {
               field: "orderInfoId",
               title: "工单编号",
               sort: true,
-              width: 160,
+              width: 180,
               align: "center",
               templet: function(d) {
                 return (
@@ -267,7 +259,7 @@ export default {
                 }
                 if (d.orderState == 4) {
                   // 已预约
-                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="start">出发</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >更改预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="start">出发</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >更改预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
                 }
                 if (d.orderState == 5) {
                   // 已出发
@@ -301,6 +293,7 @@ export default {
         console.log(data);
         var orderState = data.orderState;
         var orderInfoId = data.orderInfoId;
+        var appoinmentTime = data.appoinmentTime
         console.log(orderState);
         if (obj.event === "edit") {
           //编辑
@@ -345,13 +338,13 @@ export default {
             btnAlign: "c",
             yes: function(index, layero) {
               var appoinmentTime = _this.$("#reservation").val();
-              if (_this.orderState == 4) {
+              if (orderState == 4) {
                 var handleState = 12;
               } else {
                 var handleState = 3;
               }
               var data = {
-                userId: _this.userId,
+                userId: _this.$store.state.userId,
                 orderInfoId: orderInfoId,
                 handleState: handleState,
                 appoinmentTime: appoinmentTime
@@ -373,13 +366,13 @@ export default {
           });
         } else if (obj.event === "start") {
           // 出发
-          _this.Reservation(_this.userId, orderInfoId, 4);
+          _this.Reservation(_this.$store.state.userId, orderInfoId, 4);
         } else if (obj.event === "reach") {
           // 到达
-          _this.Reservation(_this.userId, orderInfoId, 5);
+          _this.Reservation(_this.$store.state.userId, orderInfoId, 5);
         } else if (obj.event === "begin") {
           // 开始
-          _this.Reservation(_this.userId, orderInfoId, 6);
+          _this.Reservation(_this.$store.state.userId, orderInfoId, 6);
         } else if (obj.event === "Kuantan") {
           //关单
           if (orderState == 7) {
@@ -404,7 +397,7 @@ export default {
               yes: function(index, layero) {
                 var content = _this.$("#Kuantan").val();
                 var datas = {
-                  userId: _this.userId,
+                  userId: _this.$store.state.userId,
                   orderInfoId: orderInfoId,
                   handleState: 8,
                   content: content
@@ -470,7 +463,7 @@ export default {
             success: function() {
               form.render();
               _this.$axios
-                .post("/api/getUserList", _this.$store.state.userId)
+                .post("/api/getUserList", {userId: _this.$store.state.userId})
                 .then(res => {
                   console.log(res);
                   var userList = res.data.body.userList;
@@ -495,12 +488,12 @@ export default {
                 .$("#acceptUserId option:selected")
                 .val();
               var datas = {
-                userId: _this.userId,
+                userId: _this.$store.state.userId,
                 orderInfoId: orderInfoId,
                 content: content,
                 orderUrgency: orderUrgency,
                 responsibleId: responsibleId,
-                createrId: _this.workOrderInfo.userId
+                createrId: data.createUserId
               };
               console.log(datas);
               _this.$axios.post("/api/addCoordinateInfo", datas).then(res => {
@@ -549,12 +542,27 @@ export default {
               form.render();
             },
             yes: function(index, layero) {
-              var content = _this.$("#reject").val();
+              var content = $("#reject").val();
+              if (orderState == 7) {
+                var handleState = 13;
+                if (
+                  appoinmentTime == "" ||
+                  appoinmentTime == null
+                ) {
+                  var isAppoint = 0;
+                } else {
+                  var isAppoint = 1;
+                }
+              } else {
+                var handleState = 9;
+              }
+
               var data = {
-                userId: _this.userId,
+                userId: _this.$store.state.userId,
                 orderInfoId: orderInfoId,
-                handleState: 9,
-                content: content
+                handleState: handleState,
+                content: content,
+                isAppoint: isAppoint
               };
               console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
@@ -580,7 +588,7 @@ export default {
           _this.$router.push("/workOrderCreate");
         } else if (obj.event === "acceptance") {
           //受理
-          _this.Reservation(_this.userId, orderInfoId, 2);
+          _this.Reservation(_this.$store.state.userId, orderInfoId, 2);
         } else if (obj.event === "reassignment") {
           //改派
           layer.open({
@@ -601,7 +609,7 @@ export default {
             yes: function(index, layero) {
               var content = _this$("#reassignment").val();
               var data = {
-                userId: _this.userId,
+                userId: _this.$store.state.userId,
                 orderInfoId: orderInfoId,
                 handleState: 10,
                 content: content
@@ -639,6 +647,7 @@ export default {
     sessionStorage.removeItem("orderState");
     sessionStorage.removeItem("orderInfoId");
     this.getOrderInfoNum();
+    
   }
 };
 </script>

@@ -95,7 +95,7 @@ export default {
           var networkId = data.id
           console.log(networkId)
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令

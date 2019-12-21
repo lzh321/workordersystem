@@ -183,9 +183,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">附件</label>
             <div id="affix">
-              <div class="uploadImg">
-
-              </div>
+              <div class="uploadImg"></div>
             </div>
           </div>
         </div>
@@ -197,12 +195,14 @@
       <!-- 预约 -->
       <reservation
         :workOrderInfo="workOrderInfo"
-        v-if="orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10 ? true : false"
+        v-if="orderState == 4 || orderState == 5 || orderState == 7 || orderState == 9 || orderState == 10 ? true : false"
       ></reservation>
       <!-- 故障处理中 -->
       <inProcess :orderState="orderState" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
       <!-- 协同 -->
-      <synergy v-if="orderState == 7 || orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false"></synergy>
+      <synergy
+        v-if="orderState == 7 || orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false"
+      ></synergy>
       <!-- 待回访 -->
       <waitReturnVisit :workOrderInfo="workOrderInfo" v-if="orderState == 7 ? true : false"></waitReturnVisit>
       <div class="layui-form-item layui-form-text">
@@ -338,8 +338,8 @@ export default {
     cancel() {
       this.$router.push("/workOrderManagement?type=workOrderManagement");
     },
-    getcoordinateList(data){
-      console.log(data)
+    getcoordinateList(data) {
+      console.log(data);
     },
     send() {
       var data = {
@@ -349,7 +349,13 @@ export default {
       this.$axios.post("/api/getOrderInfo", data).then(res => {
         console.log(res);
         this.workOrderInfo = res.data.body;
-        this.$(".uploadImg").html(res.data.body.orderPhoto ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />' : '')
+        this.$(".uploadImg").html(
+          res.data.body.orderPhoto
+            ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+                res.data.body.orderPhoto.split(",")[0] +
+                '" alt />'
+            : ""
+        );
       });
     }
   },
@@ -589,7 +595,7 @@ export default {
                   _this.$router.push(
                     "/workOrderManagement?type=workOrderManagement"
                   );
-                },3000);
+                }, 3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
               }
@@ -614,7 +620,7 @@ export default {
                         <li class="layui-form-item layui-form-text">
                           <label class="layui-form-label">协同内容：</label>
                           <div class="layui-input-block">
-                          <textarea name="content" placeholder="请输入驳回说明" id="synergyContent" row="50" class="layui-textarea"></textarea>
+                          <textarea name="content" placeholder="请输入协同内容" id="synergyContent" row="50" class="layui-textarea"></textarea>
                           </div>
                         </li>
                         <li class="layui-form-item">
@@ -681,7 +687,7 @@ export default {
                   _this.$router.push(
                     "/workOrderManagement?type=workOrderManagement"
                   );
-                },3000);
+                }, 3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
               }
@@ -713,17 +719,20 @@ export default {
           },
           yes: function(index, layero) {
             var content = $("#reject").val();
-            if(_this.orderState == 7){
-              var handleState = 13
-              if(_this.workOrderInfo.appoinmentTime == "" || _this.workOrderInfo.appoinmentTime == null){
-                var isAppoint = 0
-              }else{
-                var isAppoint = 1
+            if (_this.orderState == 7) {
+              var handleState = 13;
+              if (
+                _this.workOrderInfo.appoinmentTime == "" ||
+                _this.workOrderInfo.appoinmentTime == null
+              ) {
+                var isAppoint = 0;
+              } else {
+                var isAppoint = 1;
               }
-            }else{
-              var handleState = 9
+            } else {
+              var handleState = 9;
             }
-            
+
             var data = {
               userId: _this.userId,
               orderInfoId: _this.orderInfoId,
@@ -756,42 +765,41 @@ export default {
       // 关单
       form.on("submit(Kuantan)", function(data) {
         console.log(data.field);
-
-        layer.open({
-          type: 1,
-          title: "是否关闭此工单？",
-          area: ["600px", "400px"],
-          fixed: false, //不固定
-          maxmin: true,
-          content: `<div style="padding:10px" class="layui-form-item layui-form-text">
+        console.log(data.field);
+        if (_this.orderState == 7) {
+          // 待回访关单
+          data.field.userId = _this.userId;
+          data.field.orderInfoId = _this.orderInfoId;
+          console.log(data.field);
+          _this.$axios.post("/api/closeOrderInfo", data.field).then(res => {
+            console.log(res);
+            if (res.data.retCode == "000000") {
+              layer.msg(res.data.retMsg, { icon: 1 });
+              setTimeout(() => {
+                _this.$router.push(
+                  "/workOrderManagement?type=workOrderManagement"
+                );
+              });
+            } else {
+              layer.msg(res.data.retMsg, { icon: 2 });
+            }
+          });
+        } else {
+          layer.open({
+            type: 1,
+            title: "是否关闭此工单？",
+            area: ["600px", "400px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `<div style="padding:10px" class="layui-form-item layui-form-text">
                       <textarea name="Kuantan" placeholder="请输入关单说明" id="Kuantan" row="50" style="min-height:260px" class="layui-textarea"></textarea>
                     </div>
                     `,
-          btn: ["确定", "取消"],
-          success: function() {
-            form.render();
-          },
-          yes: function(index, layero) {
-            console.log(data.field);
-            if (_this.orderState == 7) {
-              // 待回访关单
-              data.field.userId = _this.userId;
-              data.field.orderInfoId = _this.orderInfoId;
-              console.log(data.field);
-              _this.$axios.post("/api/closeOrderInfo", data.field).then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  layer.msg(res.data.retMsg, { icon: 1 });
-                  setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
-                  });
-                } else {
-                  layer.msg(res.data.retMsg, { icon: 2 });
-                }
-              });
-            } else {
+            btn: ["确定", "取消"],
+            success: function() {
+              form.render();
+            },
+            yes: function(index, layero) {
               var content = $("#Kuantan").val();
               var datas = {
                 userId: _this.userId,
@@ -813,12 +821,12 @@ export default {
                   layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
-            }
-            layer.close(index);
-          },
-          btnAlign: "c"
-        });
 
+              layer.close(index);
+            },
+            btnAlign: "c"
+          });
+        }
         return false;
       });
     });

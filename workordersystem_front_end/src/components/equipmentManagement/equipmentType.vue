@@ -75,15 +75,10 @@ export default {
             [
               //表头
               { field: "modelId", fixed: "left", hide: true },
-              {
-                field: "modelId",
-                title: "设备类型编码",
-                sort: true,
-                align: "center"
-              },
+              { field: "xuhao", title: "ID", width:200, fixed: 'left', sort: true,align: "center",type: 'numbers'},
               {
                 field: "modelType",
-                title: "设备类型",
+                title: "设备型号",
                 sort: true,
                 align: "center"
               },
@@ -104,7 +99,7 @@ export default {
           console.log(data);
           var modelId = data.modelId;
           if (obj.event === "deletion") {
-            layer.confirm("真的删除行么", function(index) {
+            layer.confirm("你确定要删除这条记录？", function(index) {
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令
@@ -121,6 +116,7 @@ export default {
             });
           } else if (obj.event === "edit") {
             sessionStorage.setItem("modelId", modelId);
+            sessionStorage.setItem("data", JSON.stringify(data));
             _this.$router.push("/addEquipmentType");
           }
         });
@@ -134,6 +130,8 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
+    sessionStorage.removeItem("modelId")
+    sessionStorage.removeItem("data")
   },
 };
 </script>

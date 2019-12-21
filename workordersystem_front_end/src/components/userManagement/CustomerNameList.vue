@@ -74,7 +74,7 @@ export default {
             //表头
             { field: "customerType", title: "类型", fixed: 'left', hide:true },
             { field: "customerId", title: "银行ID",  sort: true,align: "center"},
-            { field: "customerName", title: "银行名称",  sort: true,align: "center"},
+            { field: "customerName", title: "客户名称",  sort: true,align: "center"},
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]
@@ -92,7 +92,7 @@ export default {
           var customerId = data.customerId
           console.log(customerId)
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？', function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令

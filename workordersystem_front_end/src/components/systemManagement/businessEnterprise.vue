@@ -51,7 +51,7 @@ export default {
           table.reload('serachData',{
             url: "/api/getOrganizationList",
             where:data.field,
-            // page:{curr: 1}
+            page:{curr: 1}
           })
         })
       //第一个实例
@@ -69,7 +69,12 @@ export default {
             "data": res.body.list //解析数据列表
           };
         },
-        // page: true, //开启分页
+        page: true, //开启分页
+        request: {
+          pageName: 'currentPage', //页码的参数名称，默认：page
+          // curr: 'indexCount', //页码的参数名称，默认：page
+          limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        },
         // limit: 10,
         cols: [
           [
@@ -78,7 +83,6 @@ export default {
             { field: "companyName", title: "公司名称", width:260, sort: true,align: "center"},
             { field: "deptName", title: "部门",  sort: true,align: "center" },
             { field: "jobName", title: "职务", width:150, align: "center" },
-            { field: "PriorityDescription", title: "启用", align: "center", toolbar: '#Enable_Disable'},
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]
@@ -90,7 +94,7 @@ export default {
           console.log(data)
           var listId = data.id
           if(obj.event === 'deletion'){
-            layer.confirm('真的删除行么', function(index){
+            layer.confirm('你确定要删除这条记录？',{icon: 3, title:'提示'}, function(index){
               obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
               layer.close(index);
               //向服务端发送删除指令
@@ -109,23 +113,21 @@ export default {
             });
           } else if(obj.event === 'edit'){ //编辑
             sessionStorage.setItem('listId',listId)
+            sessionStorage.setItem('data',JSON.stringify(data))
             _this.$router.push('/addInstitution')
-          }else if(obj.event === 'privilege'){  // 权限
-            // sessionStorage.setItem('deviceId',deviceId)
-            // _this.$router.push("/checkEquipmentInfo")
-          }else if(obj.event === 'freeze'){   //冻结
-
           }
         });
     });
   },
   created(){
     this.type = this.$route.query.type
-    this.$axios.post('/api/getOrganizationList').then(res=>{
-      console.log(res)
-    }).catch(err=>{
-      console.log(err)
-    })
+    // this.$axios.post('/api/getOrganizationList').then(res=>{
+    //   console.log(res)
+    // }).catch(err=>{
+    //   console.log(err)
+    // })
+    sessionStorage.removeItem('listId')
+    sessionStorage.removeItem('data')
   }
 }
 </script>

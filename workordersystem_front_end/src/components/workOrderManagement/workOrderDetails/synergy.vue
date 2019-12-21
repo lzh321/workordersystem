@@ -20,7 +20,7 @@
               </li>
               <li class="layui-form-item">
                 <label class="">状态：</label>
-                <span>{{item.coordinateState == 0 ? '待受理' : (item.coordinateState == 1 ? '处理中' : item.coordinateState == 2 ? '已完成' : '')}}</span>
+                <span>{{item.coordinateState == 0 ? '待受理' : (item.coordinateState == 1 ? '处理中' : item.coordinateState == 2 ? '已完成' :  item.coordinateState == 3 ? '已驳回' : '')}}</span>
               </li>
               <li class="layui-form-item">
                 <label class="">编号：</label>

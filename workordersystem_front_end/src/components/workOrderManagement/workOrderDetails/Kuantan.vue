@@ -1,4 +1,5 @@
 <template>
+  <!-- 关单详情 -->
   <div class="Kuantan">
     <form action class="layui-form layui-form-pane">
       <progressBar></progressBar>
@@ -158,7 +159,7 @@
             <textarea
               name
               :value="workOrderInfo.problemDescription"
-              placeholder="请输入内容"
+              placeholder=""
               class="layui-textarea"
               disabled
             ></textarea>
@@ -193,7 +194,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.isFinish == 0 ? '已解决' : '未解决'"
+              :value="workOrderInfo.isFinish == 0 ? '已解决' : (workOrderInfo.isFinish == 1 ? '未解决' : '')"
               class="layui-input"
               disabled
             />
@@ -217,14 +218,14 @@
             <textarea
               name
               :value="workOrderInfo.adviseContent"
-              placeholder="请输入内容"
+              placeholder=""
               class="layui-textarea"
               disabled
             ></textarea>
           </div>
         </div>
       </div>
-
+      <workOrderLog></workOrderLog>
     </form>
   </div>
 </template>
@@ -233,6 +234,7 @@
 import synergy from "./synergy";
 import processingRecord from "./processingRecord";
 import progressBar from '../../progressBar'
+import workOrderLog from '../workOrderDetails/workOrderLog'
 export default {
   name: "Kuantan",
   data() {
@@ -244,7 +246,8 @@ export default {
     // reservation,
     synergy,
     processingRecord,
-    progressBar
+    progressBar,
+    workOrderLog
   },
   methods:{
     workValuation(){
@@ -280,5 +283,11 @@ h2 {
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 20px;
+}
+.layui-form-label{
+  width: 130px;
+}
+.layui-input-block{
+  margin-left: 130px;
 }
 </style>
