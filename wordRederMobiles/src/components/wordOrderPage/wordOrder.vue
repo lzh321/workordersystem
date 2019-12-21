@@ -1,21 +1,17 @@
 <template>
-  <div>
-    <router-view></router-view>
-    <Tabbar></Tabbar>
+  <div class="wordOrder">
+    工单
   </div>
 </template>
 
 <script>
-import Tabbar from '@/components/TabBar'
   export default {
+    name: 'wordOrder',
     data() {
       return {
         key: ""
       }
     },
-    components:{
-      Tabbar
-    }
   }
 </script>
 
