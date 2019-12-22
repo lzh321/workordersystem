@@ -1,5 +1,5 @@
 <template>
-  <div class="wordOrder">
+  <div class="synergyManagement">
     <van-tabs
       v-model="active"
       swipeable
@@ -11,15 +11,15 @@
       <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
         <ul class="list" v-if="active == 0">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <li v-for="items in 2" :key="items" :title="item.name">
+              <router-link tag="li" to="/synergyDispose?type=synergyDispose" v-for="items in 2" :key="items" :title="item.name">
                 <div class="orderId">
-                  <i>工单</i>
+                  <i>协同</i>
                   <span>单号：PM500115060058</span>
                 </div>
                 <div class="orderStatus">
                   <div>
                     <i></i>
-                    <span>待派单</span>
+                    <span>待受理</span>
                   </div>
                   <div>
                     <i></i>
@@ -42,7 +42,7 @@
                   <img :src="items == 1 ? urgency.Urgent : urgency.ordinary" alt="">
                   <span>{{items == 1 ? '紧急' : '一般'}}</span>
                 </div>
-              </li>
+              </router-link>
           </van-list>
         </ul>
       </van-tab>
@@ -52,7 +52,7 @@
 
 <script>
 export default {
-  name: "wordOrder",
+  name: 'synergyManagement',
   data() {
     return {
       active: 0,
@@ -83,11 +83,11 @@ export default {
       }, 500);
     }
   }
-};
+}
 </script>
 
 <style scoped>
-.wordOrder {
+.synergyManagement {
   background: #f3f3f3;
   flex: 1;
 }
@@ -114,7 +114,7 @@ export default {
   margin-bottom: 10px;
 }
 .orderId i {
-  background: url("../../assets/Images/work-order.png") no-repeat;
+  background: url("../../assets/Images/synergy.png") no-repeat;
   background-size: 100%;
   width: 38px;
   height: 21px;
@@ -174,13 +174,12 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.urgency {
+.urgency{
   width: 41px;
   height: 41px;
   position: absolute;
   top: 0;
   right: 0;
-  background-size: 100%;
   text-align: center;
 }
 .urgency img{

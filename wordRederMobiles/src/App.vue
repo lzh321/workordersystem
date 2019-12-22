@@ -1,12 +1,17 @@
 <template>
   <div id="app">
     <router-view/>
+    <Tabbar></Tabbar>
   </div>
 </template>
 
 <script>
+import Tabbar from '@/components/TabBar'
 export default {
-  name: 'App'
+  name: 'App',
+  components:{
+    Tabbar,
+  }
 }
 </script>
 
@@ -15,6 +20,8 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 </style>

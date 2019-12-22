@@ -1,12 +1,12 @@
 <template>
-  <van-tabbar v-model="active" >
-    <van-tabbar-item info="3" replace to="/wordOrder">
-      <span>工单</span>
-      <img slot="icon" slot-scope="props" :src="props.active ? icon.active : icon.inactive" />
-    </van-tabbar-item>
-    <van-tabbar-item icon="search">创建</van-tabbar-item>
-    <van-tabbar-item icon="setting-o">我的</van-tabbar-item>
-  </van-tabbar>
+    <div class="tabBar">
+    <van-tabbar v-model="active">
+      <van-tabbar-item v-for="(item,index) in icon" :key="index" replace :to="item.path">
+        <span>{{item.name}}</span>
+        <img slot="icon" slot-scope="props" :src="props.active ? item.active : item.inactive" />
+      </van-tabbar-item>
+    </van-tabbar>
+    </div>
 </template>
 
 <script>
@@ -14,14 +14,39 @@ export default {
   data() {
     return {
       active: 0,
-      icon: {
-        active: "https://img.yzcdn.cn/vant/user-active.png",
-        inactive: "https://img.yzcdn.cn/vant/user-inactive.png"
-      }
+      icon: [
+        {
+          name: "工单",
+          active: require("../assets/Images/home_selected.png"),
+          inactive: require("../assets/Images/home_default.png"),
+          path: "/wordOrder?type=wordOrder"
+        },
+        {
+          name: "协同",
+          active: require("../assets/Images/home_selected.png"),
+          inactive: require("../assets/Images/home_default.png"),
+          path: "/synergyManagement?type=synergyManagement"
+        },
+        {
+          name: "创建",
+          active: require("../assets/Images/create.png"),
+          inactive: require("../assets/Images/create.png"),
+          path: "/wordOrder"
+        },
+        {
+          name: "我的",
+          active: require("../assets/Images/my_selected.png"),
+          inactive: require("../assets/Images/my_default.png"),
+          path: "/myCenter"
+        }
+      ]
     };
   }
 };
 </script>
 
 <style scoped>
+.tabBar{
+  height: 50px;
+}
 </style>

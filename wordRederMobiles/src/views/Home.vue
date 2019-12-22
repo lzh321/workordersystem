@@ -1,24 +1,31 @@
 <template>
-  <div>
-    <router-view></router-view>
-    <Tabbar></Tabbar>
+  <div class="home">
+    <NavBar :titleNaem="title"></NavBar>
+    <wordOrder></wordOrder>
+    
   </div>
 </template>
 
 <script>
-import Tabbar from '@/components/TabBar'
+import NavBar from '@/components/NavBar'
+import wordOrder from '@/components/wordOrderPage/wordOrder'
   export default {
     data() {
       return {
-        key: ""
+        title: "工单管理"
       }
     },
     components:{
-      Tabbar
+      NavBar,
+      wordOrder
     }
   }
 </script>
 
 <style scoped>
-
+.home{
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
 </style>
