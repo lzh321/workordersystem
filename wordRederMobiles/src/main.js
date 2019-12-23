@@ -3,24 +3,73 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import {Tabbar,TabbarItem,NavBar,Tab, Tabs,List,Button,Field} from 'vant'
+import axios from 'axios'
+import qs from 'qs'
+import store from './store'
+import {Tabbar,TabbarItem,NavBar,Tab, Tabs,List,Button,Field,Icon,Uploader,Dialog} from 'vant'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'
 
+// 全局注册
+Vue.use(Dialog);
+Vue.use(Uploader);
+Vue.use(Icon);
 Vue.use(Field);
-
 Vue.use(Button);
 Vue.use(List);
 Vue.use(Tab).use(Tabs);
 Vue.use(NavBar);
 Vue.use(Tabbar).use(TabbarItem)
+Vue.prototype.axios = axios
 Vue.config.productionTip = false
+
+
+// 实例对象
+axios.create({
+  timeout: 6000,
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  }
+})
+
+// 添加请求拦截器，在请求头中加token
+axios.interceptors.request.use(
+  config => {
+    config.data = qs.stringify(config.data)
+    if (localStorage.getItem('userId')) {
+      config.headers.userId = localStorage.getItem('userId');
+    }
+
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
+
+
+// 路由拦截
+router.beforeEach((to, from, next) => {
+  
+  if (to.path === '/Login') {
+    next();
+  } else {
+    let userId = sessionStorage.getItem('userId');
+    if (userId === null || userId === '' || userId === undefined) {
+      next('/Login');
+    } else {
+      next();
+    }
+  }
+})
+
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

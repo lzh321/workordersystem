@@ -477,13 +477,11 @@ export default {
         return false;
       });
       // 出发
-      form.on("submit(start)", function() {
-        var data = {
-          userId: _this.userId,
-          orderInfoId: _this.orderInfoId,
-          handleState: 4
-        };
-        _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+      form.on("submit(start)", function(data) {
+        data.field.userId = _this.userId;
+        data.field.orderInfoId = _this.orderInfoId;
+        data.field.handleState = 4;
+        _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
           console.log(res);
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
@@ -500,13 +498,11 @@ export default {
       });
 
       // 到达
-      form.on("submit(arrive)", function() {
-        var data = {
-          userId: _this.userId,
-          orderInfoId: _this.orderInfoId,
-          handleState: 5
-        };
-        _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+      form.on("submit(arrive)", function(data) {
+        data.field.userId = _this.userId;
+        data.field.orderInfoId = _this.orderInfoId;
+        data.field.handleState = 5;
+        _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
           console.log(res);
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
@@ -522,13 +518,11 @@ export default {
         return false;
       });
       // 开始
-      form.on("submit(begin)", function() {
-        var data = {
-          userId: _this.userId,
-          orderInfoId: _this.orderInfoId,
-          handleState: 6
-        };
-        _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+      form.on("submit(begin)", function(data) {
+         data.field.userId = _this.userId;
+        data.field.orderInfoId = _this.orderInfoId;
+        data.field.handleState = 6;
+        _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
           console.log(res);
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
@@ -576,18 +570,15 @@ export default {
           yes: function(index, layero) {
             var appoinmentTime = $("#reservation").val();
             if (_this.orderState == 4) {
-              var handleState = 12;
+              data.field.handleState  = 12;
             } else {
-              var handleState = 3;
+              data.field.handleState  = 3;
             }
-            var data = {
-              userId: _this.userId,
-              orderInfoId: _this.orderInfoId,
-              handleState: handleState,
-              appoinmentTime: appoinmentTime
-            };
-            console.log(data);
-            _this.$axios.post("/api/handleOrderInfo", data).then(res => {
+            data.field.userId = _this.userId;
+            data.field.orderInfoId = _this.orderInfoId;
+            data.field.appoinmentTime = appoinmentTime
+            console.log(data.field);
+            _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
@@ -670,16 +661,15 @@ export default {
             var content = $("#synergyContent").val();
             var orderUrgency = $("#degree option:selected").val();
             var responsibleId = $("#acceptUserId option:selected").val();
-            var datas = {
-              userId: _this.userId,
-              orderInfoId: _this.orderInfoId,
-              content: content,
-              orderUrgency: orderUrgency,
-              responsibleId: responsibleId,
-              createrId: _this.workOrderInfo.userId
-            };
-            console.log(datas);
-            _this.$axios.post("/api/addCoordinateInfo", datas).then(res => {
+
+            data.field.userId = _this.userId;
+            data.field.orderInfoId = _this.orderInfoId;
+            data.field.content = content
+            data.field.orderUrgency = orderUrgency
+            data.field.responsibleId = responsibleId
+            data.field.createrId = _this.workOrderInfo.userId
+            console.log(data.field);
+            _this.$axios.post("/api/addCoordinateInfo", data.field).then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });

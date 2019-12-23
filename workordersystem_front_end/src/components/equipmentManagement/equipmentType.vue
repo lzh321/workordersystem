@@ -75,17 +75,17 @@ export default {
             [
               //表头
               { field: "modelId", fixed: "left", hide: true },
-              { field: "xuhao", title: "ID", width:200, fixed: 'left', sort: true,align: "center",type: 'numbers'},
+              { field: "xuhao", title: "ID", width:200, fixed: 'left', sort: false,align: "center",type: 'numbers'},
               {
                 field: "modelType",
                 title: "设备型号",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {
                 field: "modelName",
                 title: "存货名称",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               { title: "操作", align: "center", toolbar: "#barDemo" }

@@ -142,7 +142,7 @@ export default {
               {
                 field: "id",
                 title: "协同编号",
-                sort: true,
+                sort: false,
                 align: "center",
                 templet: function(d) {
                   return (
@@ -153,7 +153,7 @@ export default {
               {
                 field: "coordinateState",
                 title: "协同状态",
-                sort: true,
+                sort: false,
                 align: "center",
                 templet: function(d) {
                   if (d.coordinateState == 0) {
@@ -173,25 +173,25 @@ export default {
               {
                 field: "orderId",
                 title: "工单编号",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {
                 field: "expendTime",
                 title: "当前响应/处理耗时（min）",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {
                 field: "amountTime",
                 title: "协同处理耗时（min）",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {
                 field: "orderUrgency",
                 title: "紧急程度",
-                sort: true,
+                sort: false,
                 align: "center",
                 templet: function(d) {
                   if (d.orderUrgency == 0) {
@@ -204,13 +204,13 @@ export default {
               {
                 field: "createrUserName",
                 title: "创建人",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {
                 field: "createTime",
                 title: "创建时间",
-                sort: true,
+                sort: false,
                 align: "center"
               },
               {

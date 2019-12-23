@@ -56,9 +56,9 @@ export default {
         cols: [
           [
             //表头
-            { field: "workOrderId", title: "序号", sort: true,align: "center"},
-            { field: "workOrderStatus", title: "接收手机",  sort: true,align: "center"},
-            { field: "bankName", title: "接收对象",  sort: true,align: "center" },
+            { field: "workOrderId", title: "序号", sort: false,align: "center"},
+            { field: "workOrderStatus", title: "接收手机",  sort: false,align: "center"},
+            { field: "bankName", title: "接收对象",  sort: false,align: "center" },
             { field: "subBranchName", title: "模板编号",  align: "center" },
             { field: "creator", title: "模板名称",  align: "center" },
             { field: "creator", title: "推送渠道",  align: "center" },

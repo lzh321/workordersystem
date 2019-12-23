@@ -11,7 +11,7 @@
       <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
         <ul class="list" v-if="active == 0">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <li v-for="items in 2" :key="items" :title="item.name">
+              <li to="/bill" v-for="items in 6" :key="items" @click="goOrderPage(items)">
                 <div class="orderId">
                   <i>工单</i>
                   <span>单号：PM500115060058</span>
@@ -19,7 +19,7 @@
                 <div class="orderStatus">
                   <div>
                     <i></i>
-                    <span>待派单</span>
+                    <span>{{items == 1 ? '待发单' : items == 2 ? '待派单' : items == 3 ? '待受理' : items == 4 ? '处理中' : items == 5 ? '待回访' : items == 6 ? '已关单' : ''}}</span>
                   </div>
                   <div>
                     <i></i>
@@ -81,6 +81,27 @@ export default {
           this.finished = true;
         }
       }, 500);
+    },
+    goOrderPage(items){
+      console.log(items)
+      if(items == 1) {
+        this.$router.push('/bill')
+      }
+      if(items == 2) {
+        this.$router.push('/orderDetails?orderStatus=2')
+      }
+      if(items == 3) {
+        this.$router.push('/orderDetails?orderStatus=3')
+      }
+      if(items == 4) {
+        this.$router.push('/orderDetails?orderStatus=4')
+      }
+      if(items == 5) {
+        this.$router.push('/orderDetails?orderStatus=5')
+      }
+      if(items == 6) {
+        this.$router.push('/orderDetails?orderStatus=6')
+      }
     }
   }
 };

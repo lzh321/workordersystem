@@ -74,11 +74,11 @@ export default {
             //表头
             
             { field: "customerId", fixed: 'left', hide:true},
-            { field: "id", title: "投放点ID",  sort: true,align: "center"},
-            { field: "customerName", title: "客户名称",  sort: true,align: "center"},
-            { field: "networName", title: "投放点",  sort: true,align: "center"},
-            { field: "regionName", title: "所在城市",  sort: true,align: "center"},
-            { field: "networAddress", title: "投放地址",  sort: true,align: "center"},
+            { field: "id", title: "投放点ID",  sort: false,align: "center"},
+            { field: "customerName", title: "客户名称",  sort: false,align: "center"},
+            { field: "networName", title: "投放点",  sort: false,align: "center"},
+            { field: "regionName", title: "所在城市",  sort: false,align: "center"},
+            { field: "networAddress", title: "投放地址",  sort: false,align: "center"},
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]

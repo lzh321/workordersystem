@@ -1,0 +1,11 @@
+派单  sendOrders
+关单  kuantan
+驳回  reject
+受理  acceptance
+处理  dispose
+预约  appointment
+客户信息  customerInfo
+回访 returnVisit
+工单详情 orderDetails
+
+发单 bill

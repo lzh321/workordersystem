@@ -3,18 +3,19 @@
     <div class="workTable_top">
       <h2>工单状态统计图</h2>
       <div class="workTable_content">
-      <ul class="layui-tab-title">
-        <li class="layui-this">
-          <span>今日</span>
-        </li>
-        <li>
-          <span>本周</span>
-        </li>
-        <li>
-          <span>本月</span>
-        </li>
-      </ul>
-      <div class="selectTime"><p>
+        <ul class="layui-tab-title">
+          <li class="layui-this">
+            <span>今日</span>
+          </li>
+          <li>
+            <span>本周</span>
+          </li>
+          <li>
+            <span>本月</span>
+          </li>
+        </ul>
+        <div class="selectTime">
+          <p>
             <input
               type="text"
               class="layui-input"
@@ -33,8 +34,10 @@
               id="seleEngTime"
             />
             <i></i>
-          </p></div>
-          </div>
+          </p>
+        </div>
+        <button class="btn layui-btn  layui-btn-normal"  @click="getorderNum(type)">查询</button>
+      </div>
     </div>
     <div class="Echarts layui-tab-content">
       <div class="layui-tab-item layui-show">
@@ -58,32 +61,44 @@ export default {
   data() {
     return {
       options: {},
+      type: null
     };
   },
+  methods: {
+    getorderNum(type) {
+      var data = {
+        userId: this.$store.state.userId,
+        type: type,
+        seleBeginTime: this.$("input[name='seleBeginTime']").val(),
+        seleEndTime: this.$("input[name='seleEngTime']").val()
+      };
+      this.$axios.post("/api/getOrderInfoNum", data).then(res => {
+        console.log(res);
+        var chartData = [
+          { value: res.data.body.sendNum, name: "待发单" },
+          { value: res.data.body.sellNum, name: "待派单" },
+          { value: res.data.body.acceptNum, name: "待受理" },
+          { value: res.data.body.processingNum, name: "处理中" },
+          { value: res.data.body.finishNum, name: "待回访" },
+          { value: res.data.body.closeNum, name: "已关单" }
+        ];
+        this.options.series[0].data = chartData;
+      });
+    }
+  },
   mounted() {
-    this.$axios.post("/api/getOrderInfoNum",{userId: this.$store.state.userId}).then(res=>{
-      console.log(res)
-      var chartData = [
-        {value: res.data.body.sendNum, name: "待发单"},
-        {value: res.data.body.sellNum, name: "待派单"},
-        {value: res.data.body.acceptNum, name: "待受理"},
-        {value: res.data.body.processingNum, name: "处理中"},
-        {value: res.data.body.finishNum, name: "待回访"},
-        {value: res.data.body.closeNum, name: "已关单"}
-      
-      ]
-      this.options.series[0].data = chartData
-    })
-
-    layui.use(["form", "laydate","element"], function() {
+    this.getorderNum(0);
+    var _this = this;
+    layui.use(["form", "laydate", "element"], function() {
       var form = layui.form;
-      var element = layui.element
+      var element = layui.element;
       var laydate = layui.laydate;
       form.render();
       element.render();
-      element.on("tab(workTable)",function(data){
-        console.log(data)
-      })
+      element.on("tab(workTable)", function(data) {
+        console.log(data.index);
+        _this.getorderNum(data.index);
+      });
       laydate.render({
         // 开始时间
         elem: "#seleBeginTime",
@@ -180,9 +195,7 @@ export default {
       ]
     };
   },
-  created(){
-
-  }
+  created() {}
 };
 </script>
 
@@ -191,6 +204,7 @@ export default {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding: 15px 15px 0;
 }
 .workTable_top {
   display: flex;
@@ -198,8 +212,9 @@ export default {
   justify-content: space-between;
   height: 50px;
 }
-.workTable_content{
-  display: flex
+.workTable_content {
+  display: flex;
+  align-items: center
 }
 .Echarts {
   flex: 1;
@@ -222,7 +237,7 @@ export default {
   height: 45px;
   padding-left: 5px;
 }
-.selectTime{
+.selectTime {
   display: flex;
   align-items: center;
   height: 45px;
@@ -257,5 +272,8 @@ export default {
 .active {
   border-bottom: 2px solid #445eee;
   color: #445eee;
+}
+.btn{
+  margin-left:10px;
 }
 </style>

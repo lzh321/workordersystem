@@ -74,9 +74,9 @@ export default {
           [
             //表头
 
-            { field: "xuhao", title: "序号", width:200,fixed: 'left', sort: true,align: "center",type: 'numbers'},
-            { field: "roleId", title: "角色编号", width:200, sort: true,align: "center"},
-            { field: "roleName", title: "角色名称",  sort: true,align: "center" },
+            { field: "xuhao", title: "序号", width:200,fixed: 'left', sort: false,align: "center",type: 'numbers'},
+            { field: "roleId", title: "角色编号", width:200, sort: false,align: "center"},
+            { field: "roleName", title: "角色名称",  sort: false,align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]

@@ -37,13 +37,13 @@
           />
         </div>
       </div>
-      <div v-if="coordinateState == 2" class="layui-form-item">
+      <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">
         <label class="layui-form-label">受理人</label>
         <div class="layui-input-block">
           <input type="text" name :value="synergyInfo.responsibleId" class="layui-input" disabled />
         </div>
       </div>
-      <div v-if="coordinateState == 2" class="layui-form-item">
+      <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">
         <label class="layui-form-label">受理时间</label>
         <div class="layui-input-block">
           <input type="text" name :value="synergyInfo.responsibleTime" class="layui-input" disabled />
@@ -54,8 +54,7 @@
         <label class="layui-form-label">处理结果</label>
         <div class="layui-input-block">
           <textarea
-                name="handleContent"
-                id="handleContent"
+                name=""
                 :value="synergyInfo.handleContent"
                 placeholder=""
                 class="layui-textarea"
@@ -63,12 +62,23 @@
               ></textarea>
         </div>
       </div>
-      <div v-if="coordinateState == 3" class="layui-form-item layui-form-text">
-        <label class="layui-form-label">驳回原因</label>
+      <div v-if="coordinateState == 1" class="layui-form-item layui-form-text">
+        <label class="layui-form-label">处理结果</label>
         <div class="layui-input-block">
           <textarea
                 name="handleContent"
                 id="handleContent"
+                value=""
+                placeholder=""
+                class="layui-textarea"
+              ></textarea>
+        </div>
+      </div>
+      <div v-if="coordinateState == 3" class="layui-form-item layui-form-text">
+        <label class="layui-form-label">驳回原因</label>
+        <div class="layui-input-block">
+          <textarea
+                name=""
                 :value="synergyInfo.rejectContent"
                 placeholder=""
                 class="layui-textarea"

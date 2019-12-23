@@ -1,6 +1,5 @@
 <template>
   <div class="synergy">
-    <NavBar :titleNaem="title"></NavBar>
     <!-- <synergyManagement></synergyManagement> -->
     <router-view></router-view>
   </div>

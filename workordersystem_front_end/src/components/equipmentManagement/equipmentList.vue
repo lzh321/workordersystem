@@ -95,13 +95,13 @@ export default {
             [
               //表头
               {field: "deviceId", fixed: 'left', hide:true},
-              { field: "deviceNumber", title: "存货编码", sort: true,align: "center"},
-              { field: "modelName", title: "存货名称",  sort: true,align: "center"},
-              { field: "modelType", title: "设备型号",  sort: true,align: "center" },
+              { field: "deviceNumber", title: "存货编码", sort: false,align: "center"},
+              { field: "modelName", title: "存货名称",  sort: false,align: "center"},
+              { field: "modelType", title: "设备型号",  sort: false,align: "center" },
               { field: "seviceBegintime", title: "维保开始时间",  align: "center" },
               { field: "seviceEndtime", title: "维保结束时间",  align: "center" },
-              { field: "customerName", title: "客户名称",sort: true,align: "center" },
-              { field: "networkName", title: "投放点", sort: true,align: "center" },
+              { field: "customerName", title: "客户名称",sort: false,align: "center" },
+              { field: "networkName", title: "投放点", sort: false,align: "center" },
               { field: "region", title: "所在城市", width: 100, align: "center"},
               { field: "networkAddress", title: "投放点地址", align: "center"},
               { field: "operation", title: "操作",width: 165, align: "center", toolbar: '#barDemo' }

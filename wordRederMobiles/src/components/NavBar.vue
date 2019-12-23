@@ -1,19 +1,13 @@
 <template>
-  <div class="navBar">
-      <div v-if="type == 'synergyManagement' || type == 'wordOrder'" class="SearchEntrance">
+  <div v-if="type == 'synergyManagement' || type == 'wordOrder'" class="navBar">
+      <div class="SearchEntrance">
         <i></i>
         <span>搜索</span>
       </div>
-      <div v-else class="goBack">
-        <i></i>
-        <span>返回</span>
-      </div>
-      <div class="title">{{titleNaem}}</div>
-      <div v-if="type == 'synergyManagement' || type == 'wordOrder'" class="filtrate">
+      <div class="filtrate">
         <i></i>
         <span>筛选</span>
       </div>
-      <div v-else class="placeholder"></div>
     </div>
 </template>
 

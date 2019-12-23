@@ -73,8 +73,8 @@ export default {
           [
             //表头
             { field: "customerType", title: "类型", fixed: 'left', hide:true },
-            { field: "customerId", title: "银行ID",  sort: true,align: "center"},
-            { field: "customerName", title: "客户名称",  sort: true,align: "center"},
+            { field: "customerId", title: "银行ID",  sort: false,align: "center"},
+            { field: "customerName", title: "客户名称",  sort: false,align: "center"},
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]

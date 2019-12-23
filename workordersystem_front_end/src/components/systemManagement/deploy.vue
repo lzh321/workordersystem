@@ -46,13 +46,13 @@ export default {
         {
           field: "id",
           title: "公司编号",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {
           field: "companyName",
           title: "公司名称",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {
@@ -67,13 +67,13 @@ export default {
         {
           field: "deptId",
           title: "部门编号",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {
           field: "deptName",
           title: "部门名称",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {
@@ -88,13 +88,13 @@ export default {
         {
           field: "id",
           title: "职务编号",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {
           field: "jobName",
           title: "职务名称",
-          sort: true,
+          sort: false,
           align: "center"
         },
         {

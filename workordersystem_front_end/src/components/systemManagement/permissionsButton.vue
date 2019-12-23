@@ -72,11 +72,11 @@ export default {
           [
             //表头
             
-            { field: "xuhao", title: "序号", width:200, fixed: 'left', sort: true,align: "center",type: 'numbers'},
-            { field: "menuId", width:200, sort: true,align: "center", hide: true},
-            { field: "menuNo", title: "按钮编码", width:200, sort: true,align: "center"},
-            { field: "menuPno", title: "按钮名称", width:260, sort: true,align: "center",templet: function(d){return d.menuPno == 1 ? '父级菜单' : '子级菜单'}},
-            { field: "menuName", title: "菜单名称",  sort: true,align: "center" },
+            { field: "xuhao", title: "序号", width:200, fixed: 'left', sort: false,align: "center",type: 'numbers'},
+            { field: "menuId", width:200, sort: false,align: "center", hide: true},
+            { field: "menuNo", title: "按钮编码", width:200, sort: false,align: "center"},
+            { field: "menuPno", title: "按钮名称", width:260, sort: false,align: "center",templet: function(d){return d.menuPno == 1 ? '父级菜单' : '子级菜单'}},
+            { field: "menuName", title: "菜单名称",  sort: false,align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
         ]

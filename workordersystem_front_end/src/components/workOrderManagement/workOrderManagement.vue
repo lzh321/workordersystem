@@ -175,7 +175,7 @@ export default {
             {
               field: "orderInfoId",
               title: "工单编号",
-              sort: true,
+              sort: false,
               width: 180,
               align: "center",
               templet: function(d) {
@@ -190,13 +190,13 @@ export default {
               field: "orderStateName",
               title: "工单状态",
               width: 100,
-              sort: true,
+              sort: false,
               align: "center"
             },
             {
               field: "customerName",
               title: "银行名称",
-              sort: true,
+              sort: false,
               align: "center"
             },
             { field: "networName", title: "支行名称", align: "center" },
@@ -212,13 +212,13 @@ export default {
             {
               field: "expendTime",
               title: "当前总耗时（min）",
-              sort: true,
+              sort: false,
               align: "center"
             },
             {
               field: "amountTime",
               title: "工单总耗时（min）",
-              sort: true,
+              sort: false,
               align: "center"
             },
             {
@@ -230,7 +230,7 @@ export default {
             {
               field: "createTime",
               title: "创建时间",
-              sort: true,
+              sort: false,
               align: "center"
             },
             {

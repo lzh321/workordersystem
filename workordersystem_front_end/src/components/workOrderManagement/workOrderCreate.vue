@@ -410,7 +410,7 @@ export default {
         data.field.userId = _this.$store.state.userId;
         data.field.orderInfoId = orderInfoId;
         data.field.isClose = "1";
-        _this.$axios.post("/api/addOrderInfo", data.field).then(res => {
+        _this.$axios.post("/api/alterOrderInfo", data.field).then(res => {
           console.log(res);
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });

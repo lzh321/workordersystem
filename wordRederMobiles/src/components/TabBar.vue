@@ -31,7 +31,7 @@ export default {
           name: "创建",
           active: require("../assets/Images/create.png"),
           inactive: require("../assets/Images/create.png"),
-          path: "/wordOrder"
+          path: "/createOrder"
         },
         {
           name: "我的",

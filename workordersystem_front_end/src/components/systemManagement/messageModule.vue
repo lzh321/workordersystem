@@ -57,9 +57,9 @@ export default {
           [
             //表头
             {field: "workOrderId", width:80, title: "<input type='checkbox' name='' lay-skin='primary'>", fixed: "left",align: "center",toolbar: '#barInput'},
-            { field: "workOrderId", title: "模板编号", width:200, sort: true,align: "center"},
-            { field: "workOrderStatus", title: "模板名称", width:260, sort: true,align: "center"},
-            { field: "bankName", title: "模板内容",  sort: true,align: "center" },
+            { field: "workOrderId", title: "模板编号", width:200, sort: false,align: "center"},
+            { field: "workOrderStatus", title: "模板名称", width:260, sort: false,align: "center"},
+            { field: "bankName", title: "模板内容",  sort: false,align: "center" },
             { field: "subBranchName", title: "接收对象", width:150, align: "center" },
             { field: "creator", title: "推送渠道", width:150, align: "center" },
             { field: "PriorityDescription", title: "启用", align: "center", toolbar: '#Enable_Disable'},

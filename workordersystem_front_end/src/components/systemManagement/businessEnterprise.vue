@@ -79,9 +79,9 @@ export default {
         cols: [
           [
             //表头
-            { field: "companyId", title: "公司编号", width:200, sort: true,align: "center"},
-            { field: "companyName", title: "公司名称", width:260, sort: true,align: "center"},
-            { field: "deptName", title: "部门",  sort: true,align: "center" },
+            { field: "companyId", title: "公司编号", width:200, sort: false,align: "center"},
+            { field: "companyName", title: "公司名称", width:260, sort: false,align: "center"},
+            { field: "deptName", title: "部门",  sort: false,align: "center" },
             { field: "jobName", title: "职务", width:150, align: "center" },
             { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
           ]
