@@ -8,38 +8,38 @@
         <label for>
           <span>银行名称</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.customerName}}</span>
       </div>
       <div>
         <label for>
           <span>网点名称</span>：
         </label>
 
-        <span>可选</span>
+        <span>{{orderInfo.networName}}</span>
       </div>
       <div>
         <label for>
           <span>网点地址</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.networAddress}}</span>
       </div>
       <div>
         <label for>
           <span>联系人</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.contactName}}</span>
       </div>
       <div>
         <label for>
           <span>联系电话</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.contactPhone}}</span>
       </div>
       <div>
         <label for>
           <span>合同</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.agreenmentId}}</span>
       </div>
       <div class="info">
         <h2>故障信息</h2>
@@ -49,52 +49,52 @@
           <span>工单来源</span>：
         </label>
 
-        <span>可选</span>
+        <span>{{orderInfo.orderSource == 0 ? '电话' : orderInfo.orderSource == 1 ? '微信' : '其他' }}</span>
       </div>
       <div>
         <label for>
           <span>工单类型</span>：
         </label>
 
-        <span>可选</span>
+        <span>{{orderInfo.orderType == 0 ? '设备报障' : orderInfo.orderType == 1 ? '差错账' : orderInfo.orderType == 2 ? '钞空/存满' : orderInfo.orderType == 3 ? '吞卡' : orderInfo.orderType == 4 ? '通讯中断' : orderInfo.orderType == 5 ? '卡钞' : orderInfo.orderType == 6 ? 'PM' : orderInfo.orderType == 7 ? '软硬件升级' : orderInfo.orderType == 8 ? '咨询' : orderInfo.orderType == 9 ? '设备确认' : orderInfo.orderType == 10 ? '其他' : ''}}</span>
       </div>
       <div>
         <label for>
           <span>紧急程度</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.orderUrgency == 0 ? '一般' : orderInfo.orderUrgency == 1 ? '紧急' : ''}}</span>
       </div>
       <div>
         <label for>
           <span>保障时间</span>：
         </label>
 
-        <span>可选</span>
+        <span>{{orderInfo.reportTime}}</span>
       </div>
       <div>
         <label for>
           <span>设备型号</span>：
         </label>
 
-        <span>可选</span>
+        <span>{{orderInfo.modelType}}</span>
       </div>
       <div>
         <label for>
           <span>存货编码</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.deviceNumber}}</span>
       </div>
       <div class="problem">
         <label for>
           <span>问题描述</span>：
         </label>
-        <textarea name id cols="30" rows="10" disabled></textarea>
+        <textarea name id cols="30" :value="orderInfo.problemDescription" rows="10" disabled></textarea>
       </div>
       <div class="affix">
         <label for>
           <span>附件</span>：
         </label>
-        <van-uploader v-model="fileList" />
+        <img :src="orderInfo.orderPhoto ? 'http://192.168.1.245/' + orderInfo.orderPhoto : ''" alt="">
       </div>
     </form>
     
@@ -104,6 +104,7 @@
 <script>
 export default {
   name: "create",
+  props:["orderInfo"],
   data() {
     return {
       fileList: []
@@ -187,6 +188,7 @@ textarea {
   width: 100%;
   margin-top: 10px;
   background: #FFFFFF;
+  color: #666666;
 }
 
 

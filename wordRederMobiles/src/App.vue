@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view/>
+    <keep-alive >
+      <router-view/>
+    </keep-alive>
     <Tabbar v-if="$route.meta.showTab"></Tabbar>
   </div>
 </template>

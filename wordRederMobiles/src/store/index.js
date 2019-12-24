@@ -5,13 +5,13 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state:{
-    userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : ''
+    userId: localStorage.getItem('userId') ? localStorage.getItem('userId') : ''
   },
   mutations:{
     // 修改token，并将token存到sessionStorage
     changeLogin (state, user){
       state.userId = user.userId;
-      sessionStorage.setItem('userId', user.userId)
+      localStorage.setItem('userId', user.userId)
     }
   }
 })

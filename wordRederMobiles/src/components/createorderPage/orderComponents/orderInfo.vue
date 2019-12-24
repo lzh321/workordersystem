@@ -5,64 +5,50 @@
       <div class="info">
         <h2>故障处理记录</h2>
       </div>
-      <div class="fault">
-        <label for>
-          <span>上门时间</span>：
-        </label>
-        <span>可选</span>
-      </div>
-      <div class="fault">
-        <label for>
-          <span>工程师</span>：
-        </label>
-        <span>可选</span>
-      </div>
-      <div class="fault">
-        <label for>
-          <span>联系电话</span>：
-        </label>
-        <span>可选</span>
-      </div>
+      <appointment :orderInfo="orderInfo"></appointment>
       <div class="fault">
         <label for>
           <span>故障类型</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.recordType == 0 ? '硬件' : orderInfo.recordType == 1 ? '软件' : orderInfo.recordType == 2 ? '辅助' : orderInfo.recordType == 3 ? '其他' : ''}}</span>
       </div>
       <div class="fault">
         <label for>
           <span>故障模块</span>：
         </label>
-        <span>可选</span>
+        <span>{{orderInfo.recordModel == 0 ? '显示屏' : orderInfo.recordModel == 1 ? '密码键盘' : ''}}</span>
       </div>
       <div>
         <label for>
           <span>问题记录</span>：
         </label>
-        <textarea name id cols="30" rows="10" disabled></textarea>
+        <textarea name id cols="30" rows="10" :value="orderInfo.recordContent" disabled></textarea>
       </div>
       <div>
         <label for>
           <span>解决办法</span>：
         </label>
-        <textarea name id cols="30" rows="10" disabled></textarea>
+        <textarea name id cols="30" rows="10" :value="orderInfo.recordSettle" disabled></textarea>
       </div>
-      <synergy></synergy>
+      <synergyInfo></synergyInfo>
     </form>
   </div>
 </template>
 
 <script>
-import synergy from './synergy'
+import synergyInfo from './synergyInfo'
+import appointment from './appointment'
 export default {
   name: "dispose",
+  props:["orderInfo"],
   data() {
     return {
       
     }
   },
   components:{
-    synergy
+    synergyInfo,
+    appointment
   }
 };
 </script>
@@ -77,7 +63,7 @@ form{
 }
 form div{
   padding: 10px 0;
-  border-bottom: 1px solid #F0F0F0; 
+  /* border-bottom: 1px solid #F0F0F0;  */
 }
 form div > span {
   display: flex;
@@ -92,12 +78,12 @@ label {
   display: flex;
   align-items: center;
 }
-label::before{
+/* label::before{
   content: '*';
   color: red;
   display: inline-block;
   margin-right: 3px;
-}
+} */
 
 label span {
   width: 60px;
@@ -114,6 +100,7 @@ textarea {
   width: 100%;
   margin-top: 10px;
   background: #FFFFFF;
+  color: #666666;
 }
 .info {
   justify-content: space-between;

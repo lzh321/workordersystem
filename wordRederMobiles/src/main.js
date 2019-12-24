@@ -6,12 +6,16 @@ import router from './router'
 import axios from 'axios'
 import qs from 'qs'
 import store from './store'
-import {Tabbar,TabbarItem,NavBar,Tab, Tabs,List,Button,Field,Icon,Uploader,Dialog} from 'vant'
+import jquery from 'jquery'
+import {Tabbar,TabbarItem,NavBar,Tab, Tabs,List,Button,Field,Icon,Uploader,Dialog,Toast,DatetimePicker,Popup} from 'vant'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'
 
 // 全局注册
+Vue.use(Popup);
+Vue.use(DatetimePicker);
+Vue.use(Toast);
 Vue.use(Dialog);
 Vue.use(Uploader);
 Vue.use(Icon);
@@ -22,8 +26,22 @@ Vue.use(Tab).use(Tabs);
 Vue.use(NavBar);
 Vue.use(Tabbar).use(TabbarItem)
 Vue.prototype.axios = axios
+Vue.prototype.$ = jquery
 Vue.config.productionTip = false
 
+// 自定义方法
+jquery.prototype.serializeObject=function(){
+
+  var obj=new Object();
+
+  jquery.each(this.serializeArray(),function(index,param){
+      if(!(param.name in obj)){
+          obj[param.name]=param.value;
+      }
+  });
+
+  return obj;
+};
 
 // 实例对象
 axios.create({
@@ -32,6 +50,8 @@ axios.create({
     'Content-Type': 'application/x-www-form-urlencoded'
   }
 })
+
+
 
 // 添加请求拦截器，在请求头中加token
 axios.interceptors.request.use(
@@ -55,7 +75,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/Login') {
     next();
   } else {
-    let userId = sessionStorage.getItem('userId');
+    let userId = localStorage.getItem('userId');
     if (userId === null || userId === '' || userId === undefined) {
       next('/Login');
     } else {

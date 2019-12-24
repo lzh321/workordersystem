@@ -7,42 +7,49 @@
       title-active-color="#FFFFFF"
       title-inactive-color="#FFFFFF"
       background="#2F6CFF"
+      @click="chanage(active)"
     >
       <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
-        <ul class="list" v-if="active == 0">
+        <ul class="list">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <li to="/bill" v-for="items in 6" :key="items" @click="goOrderPage(items)">
-                <div class="orderId">
-                  <i>工单</i>
-                  <span>单号：PM500115060058</span>
+            <li
+              to="/bill"
+              v-for="(items,index) in list"
+              :key="index"
+              @click="goOrderPage(items.orderState,items.orderInfoId)"
+            >
+              <div class="orderId">
+                <i>工单</i>
+                <span>单号：{{items.orderInfoId}}</span>
+              </div>
+              <div class="orderStatus">
+                <div>
+                  <img :src="items.orderState == 0 ? orderStatus.bill : items.orderState == 1 ? orderStatus.sendOrders : items.orderState == 2 ? orderStatus.acceptance: items.orderState == 3 ? orderStatus.dispose : items.orderState == 4 ? orderStatus.appointment : items.orderState == 5 ? orderStatus.sendOrders : items.orderState == 6 ? orderStatus.sendOrders : items.orderState == 7 ? orderStatus.visit : items.orderState == 8 ? orderStatus.kuantan : items.orderState == 9 ? orderStatus.sendOrders : items.orderState == 10 ? orderStatus.dispose : ''" alt />
+                  
+                  <span>{{items.orderState == 0 ? '待发单' : items.orderState == 1 ? '待派单' : items.orderState == 2 ? '待受理' : items.orderState == 3 ? '处理中' : items.orderState == 4 ? '已预约' : items.orderState == 5 ? '已出发' : items.orderState == 6 ? '已开始' : items.orderState == 7 ? '待回访' : items.orderState == 8 ? '已关单' : items.orderState == 9 ? '已到达' : items.orderState == 10 ? '故障处理中' : ''}}</span>
                 </div>
-                <div class="orderStatus">
-                  <div>
-                    <i></i>
-                    <span>{{items == 1 ? '待发单' : items == 2 ? '待派单' : items == 3 ? '待受理' : items == 4 ? '处理中' : items == 5 ? '待回访' : items == 6 ? '已关单' : ''}}</span>
-                  </div>
-                  <div>
-                    <i></i>
-                    <span>2019-10-26 15:32:45</span>
-                  </div>
+                <div>
+                  <i></i>
+                  <span>{{items.createTime}}</span>
                 </div>
-                <div class="customerName orderContent">
-                  <label for>客户名称：</label>
-                  <span>民生银行</span>
-                </div>
-                <div class="DeliveryPoint orderContent">
-                  <label for>投&nbsp;放&nbsp;点：</label>
-                  <span>民生分行</span>
-                </div>
-                <div class="address orderContent">
-                  <label for>地&emsp;&emsp;&nbsp;址：</label>
-                  <span>民生银行</span>
-                </div>
-                <div class="urgency">
-                  <img :src="items == 1 ? urgency.Urgent : urgency.ordinary" alt="">
-                  <span>{{items == 1 ? '紧急' : '一般'}}</span>
-                </div>
-              </li>
+              </div>
+              <div class="customerName orderContent">
+                <label for>客户名称：</label>
+                <span>{{items.customerName}}</span>
+              </div>
+              <div class="DeliveryPoint orderContent">
+                <label for>投&nbsp;放&nbsp;点：</label>
+                <span>{{items.networName}}</span>
+              </div>
+              <div class="address orderContent">
+                <label for>地&emsp;&emsp;&nbsp;址：</label>
+                <span>{{items.networAddress}}</span>
+              </div>
+              <div class="urgency">
+                <img :src="items.orderUrgency == 0 ? urgency.Urgent : urgency.ordinary" alt />
+                <span>{{items.orderUrgency == 0 ? '紧急' : '一般'}}</span>
+              </div>
+            </li>
           </van-list>
         </ul>
       </van-tab>
@@ -57,52 +64,118 @@ export default {
     return {
       active: 0,
       list: [],
+      currentPage: 1,
+      everyCount: 100,
+      totalCount: "",
       loading: false,
       finished: false,
-      tab: [{ name: "待办事项" }, { name: "历史记录" }],
+      tab: [{ name: "待办事项" }, { name: "工单列表" }],
       urgency: {
         Urgent: require("../../assets/Images/emergency.png"),
         ordinary: require("../../assets/Images/general.png")
+      },
+      orderStatus: {
+        bill: require("../../assets/Images/operation_receipt.png"),
+        sendOrders: require("../../assets/Images/operation_send-orders.png"),
+        kuantan: require("../../assets/Images/operation_kuantan.png"),
+        reject: require("../../assets/Images/operation_rejected.png"),
+        acceptance: require("../../assets/Images/operation_To-accept-the.png"),
+        dispose: require("../../assets/Images/dispose.png"),
+        appointment: require("../../assets/Images/operation_order.png"),
+        visit: require("../../assets/Images/pay-a-return-visit.png")
       }
     };
   },
   methods: {
+    chanage(active){
+      console.log(active)
+      if(active == 0){
+        this.getOrderInfoList("/api/getOrderPlanList",this.currentPage, this.everyCount);
+      }
+      if(active == 1){
+        this.getOrderInfoList("/api/getOrderInfoList",this.currentPage, this.everyCount);
+      }
+    },
     onLoad() {
-      // 异步更新数据
+       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
+        // for (let i = 0; i < 10; i++) {
+        //   this.list.push(this.list.length + 1);
+        // }
         // 加载状态结束
         this.loading = false;
 
         // 数据全部加载完成
-        if (this.list.length >= 40) {
+        if (this.list.length >= this.totalCount) {
           this.finished = true;
         }
       }, 500);
     },
-    goOrderPage(items){
-      console.log(items)
-      if(items == 1) {
-        this.$router.push('/bill')
+    goOrderPage(orderStatus,orderInfoId) {
+      console.log(orderStatus,orderInfoId);
+      if (orderStatus == 0) {   //发单
+        this.$router.push("/bill?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId",orderInfoId)
+        sessionStorage.setItem("orderStatus",orderStatus)
       }
-      if(items == 2) {
-        this.$router.push('/orderDetails?orderStatus=2')
+      if (orderStatus == 1) {   //派单
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
       }
-      if(items == 3) {
-        this.$router.push('/orderDetails?orderStatus=3')
+      if (orderStatus == 2) {   //待受理
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
       }
-      if(items == 4) {
-        this.$router.push('/orderDetails?orderStatus=4')
+      if (orderStatus == 3) {   //处理中
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
       }
-      if(items == 5) {
-        this.$router.push('/orderDetails?orderStatus=5')
+      if (orderStatus == 4) {   //已预约
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
       }
-      if(items == 6) {
-        this.$router.push('/orderDetails?orderStatus=6')
+      if (orderStatus == 5) {   //已出发
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
       }
+      if (orderStatus == 6) {   //已开始
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
+      }
+      if (orderStatus == 7) {   //已回访
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
+      }
+      if (orderStatus == 8) {   //已关单
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
+      }
+      if (orderStatus == 9) {   //已到达
+         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+         sessionStorage.setItem("orderInfoId",orderInfoId)
+      }
+      if (orderStatus == 10) {   //已故障处理中
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId",orderInfoId)
+      }
+    },
+    getOrderInfoList(url,currentPage, everyCount) {
+      var data = {
+        userId: this.$store.state.userId,
+        currentPage: currentPage,
+        everyCount: everyCount
+      };
+      this.axios.post(url, data).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          this.totalCount = res.data.body.totalCount;
+          this.list = res.data.body.orderInfoList;
+        }
+      });
     }
+  },
+  created() {
+    this.getOrderInfoList("/api/getOrderPlanList",this.currentPage, this.everyCount);
   }
 };
 </script>
@@ -115,7 +188,7 @@ export default {
 .van-tabs {
   height: 100%;
 }
-.van-tabs__content{
+.van-tabs__content {
   height: 100%;
 }
 .list {
@@ -157,11 +230,9 @@ export default {
   display: flex;
   align-items: center;
 }
-.orderStatus > div:nth-child(1) i {
+.orderStatus > div:nth-child(1) img {
   width: 16px;
   height: 16px;
-  background: url("../../assets/Images/operation_send-orders.png") no-repeat;
-  background-size: 100%;
   margin-right: 5px;
 }
 .orderStatus > div:nth-child(1) span {
@@ -204,7 +275,7 @@ export default {
   background-size: 100%;
   text-align: center;
 }
-.urgency img{
+.urgency img {
   width: 100%;
   height: 100%;
 }

@@ -1,39 +1,39 @@
 <template>
 <!-- 回访记录 -->
   <div class="returnVisit">
-    <orderInfo></orderInfo>
-    <form action="">
+    <orderInfo :orderInfo="orderInfo"></orderInfo>
+    <form action="" id="formData">
       <div class="info">
         <h2>回访记录</h2>
       </div>
       <div>
         <label for=""><span class="problem">问题是否已解决</span>：</label>
-        <input type="checkbox">已解决
-        <input type="checkbox">未解决
+        <input type="checkbox" name="isFinish" value="0">已解决
+        <input type="checkbox" name="isFinish" value="1">未解决
       </div>
       <div>
         <label for=""><span>满意度情况</span>：</label>
-        <input type="checkbox">满意
-        <input type="checkbox">基本满意
-        <input type="checkbox">不满意
+        <input type="checkbox" name="satisfiedState" value="0">满意
+        <input type="checkbox" name="satisfiedState" value="1">基本满意
+        <input type="checkbox" name="satisfiedState" value="2">不满意
       </div>
       <div>
         <label for=""><span>意见/建议</span>：</label>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
+        <textarea name="adviseContent" id="" cols="30" rows="10"></textarea>
       </div>
       <div>
         <label for=""><span>备注</span>：</label>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
+        <textarea name="remark" id="" cols="30" rows="10"></textarea>
       </div>
     </form>
     <orderLog></orderLog>
      <div class="actionBtn">
       <ul>
-        <router-link tag="li" to="/wordOrder?type=wordOrder">
+        <li @click="rejeck">
           <img src="../../../assets/Images/operation_rejected.png" alt />
           <span>驳回</span>
-        </router-link>
-        <li>
+        </li>
+        <li @click="kuantan">
           <img src="../../../assets/Images/operation_kuantan.png" alt />
           <span>关单</span>
         </li>
@@ -47,9 +47,37 @@ import orderInfo from './orderInfo'
 import orderLog from './orderLog'
 export default {
   name: 'returnVisit',
+  props:["orderInfo"],
   data() {
     return {
+      orderInfoId: sessionStorage.getItem("orderInfoId")
+    }
+  },
+  methods:{
+    kuantan(){
+      var createData = this.$("#formData").serializeObject();
       
+      this.orderInfo.isFinish = createData.isFinish
+      this.orderInfo.adviseContent = createData.adviseContent
+      this.orderInfo.remark = createData.remark
+      this.orderInfo.satisfiedState = createData.satisfiedState
+      this.orderInfo.orderInfoId = this.orderInfoId
+      console.log(this.orderInfo)
+      this.axios.post("/api/closeOrderInfo",this.orderInfo).then(res=>{
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
+          sessionStorage.clear();
+          setTimeout(() => {
+            this.$router.push("/wordOrder");
+          }, 3000);
+        } else {
+          layer.msg(res.data.retMsg, { icon: 2 });
+        }
+      })
+    },
+    rejeck(){
+      this.$router.push('/kuantanState?handleState=13')
     }
   },
   components:{

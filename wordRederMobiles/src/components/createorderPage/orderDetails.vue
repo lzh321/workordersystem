@@ -1,11 +1,16 @@
 <template>
   <div class="orderDetails">
-    <customerInfo></customerInfo>
-    <sendOrders :orderStatus="orderStatus" v-if="orderStatus == 2"></sendOrders>
-    <acceptance :orderStatus="orderStatus" v-if="orderStatus == 3"></acceptance>
-    <dispose :orderStatus="orderStatus"  v-if="orderStatus == 4"></dispose>
-    <returnVisit :orderStatus="orderStatus"  v-if="orderStatus == 5"></returnVisit>
-    <kuantan :orderStatus="orderStatus"  v-if="orderStatus == 6"></kuantan>
+    <customerInfo :orderInfo="orderInfo"></customerInfo>
+    <!-- 待派单 -->
+    <sendOrders :orderStatus="orderStatus" v-if="orderStatus == 1"></sendOrders> 
+    <!-- 待受理 -->
+    <acceptance :orderStatus="orderStatus" v-if="orderStatus == 2"></acceptance>
+    <!-- 待处理 -->
+    <dispose :orderStatus="orderStatus" :orderInfo="orderInfo"  v-if="orderStatus == 3 || orderStatus == 4 || orderStatus == 5 || orderStatus == 9 || orderStatus == 10"></dispose>
+    <!-- 待回访 -->
+    <returnVisit :orderInfo="orderInfo" :orderStatus="orderStatus"  v-if="orderStatus == 7"></returnVisit>
+    <!-- 已关单 -->
+    <kuantan :orderInfo="orderInfo"  v-if="orderStatus == 8"></kuantan>
   </div>
 </template>
 
@@ -20,7 +25,9 @@ export default {
   name: 'orderDetails',
   data() {
     return {
-      orderStatus: ''
+      orderStatus: '',
+      orderInfoId: '',
+      orderInfo: {}
     }
   },
   components:{
@@ -31,8 +38,29 @@ export default {
     returnVisit,
     kuantan
   },
+  methods:{
+    getOrderInfo(){
+      var data = {
+        userId: this.$store.state.userId,
+        orderInfoId: this.orderInfoId
+      }
+      this.axios.post("/api/getOrderInfo",data).then(res=>{
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.orderInfo = res.data.body
+        }
+      })
+      
+    }
+  },
   created(){
     this.orderStatus = this.$route.query.orderStatus
+    this.orderInfoId = sessionStorage.getItem("orderInfoId")
+    this.getOrderInfo()
+    
+  },
+  beforeDestroy(){
+    sessionStorage.clear()
   }
 }
 </script>

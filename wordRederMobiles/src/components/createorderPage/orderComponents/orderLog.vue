@@ -3,27 +3,23 @@
     <div class="info">
       <h2>工单处理日志</h2>
     </div>
-    <div class="logContent">
-      <div class="logTime">
-        <span>10-28</span>
-        <span>14:12:45</span>
-      </div>
+    <div class="logContent" v-for="(item,index) in orderLog" :key="index">
       <ul>
         <li>
           <label for=""><span>操作人</span>：</label>
-          <span>大大</span>
+          <span>{{item.handleUserName}}</span>
         </li>
         <li>
           <label for=""><span>操作</span>：</label>
-          <span>驳回</span>
+          <span>{{item.handleStateName}}</span>
         </li>
         <li>
-          <label for=""><span>驳回说明</span>：</label>
-          <span>大落到登录登录冻刀DAUOA领导老爱大佬递嗲嗲抖抖傲刀豆哈哈哈哈哈</span>
+          <label for=""><span>操作时间</span>：</label>
+          <span>{{item.operationTime}}</span>
         </li>
         <li>
           <label for=""><span>备注</span>：</label>
-          <span>哈哈哈哈哈啊哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈哈哈哈啊哈哈啊哈哈哈哈</span>
+          <span>{{item.remarkDetail}}</span>
         </li>
       </ul>
     </div>
@@ -31,7 +27,33 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: 'orderLog',
+  data() {
+    return {
+      orderLog: [],
+      seleOrderInfoId: ''
+    }
+  },
+  methods:{
+    getorderLog(){
+      var data = {
+        userId: this.$store.state.userId,
+        seleOrderInfoId: this.seleOrderInfoId
+      }
+      this.axios.post("/api/getRemarListByOrderInfoId",data).then(res=>{
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.orderLog = res.data.body.remarList
+        }
+      })
+    }
+  },
+  created(){
+    this.seleOrderInfoId = sessionStorage.getItem('orderInfoId')
+    this.getorderLog()
+  }
+};
 </script>
 
 <style scoped>

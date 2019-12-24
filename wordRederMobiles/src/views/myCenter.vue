@@ -5,23 +5,23 @@
         <img src="../assets/Images/head-portrait.png" alt />
         <p class="userName">
           
-          <span>曾帅</span>
+          <span>{{userInfo.userName}}</span>
         </p>
         <p class="userSex">
-          <img src="../assets/Images/male.png" alt />
-          <span>男</span></p>
-        <p class="company">票联金融服务有限公司</p>
-        <p class="Department">开发测试中心</p>
-        <p class="job">工程师</p>
+          <img :src="userInfo.userSex == 0 ? require('../assets/Images/male.png') :  require('../assets/Images/female.png')" alt />
+          <span>{{userInfo.userSex == 0 ? '男': '女'}}</span></p>
+        <p class="company">{{userInfo.companyName}}</p>
+        <p class="Department">{{userInfo.deptName}}</p>
+        <p class="job">{{userInfo.jobName}}</p>
       </div>
       <div class="userInfo_Phone">
         <div>
           <img src="../assets/Images/number.png" alt="">
-          <span>138-0231-0316</span>
+          <span>{{userInfo.userPhone}}</span>
         </div>
         <div>
           <img src="../assets/Images/email.png" alt="">
-          <span>117232651215@qq.com</span>
+          <span>{{userInfo.userMail}}</span>
         </div>
       </div>
     </div>
@@ -30,7 +30,20 @@
 
 <script>
 export default {
-  name: "myCenter"
+  name: "myCenter",
+  data() {
+    return {
+      userInfo:{}
+    }
+  },
+  created(){
+    this.axios.post("/api/getUserInfo",{userId: this.$store.state.userId}).then(res=>{
+      console.log(res)
+      if(res.data.retCode == '000000') {
+        this.userInfo = res.data.body[0]
+      }
+    })
+  }
 };
 </script>
 
@@ -38,7 +51,7 @@ export default {
 .myCenter {
   flex: 1;
   background: #2f6cff;
-  padding: 100px 25px 80px;
+  padding: 80px 25px 80px;
 }
 .userInfo {
   background: #ffffff;

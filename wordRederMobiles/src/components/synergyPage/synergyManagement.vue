@@ -1,5 +1,5 @@
 <template>
-  <div class="synergyManagement">
+  <div class="wordOrder">
     <van-tabs
       v-model="active"
       swipeable
@@ -7,42 +7,45 @@
       title-active-color="#FFFFFF"
       title-inactive-color="#FFFFFF"
       background="#2F6CFF"
+      @click="chanage(active)"
     >
       <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
-        <ul class="list" v-if="active == 0">
+        <ul class="list">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-              <router-link tag="li" to="/synergyDispose?type=synergyDispose" v-for="items in 2" :key="items" :title="item.name">
-                <div class="orderId">
-                  <i>协同</i>
-                  <span>单号：PM500115060058</span>
+            <li
+              to="/bill"
+              v-for="(items,index) in list"
+              :key="index"
+              @click="goOrderPage(items.coordinateState,items.id)"
+            >
+              <div class="orderId">
+                <i>协同</i>
+                <span>单号：{{items.id}}</span>
+              </div>
+              <div class="orderStatus">
+                <div>
+                  <img :src="items.coordinateState == 0 ? orderStatusImg.bill : items.coordinateState == 1 ? orderStatusImg.sendOrders : items.coordinateState == 2 ? orderStatusImg.acceptance: items.coordinateState == 3 ? orderStatusImg.dispose : ''" alt />
+                  
+                  <span>{{items.coordinateState == 0 ? '待受理' : items.coordinateState == 1 ? '处理中' : items.coordinateState == 2 ? '已完成' : items.coordinateState == 3 ? '已驳回' : ''}}</span>
                 </div>
-                <div class="orderStatus">
-                  <div>
-                    <i></i>
-                    <span>待受理</span>
-                  </div>
-                  <div>
-                    <i></i>
-                    <span>2019-10-26 15:32:45</span>
-                  </div>
+                <div>
+                  <i></i>
+                  <span>{{items.createTime}}</span>
                 </div>
-                <div class="customerName orderContent">
-                  <label for>客户名称：</label>
-                  <span>民生银行</span>
-                </div>
-                <div class="DeliveryPoint orderContent">
-                  <label for>投&nbsp;放&nbsp;点：</label>
-                  <span>民生分行</span>
-                </div>
-                <div class="address orderContent">
-                  <label for>地&emsp;&emsp;&nbsp;址：</label>
-                  <span>民生银行</span>
-                </div>
-                <div class="urgency">
-                  <img :src="items == 1 ? urgency.Urgent : urgency.ordinary" alt="">
-                  <span>{{items == 1 ? '紧急' : '一般'}}</span>
-                </div>
-              </router-link>
+              </div>
+              <div class="customerName orderContent">
+                <label for>创建人：</label>
+                <span>{{items.createrUserName}}</span>
+              </div>
+              <div class="DeliveryPoint orderContent">
+                <label for>工单编号：</label>
+                <span>{{items.orderId}}</span>
+              </div>
+              <div class="urgency">
+                <img :src="items.orderUrgency == 0 ? urgency.Urgent : urgency.ordinary" alt />
+                <span>{{items.orderUrgency == 0 ? '紧急' : '一般'}}</span>
+              </div>
+            </li>
           </van-list>
         </ul>
       </van-tab>
@@ -52,49 +55,108 @@
 
 <script>
 export default {
-  name: 'synergyManagement',
+  name: "wordOrder",
   data() {
     return {
       active: 0,
       list: [],
+      currentPage: 1,
+      everyCount: 100,
+      totalCount: "",
       loading: false,
       finished: false,
-      tab: [{ name: "待办事项" }, { name: "历史记录" }],
+      tab: [{ name: "待办事项" }, { name: "协同列表" }],
       urgency: {
         Urgent: require("../../assets/Images/emergency.png"),
         ordinary: require("../../assets/Images/general.png")
+      },
+      orderStatusImg: {
+        bill: require("../../assets/Images/operation_receipt.png"),
+        sendOrders: require("../../assets/Images/operation_send-orders.png"),
+        kuantan: require("../../assets/Images/operation_kuantan.png"),
+        reject: require("../../assets/Images/operation_rejected.png"),
+        acceptance: require("../../assets/Images/operation_To-accept-the.png"),
+        dispose: require("../../assets/Images/dispose.png"),
+        appointment: require("../../assets/Images/operation_order.png"),
+        visit: require("../../assets/Images/pay-a-return-visit.png")
       }
     };
   },
   methods: {
+    chanage(active){
+      console.log(active)
+      if(active == 0){
+        this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
+      }
+      if(active == 1){
+        this.getOrderInfoList("/api/getCoordinateInfoList",this.currentPage, this.everyCount);
+      }
+    },
     onLoad() {
-      // 异步更新数据
+       // 异步更新数据
       setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
+        // for (let i = 0; i < 10; i++) {
+        //   this.list.push(this.list.length + 1);
+        // }
         // 加载状态结束
         this.loading = false;
 
         // 数据全部加载完成
-        if (this.list.length >= 40) {
+        if (this.list.length >= this.totalCount) {
           this.finished = true;
         }
       }, 500);
+    },
+    goOrderPage(coordinateState,id) {
+      console.log(coordinateState,id);
+      if (coordinateState == 0) {   //发单
+        this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+        sessionStorage.setItem("id",id)
+      }
+      if (coordinateState == 1) {   //派单
+         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+         sessionStorage.setItem("id",id)
+      }
+      if (coordinateState == 2) {   //待受理
+         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+         sessionStorage.setItem("id",id)
+      }
+      if (coordinateState == 3) {   //处理中
+         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+         sessionStorage.setItem("id",id)
+      }
+
+    },
+    getOrderInfoList(url,currentPage, everyCount) {
+      var data = {
+        userId: this.$store.state.userId,
+        currentPage: currentPage,
+        everyCount: everyCount
+      };
+      this.axios.post(url, data).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          this.totalCount = res.data.body.totalCount;
+          this.list = res.data.body.coordinateList;
+        }
+      });
     }
+  },
+  created() {
+    this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
   }
-}
+};
 </script>
 
 <style scoped>
-.synergyManagement {
+.wordOrder {
   background: #f3f3f3;
   flex: 1;
 }
 .van-tabs {
   height: 100%;
 }
-.van-tabs__content{
+.van-tabs__content {
   height: 100%;
 }
 .list {
@@ -114,7 +176,7 @@ export default {
   margin-bottom: 10px;
 }
 .orderId i {
-  background: url("../../assets/Images/synergy.png") no-repeat;
+  background: url("../../assets/Images/work-order.png") no-repeat;
   background-size: 100%;
   width: 38px;
   height: 21px;
@@ -136,11 +198,9 @@ export default {
   display: flex;
   align-items: center;
 }
-.orderStatus > div:nth-child(1) i {
+.orderStatus > div:nth-child(1) img {
   width: 16px;
   height: 16px;
-  background: url("../../assets/Images/operation_send-orders.png") no-repeat;
-  background-size: 100%;
   margin-right: 5px;
 }
 .orderStatus > div:nth-child(1) span {
@@ -174,15 +234,16 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.urgency{
+.urgency {
   width: 41px;
   height: 41px;
   position: absolute;
   top: 0;
   right: 0;
+  background-size: 100%;
   text-align: center;
 }
-.urgency img{
+.urgency img {
   width: 100%;
   height: 100%;
 }

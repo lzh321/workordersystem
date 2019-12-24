@@ -7,6 +7,16 @@ import synergy from '@/views/synergy'
 import createOrder from '@/views/createOrder'
 import wordOrder from '@/components/wordOrderPage/wordOrder'
 import customerInfo from '@/components/createorderPage/orderComponents/customerInfo'
+import selectBank from '@/components/createorderPage/subPage/selectBank'
+import network from '@/components/createorderPage/subPage/network'
+import orderSource from '@/components/createorderPage/subPage/orderSource'
+import orderType from '@/components/createorderPage/subPage/orderType'
+import modelType from '@/components/createorderPage/subPage/modelType'
+import recordModel from '@/components/createorderPage/subPage/recordModel'
+import userList from '@/components/createorderPage/subPage/userList'
+import goSynergy from '@/components/createorderPage/subPage/goSynergy'
+import recordType from '@/components/createorderPage/subPage/recordType'
+import kuantanState from '@/components/createorderPage/subPage/kuantanState'
 import bill from '@/components/createorderPage/orderComponents/bill'
 import orderDetails from '@/components/createorderPage/orderDetails'
 import synergyManagement from '@/components/synergyPage/synergyManagement'
@@ -25,7 +35,10 @@ export default new Router({
     {
       path: '/Login',
       name: 'Login',
-      component: Login
+      component: Login,
+      meta: {
+        title: '登录'
+      }
     },
     {
       path: '/Home',
@@ -33,6 +46,7 @@ export default new Router({
       component: Home,
       meta:{
         showTab: true,
+        title: '首页'
       },
       children:[
         {
@@ -41,6 +55,7 @@ export default new Router({
           component: wordOrder,
           meta:{
             showTab: true,
+            title: '工单'
           },
         },
         {
@@ -49,6 +64,7 @@ export default new Router({
           component: orderDetails,
           meta:{
             showTab: false,
+            title: '工单详情'
           },
         },
         {
@@ -76,12 +92,67 @@ export default new Router({
       component: myCenter,
       meta:{
         showTab: true,
+        title: '个人中心'
       },
     },
     {
       path:'/createOrder',
       name: 'createOrder',
-      component: createOrder
+      component: createOrder,
+      meta:{
+        title: '创建工单',
+      }
+    },
+    {
+      path: '/selectBank',
+      name: 'selectBank',
+      component: selectBank
+    },
+    {
+      path: '/network',
+      name: 'network',
+      component: network
+    },
+    {
+      path: '/orderSource',
+      name: 'orderSource',
+      component: orderSource
+    },
+    {
+      path: '/orderType',
+      name: 'orderType',
+      component: orderType
+    },
+    
+    {
+      path: '/modelType',
+      name: 'modelType',
+      component: modelType
+    },
+    {
+      path: '/userList',
+      name: 'userList',
+      component: userList
+    },
+    {
+      path: '/kuantanState',
+      name: 'kuantanState',
+      component: kuantanState
+    },
+    {
+      path: '/goSynergy',
+      name: 'goSynergy',
+      component: goSynergy
+    },
+    {
+      path: '/recordType',
+      name: 'recordType',
+      component: recordType
+    },
+    {
+      path: '/recordModel',
+      name: 'recordModel',
+      component: recordModel
     },
     {
       path:'/synergy',
@@ -89,6 +160,7 @@ export default new Router({
       component: synergy,
       meta:{
         showTab: true,
+        title: '协同'
       },
       children:[
         {

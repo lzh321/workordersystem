@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <NavBar :titleNaem="title"></NavBar>
+    <!-- <NavBar :titleNaem="title"></NavBar> -->
     <!-- <wordOrder></wordOrder> -->
     <router-view></router-view>
   </div>

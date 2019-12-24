@@ -98,7 +98,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.orderStateName"
+              :value="workOrderInfo.orderType == 0 ? '设备报障' : workOrderInfo.orderType == 1 ? '差错账' : workOrderInfo.orderType == 2 ? '钞空/存满' : workOrderInfo.orderType == 3 ? '吞卡' : workOrderInfo.orderType == 4 ? '通讯中断' : workOrderInfo.orderType == 5 ? '卡钞' : workOrderInfo.orderType == 6 ? 'PM' : workOrderInfo.orderType == 7 ? '软硬件升级' : workOrderInfo.orderType == 8 ? '咨询' : workOrderInfo.orderType == 9 ? '设备确认' : workOrderInfo.orderType == 10 ? '其他' : ''"
               class="layui-input"
               disabled
             />

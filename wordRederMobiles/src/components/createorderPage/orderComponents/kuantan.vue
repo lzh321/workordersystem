@@ -1,7 +1,7 @@
 <template>
   <div class="kuantan">
-    <orderInfo></orderInfo>
-    <VisitInfo></VisitInfo>
+    <orderInfo :orderInfo="orderInfo"></orderInfo>
+    <VisitInfo :orderInfo="orderInfo"></VisitInfo>
     <orderLog></orderLog>
   </div>
 </template>
@@ -12,6 +12,7 @@ import VisitInfo from './VisitInfo'
 import orderLog from './orderLog'
 export default {
   name: 'kuantan',
+  props:['orderInfo'],
   data() {
     return {
       

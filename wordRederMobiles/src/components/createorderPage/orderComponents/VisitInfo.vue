@@ -7,15 +7,15 @@
       </div>
       <div>
         <label for=""><span class="problem">问题是否已解决</span>：</label>
-        <span>已解决</span>
+        <span>{{orderInfo.isFinish == 0 ? '已解决' : orderInfo.isFinish == 1 ? '未解决' : ''}}</span>
       </div>
       <div>
         <label for=""><span>满意度情况</span>：</label>
-        <span>基本满意</span>
+        <span>{{orderInfo.satisfiedState == 0 ? '满意' : orderInfo.satisfiedState == 1 ? '基本满意' : orderInfo.satisfiedState == 2 ? '不满意' : ''}}</span>
       </div>
       <div>
         <label for=""><span>意见/建议</span>：</label>
-        <textarea name="" id="" cols="30" rows="10" disabled></textarea>
+        <textarea name="" id="" cols="30" :value="orderInfo.satisfiedState" rows="10" disabled></textarea>
       </div>
       
     </form>
@@ -25,6 +25,7 @@
 <script>
 export default {
   name: 'returnVisit',
+  props: ["orderInfo"],
   data() {
     return {
       
@@ -47,7 +48,7 @@ form{
 form div{
 
   padding: 10px 0;
-  border-bottom: 1px solid #F0F0F0; 
+  /* border-bottom: 1px solid #F0F0F0;  */
 }
 form div:nth-child(2){
 display: flex;
@@ -69,12 +70,12 @@ label {
   display: flex;
   align-items: center;
 }
-label::before{
+/* label::before{
   content: '*';
   color: red;
   display: inline-block;
   margin-right: 3px;
-}
+} */
 label .problem{
   width: 100px;
 }
@@ -93,6 +94,7 @@ textarea {
   width: 100%;
   margin-top: 10px;
   background: #FFFFFF;
+  color: #666666;
 }
 .info {
   justify-content: space-between;
@@ -114,13 +116,4 @@ h2{
   flex-direction: column;
 }
 
-.actionBtn ul li:nth-child(1) {
-  color: #F8A32C;
-  font-size:14px; 
-}
-
-.actionBtn ul li:nth-child(2) {
-  color: #999999;
-  font-size:14px; 
-}
 </style>
