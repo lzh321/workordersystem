@@ -25,6 +25,7 @@
             name="agreenmentId"
             :value="orderInfo.agreenmentId ? orderInfo.agreenmentId : ''"
             class="layui-input"
+            autocomplete="off"
             lay-verify="required"
           />
         </div>
@@ -71,6 +72,7 @@
             type="text"
             name="contactName"
             lay-verify="required"
+            autocomplete="off"
             :value="orderInfo.contactName ? orderInfo.contactName : ''"
             class="layui-input"
           />
@@ -83,6 +85,7 @@
           <input
             type="text"
             name="contactPhone"
+            autocomplete="off"
             lay-verify="required"
             :value="orderInfo.contactPhone ? orderInfo.contactPhone : ''"
             class="layui-input"
@@ -148,6 +151,7 @@
             :value="orderInfo.reportTime ? orderInfo.reportTime : ''"
             class="layui-input"
             id="reportedBarrierTime"
+            autocomplete="off"
             lay-verify="required"
           />
           <i></i>
@@ -191,6 +195,7 @@
             placeholder="请输入内容"
             class="layui-textarea"
             lay-verify="required"
+            autocomplete="off"
           ></textarea>
         </div>
       </div>
@@ -205,6 +210,7 @@
             <input
               type="hidden"
               name="orderImg"
+              autocomplete="off"
               :value="orderInfo.orderPhoto ? orderInfo.orderPhoto : ''"
             />
           </blockquote>
@@ -428,6 +434,11 @@ export default {
         done: function(res) {
           //上传完毕
           console.log(res);
+          if(res.retCode == 0){
+            layer.msg(res.retMsg,{icon: 1})
+          }else{
+            layer.msg(res.retMsg,{icon: 2})
+          }
           $("input[name='recordPhoto']").val(res.body.url);
         }
       });

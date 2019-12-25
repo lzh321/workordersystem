@@ -9,7 +9,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" name="customerName" placeholder="请输入客户名称">
+          <input type="text" class="layui-input" lay-verify="required" autocomplete="off" name="customerName" placeholder="请输入客户名称">
         </div>
       </div>
 

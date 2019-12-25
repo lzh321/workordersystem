@@ -8,7 +8,7 @@
         <div class="search_input" v-if="workOrderManagement">
           <p>
             <span for>工单编号</span>
-            <input type="text" name="seleOrderInfoId" value placeholder />
+            <input type="text" name="seleOrderInfoId" autocomplete="off" value placeholder />
           </p>
           <p>
             <span for>工单状态</span>
@@ -29,14 +29,14 @@
           </p>
           <p>
             <span for>创建时间</span>
-            <input class="Times" type="text" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
-            <input class="Times" type="text" name="seleEngTime" id="endTime" placeholder="结束时间" /> 
+            <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
+            <input class="Times" type="text" autocomplete="off" name="seleEngTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="synergyManagement">
           <p>
             <span for>协同编号</span>
-            <input type="text" name="seleID" value placeholder="协同编号" />
+            <input type="text" name="seleID" autocomplete="off" value placeholder="协同编号" />
           </p>
           <p>
             <span for>协同状态</span>
@@ -50,14 +50,14 @@
           </p>
           <p>
             <span for>创建时间</span>
-            <input class="Times" type="text" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
-            <input class="Times" type="text" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
+            <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
+            <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
           <p>
             <span for>输入查询</span>
-            <input type="text" name="val" value placeholder="姓名/账号/手机"/>
+            <input type="text" name="val" autocomplete="off" value placeholder="姓名/账号/手机"/>
           </p>
           <p>
             <span for>员工职务</span>
@@ -77,7 +77,7 @@
         <div class="search_input" v-if="businessEnterprise">
           <p>
             <span for>输入查询</span>
-            <input type="text" name="seleCompanyName" value placeholder="请输入公司名称" />
+            <input type="text" name="seleCompanyName" autocomplete="off" value placeholder="请输入公司名称" />
           </p>
           <p>
             <span for>员工职务</span>
@@ -108,7 +108,7 @@
           </p>
           <p>
             <span for>投放点</span>
-            <input type="text" name="seleNetworkName" class="layui-input" placeholder="请输入投放点名称"/>
+            <input type="text" name="seleNetworkName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
         <div class="search_input" v-if="CustomerNameList">
@@ -127,15 +127,15 @@
         <div class="search_input" v-if="messageModule">
           <p v-if="messagePushList">
             <span for>接收手机</span>
-            <input type="text" placeholder="请输入接收手机"/>
+            <input type="text" autocomplete="off" placeholder="请输入接收手机"/>
           </p>
           <p>
             <span for>模板编号</span>
-            <input type="text" placeholder="请输入模板编号"/>
+            <input type="text" autocomplete="off" placeholder="请输入模板编号"/>
           </p>
           <p>
             <span for>模板名称</span>
-            <input type="text" placeholder="请输入模板名称"/>
+            <input type="text" autocomplete="off" placeholder="请输入模板名称"/>
           </p>
         </div>
         <div class="search_input" v-if="equipmentList">
@@ -152,7 +152,7 @@
           </p>
           <p>
             <span>存货名称</span>
-            <input type="text" lay-verify name="seleModelName" placeholder="请输入存货名称"/>
+            <input type="text" lay-verify autocomplete="off" name="seleModelName" placeholder="请输入存货名称"/>
           </p>
           <p>
             <span>设备型号</span>
@@ -180,36 +180,36 @@
           </p>
           <p>
             <span for>存货名称</span>
-            <input type="text" name="seleModelName" placeholder="请输入存货名称"/>
+            <input type="text" name="seleModelName" autocomplete="off" placeholder="请输入存货名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="menuManagement">
           <p>
             <span for>菜单编号</span>
-            <input type="text" name="seleMenuNo" placeholder="请输入菜单编号"/>
+            <input type="text" name="seleMenuNo" autocomplete="off" placeholder="请输入菜单编号"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" placeholder="请输入菜单名称"/>
+            <input type="text" name="seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="roleManagement">
           <p>
             <span for>角色名称</span>
-            <input type="text" name="seleRoleName" placeholder="请输入角色名称"/>
+            <input type="text" name="seleRoleName" autocomplete="off" placeholder="请输入角色名称"/>
           </p>
         </div>
 
         <div class="search_input" v-if="permissionsButton">
           <p>
             <span for>按钮编号</span>
-            <input type="text" name="seleMenuNo" placeholder="请输入按钮编号"/>
+            <input type="text" name="seleMenuNo" autocomplete="off" placeholder="请输入按钮编号"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" placeholder="请输入菜单名称"/>
+            <input type="text" name="seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
           </p>
         </div>
 

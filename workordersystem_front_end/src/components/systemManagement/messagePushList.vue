@@ -43,28 +43,58 @@ export default {
     dataScreening
   },
   mounted() {
-    
+    var _this = this
     layui.use("table", function() {
       var table = layui.table;
       //第一个实例
       table.render({
         elem: "#demo",
         height: 485,
-        url: "../../../static/table.json", //数据接口
+        url: "/api/getSmsInfoList", //数据接口
+        method: "post",
+        where:{
+          userId: _this.$store.state.userId
+        },
+        id: "serachData",
+        parseData: function(res) {
+          //res 即为原始返回的数据
+          return {
+            code: res.retCode, //解析接口状态
+            msg: res.retMsg, //解析提示文本
+            count: res.body.totalCount, //解析数据长度
+            data: res.body.smsInfoList //解析数据列表
+          };
+        },
+        request: {
+          pageName: "currentPage", //页码的参数名称，默认：page
+          // curr: 'indexCount', //页码的参数名称，默认：page
+          limitName: "everyCount" //每页数据量的参数名，默认：limit
+        },
         page: true, //开启分页
         limit: 10,
         cols: [
           [
             //表头
-            { field: "workOrderId", title: "序号", sort: false,align: "center"},
-            { field: "workOrderStatus", title: "接收手机",  sort: false,align: "center"},
-            { field: "bankName", title: "接收对象",  sort: false,align: "center" },
-            { field: "subBranchName", title: "模板编号",  align: "center" },
-            { field: "creator", title: "模板名称",  align: "center" },
-            { field: "creator", title: "推送渠道",  align: "center" },
-            { field: "creator", title: "推送内容",  align: "center" },
-            { field: "PriorityDescription", title: "状态", align: "center"},
-            { field: "operation", title: "推送时间", align: "center" }
+            { field: "id", title: "ID", sort: false, align: "center"},
+            { field: "mobile", title: "接收手机",  sort: false,align: "center"},
+            { field: "responserName", title: "接收对象",  sort: false,align: "center" },
+            { field: "modelId", title: "模板编号",  align: "center" },
+            { field: "modelName", title: "模板名称",  align: "center" },
+            { field: "newsType", title: "推送渠道",  align: "center" ,templet:function(d){
+              if(d.newsType == 0){
+                return '短信'
+              }
+            }},
+            { field: "content", title: "推送内容",  align: "center" },
+            { field: "status", title: "状态", align: "center",templet:function(d){
+              if(d.status == 0){
+                return '失败'
+              }
+              if(d.status == 1){
+                return '成功'
+              }
+            }},
+            { field: "createTime", title: "推送时间", align: "center" }
           ]
         ]
       });

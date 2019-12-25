@@ -423,7 +423,7 @@ export default {
           //协同
           // sessionStorage.setItem('orderState',orderState)
           // _this.$router.push('/addCustomer')
-          _this.send(orderInfoId);
+          // _this.send(orderInfoId);
           layer.open({
             type: 1,
             title: "发起协同作业",
@@ -607,7 +607,7 @@ export default {
               form.render();
             },
             yes: function(index, layero) {
-              var content = _this$("#reassignment").val();
+              var content = _this.$("#reassignment").val();
               var data = {
                 userId: _this.$store.state.userId,
                 orderInfoId: orderInfoId,

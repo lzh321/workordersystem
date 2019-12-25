@@ -1,18 +1,18 @@
 <template>
-<div class="State">
-  <form action="" id="formData">
-    <div>
-      <label for>
-        <span>{{title}}</span>：
-      </label>
-      <textarea name="content" id cols="30" rows="10"></textarea>
-    </div>
-    <div class="btn">
-      <a type="button" @click="confirm" class="confirm layui-btn">确定</a>
-    </div>
-  </form>
-</div>
-  
+  <div class="State">
+    <form action id="formData">
+      <div>
+        <label for>
+          <i v-if="handleState == 8 ? false : true">*</i>
+          <span>{{title}}</span>：
+        </label>
+        <textarea name="content" id cols="30" rows="10"></textarea>
+      </div>
+      <div class="btn">
+        <a type="button" @click="confirm" class="confirm layui-btn">确定</a>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -21,70 +21,98 @@ export default {
   data() {
     return {
       title: "",
-      handleState: '',
+      handleState: "",
       orderInfoId: sessionStorage.getItem("orderInfoId"),
       orderInfo: {}
     };
   },
   methods: {
-    getOrderInfo(){
+    getOrderInfo() {
       var data = {
         userId: this.$store.state.userId,
         orderInfoId: this.orderInfoId
-      }
-      this.axios.post("/api/getOrderInfo",data).then(res=>{
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.orderInfo = res.data.body
-        }
-      })
-      
-    },
-    resData(handleState) {
-      var formData = this.$("#formData").serializeObject();
-      formData.userId = this.$store.state.userId;
-      formData.orderInfoId = this.orderInfoId;
-      formData.handleState = parseInt(handleState);
-      console.log(this.orderInfo)
-      if(this.orderInfo.appoinmentTime) {
-        formData.isAppoint = 1
-      }else{
-        formData.isAppoint = 0
-      }
-      console.log(formData);
-      this.axios.post("/api/handleOrderInfo", formData).then(res => {
+      };
+      this.axios.post("/api/getOrderInfo", data).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
-          layer.msg(res.data.retMsg, { icon: 1 });
-          sessionStorage.clear();
-          setTimeout(() => {
-            this.$router.push("/wordOrder");
-          }, 3000);
-        } else {
-          layer.msg(res.data.retMsg, { icon: 2 });
+          this.orderInfo = res.data.body;
         }
       });
     },
-    confirm(){
-      this.resData(this.handleState)
+    resData(handleState) {
+      if (this.handleState == 3) {
+        var formData = this.$("#formData").serializeObject();
+        formData.userId = this.$store.state.userId;
+        formData.id = this.$route.query.id;
+        formData.handleState = handleState;
+        formData.rejectContent = formData.content;
+        console.log(formData);
+        this.axios.post("/api/handleCoordinateInfo", formData).then(res => {
+          console.log(res);
+          if (res.data.retCode == "000000") {
+            layer.msg(res.data.retMsg, { icon: 1 });
+            sessionStorage.clear();
+            setTimeout(() => {
+              this.$router.push("/synergyManagement");
+            }, 3000);
+          } else {
+            layer.msg(res.data.retMsg, { icon: 2 });
+          }
+        });
+      } else {
+        var formData = this.$("#formData").serializeObject();
+        formData.userId = this.$store.state.userId;
+        formData.orderInfoId = this.orderInfoId;
+        formData.handleState = parseInt(handleState);
+        console.log(this.orderInfo);
+        if (this.orderInfo.appoinmentTime) {
+          formData.isAppoint = 1;
+        } else {
+          formData.isAppoint = 0;
+        }
+        console.log(formData);
+        this.axios.post("/api/handleOrderInfo", formData).then(res => {
+          console.log(res);
+          if (res.data.retCode == "000000") {
+            layer.msg(res.data.retMsg, { icon: 1 });
+            sessionStorage.clear();
+            setTimeout(() => {
+              this.$router.push("/wordOrder");
+            }, 3000);
+          } else {
+            layer.msg(res.data.retMsg, { icon: 2 });
+          }
+        });
+      }
+    },
+    confirm() {
+      this.resData(this.handleState);
     }
   },
   created() {
     if (this.handleState == 8) {
       this.title = "关单说明";
     }
-    if(this.handleState == 9 || this.handleState == 13){
-      this.title = "驳回说明"
+    if (
+      this.handleState == 9 ||
+      this.handleState == 13 ||
+      this.handleState == 3
+    ) {
+      this.title = "驳回说明";
     }
-    this.getOrderInfo()
+    this.getOrderInfo();
   },
   activated() {
-    this.handleState = this.$route.query.handleState
+    this.handleState = this.$route.query.handleState;
     if (this.handleState == 8) {
       this.title = "关单说明";
     }
-    if(this.handleState == 9 || this.handleState == 13){
-      this.title = "驳回说明"
+    if (
+      this.handleState == 9 ||
+      this.handleState == 13 ||
+      this.handleState == 3
+    ) {
+      this.title = "驳回说明";
     }
   }
 };
@@ -99,8 +127,7 @@ label {
   display: flex;
   align-items: center;
 }
-label::before {
-  content: "*";
+label i {
   color: red;
   display: inline-block;
   margin-right: 3px;
@@ -117,17 +144,17 @@ textarea {
   margin-top: 10px;
   padding: 5px;
 }
-.btn{
+.btn {
   text-align: center;
   margin-top: 20px;
 }
-.confirm{
+.confirm {
   /* border: none; */
   width: 100px;
   /* height: 40px; */
   border-radius: 50px;
   text-align: center;
-  background: #2F6CFF;
+  background: #2f6cff;
   color: #f3f3f3;
 }
 </style>

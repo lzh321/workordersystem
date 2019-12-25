@@ -64,14 +64,12 @@ export default {
   },
   mounted() {
     //Demo
-    // setTimeout(() => {
-    //   this.getInstitution();
-    // },100);
+    
     var _this = this;
     layui.use("form", function() {
       var form = layui.form;
-      this.getInstitution();
       form.render();
+      
       //监听提交
       form.on("submit(addInstitution)", function(data) {
         // layer.msg(JSON.stringify(data.field));
@@ -145,9 +143,8 @@ export default {
     },
     getInstitution() {
       // 公司
-      var companyId = this.companyId;
+      var companyId = this.Institution.companyId
       var companyIdLen = this.$("#companyId option").length;
-      console.log(companyIdLen);
       for (var i = 0; i < companyIdLen; i++) {
         var companyIdVal = this.$("#companyId option")
           .eq(i)
@@ -159,7 +156,7 @@ export default {
         }
       }
       // 部门
-      var deptId = this.deptId;
+      var deptId = this.Institution.deptId;
       var deptIdLen = this.$("#deptId option").length;
       for (var i = 0; i < deptIdLen; i++) {
         var deptIdVal = this.$("#deptId option")
@@ -172,8 +169,9 @@ export default {
         }
       }
       // 职务
-      var jobId = this.jobId;
+      var jobId = this.Institution.jobId;
       var jobIdLen = this.$("#jobId option").length;
+
       for (var i = 0; i < jobIdLen; i++) {
         var jobIdVal = this.$("#jobId option")
           .eq(i)
@@ -193,6 +191,7 @@ export default {
     this.send();
   },
   updated() {
+    this.getInstitution();
     layui.use("form", function() {
       layui.form.render();
     });

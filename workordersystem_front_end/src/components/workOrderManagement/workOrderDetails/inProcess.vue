@@ -5,12 +5,10 @@
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
       <div class="layui-input-block">
-        <select name="recordType">
+        <select name="recordType" lay-filter="recordType">
           <option value>请选择故障类型</option>
-          <option value="0">硬件</option>
-          <option value="1">软件</option>
-          <option value="2">辅助</option>
-          <option value="3">其他</option>
+          <option v-for="(item,index) in record" :key="index" :value="item.recordType" :selected="workOrderInfo.recordType == item.recordType ? true : false">{{item.recordName}}</option>
+
         </select>
       </div>
     </div>
@@ -19,8 +17,7 @@
       <div class="layui-input-block">
         <select name="recordModel">
           <option value>请选择故障模块</option>
-          <option value="0">显示屏</option>
-          <option value="1">密码键盘</option>
+          <option v-for="(items,index) in recordList" :key="index" :value="items.recordModel" :selected="workOrderInfo.recordModel == items.recordModel ? true : false">{{items.recordModelName}}</option>
         </select>
       </div>
     </div>
@@ -28,13 +25,25 @@
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">问题记录</label>
       <div class="layui-input-block">
-        <textarea name="recordContent" placeholder="请输入内容" class="layui-textarea"></textarea>
+        <textarea
+          name="recordContent"
+          placeholder="请输入内容"
+          :value="workOrderInfo.recordContent"
+          autocomplete="off"
+          class="layui-textarea"
+        ></textarea>
       </div>
     </div>
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">解决办法</label>
       <div class="layui-input-block">
-        <textarea name="recordSettle" placeholder="请输入内容" class="layui-textarea"></textarea>
+        <textarea
+          name="recordSettle"
+          placeholder="请输入内容"
+          :value="workOrderInfo.recordSettle"
+          autocomplete="off"
+          class="layui-textarea"
+        ></textarea>
       </div>
     </div>
 
@@ -49,25 +58,316 @@
         </blockquote>
       </div>
     </div>
-
-    
   </div>
 </template>
 <script>
 export default {
   name: "inProcess",
-  props:["orderState"],
+  props: ["orderState", "workOrderInfo"],
   data() {
     return {
-      orderInfoId: sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
+      orderInfoId: sessionStorage.getItem("orderInfoId")
+        ? sessionStorage.getItem("orderInfoId")
+        : "",
+      recordList: [],
+      record: [
+        {
+          recordType: 0,
+          recordName: "硬件",
+          recordList: [
+            {
+              recordModel: 0,
+              recordModelName: "891支票模块"
+            },
+            {
+              recordModel: 1,
+              recordModelName: "891镜头模块"
+            },
+            {
+              recordModel: 2,
+              recordModelName: "891票箱"
+            },
+            {
+              recordModel: 3,
+              recordModelName: "支票售卖模块"
+            },
+            {
+              recordModel: 4,
+              recordModelName: "委托书售卖模块"
+            },
+            {
+              recordModel: 5,
+              recordModelName: "密码键盘"
+            },
+            {
+              recordModel: 6,
+              recordModelName: "显示屏"
+            },
+            {
+              recordModel: 7,
+              recordModelName: "存拆打印机"
+            },
+            {
+              recordModel: 8,
+              recordModelName: "热敏打印机"
+            },
+            {
+              recordModel: 9,
+              recordModelName: "凭条打印机"
+            },
+            {
+              recordModel: 10,
+              recordModelName: "激光打印机"
+            },
+            {
+              recordModel: 11,
+              recordModelName: "流水打印机"
+            },
+            {
+              recordModel: 12,
+              recordModelName: "UPS模块"
+            },
+            {
+              recordModel: 13,
+              recordModelName: "指纹仪"
+            },
+            {
+              recordModel: 14,
+              recordModelName: "风扇"
+            },
+            {
+              recordModel: 15,
+              recordModelName: "显示器切换模块"
+            },
+            {
+              recordModel: 16,
+              recordModelName: "小配件/线材"
+            },
+            {
+              recordModel: 17,
+              recordModelName: "电话手柄"
+            },
+            {
+              recordModel: 18,
+              recordModelName: "二代身份证"
+            },
+            {
+              recordModel: 19,
+              recordModelName: "电话手柄"
+            },
+            {
+              recordModel: 20,
+              recordModelName: "非接触卡片读卡器"
+            },
+            {
+              recordModel: 21,
+              recordModelName: "交流保险管"
+            },
+            {
+              recordModel: 22,
+              recordModelName: "滤波器"
+            },
+            {
+              recordModel: 23,
+              recordModelName: "回声消除设备"
+            },
+            {
+              recordModel: 24,
+              recordModelName: "IC卡读卡器"
+            },
+            {
+              recordModel: 25,
+              recordModelName: "读卡器"
+            },
+            {
+              recordModel: 26,
+              recordModelName: "监控主机"
+            },
+            {
+              recordModel: 27,
+              recordModelName: "监控摄像头"
+            },
+            {
+              recordModel: 28,
+              recordModelName: "A4扫描仪"
+            },
+            {
+              recordModel: 29,
+              recordModelName: "开关电源"
+            },
+            {
+              recordModel: 30,
+              recordModelName: "M5030/票箱"
+            },
+            {
+              recordModel: 31,
+              recordModelName: "PC主板"
+            },
+            {
+              recordModel: 32,
+              recordModelName: "PC电源"
+            },
+            {
+              recordModel: 33,
+              recordModelName: "PC/CPU"
+            },
+            {
+              recordModel: 34,
+              recordModelName: "PC硬盘"
+            },
+            {
+              recordModel: 35,
+              recordModelName: "PC内存"
+            },
+            {
+              recordModel: 36,
+              recordModelName: "PC电子/BIOS"
+            },
+            {
+              recordModel: 37,
+              recordModelName: "门锁"
+            },
+            {
+              recordModel: 38,
+              recordModelName: "转盘锁"
+            },
+            {
+              recordModel: 39,
+              recordModelName: "电子锁"
+            },
+            {
+              recordModel: 40,
+              recordModelName: "盖章模块"
+            },
+            {
+              recordModel: 41,
+              recordModelName: "人体感应模块"
+            },
+            {
+              recordModel: 42,
+              recordModelName: "电子签名笔模块"
+            },
+            {
+              recordModel: 43,
+              recordModelName: "发UKEY模块"
+            },
+            {
+              recordModel: 44,
+              recordModelName: "二维码模块"
+            },
+            {
+              recordModel: 45,
+              recordModelName: "电源模块"
+            },
+            {
+              recordModel: 46,
+              recordModelName: "电源开关"
+            },
+            {
+              recordModel: 47,
+              recordModelName: "指示灯及控制板"
+            },
+         ]
+        },
+        {
+          recordType: 1,
+          recordName: "软件",
+          recordList: [
+            {
+              recordModel: 0,
+              recordModelName: "系统安装"
+            },
+            {
+              recordModel: 1,
+              recordModelName: "测试系统"
+            },
+            {
+              recordModel: 2,
+              recordModelName: "测试应用"
+            },
+            {
+              recordModel: 3,
+              recordModelName: "应用故障"
+            },
+            {
+              recordModel: 4,
+              recordModelName: "收集数据"
+            },
+            {
+              recordModel: 5,
+              recordModelName: "升级程序补丁"
+            },
+          ]
+        },
+        {
+          recordType: 2,
+          recordName: "辅助",
+          recordList: [
+            {
+              recordModel: 0,
+              recordModelName: "补充打印机纸"
+            },
+            {
+              recordModel: 1,
+              recordModelName: "补充打印机色带"
+            },
+            {
+              recordModel: 2,
+              recordModelName: "蹲点/观察"
+            },
+            {
+              recordModel: 3,
+              recordModelName: "电话解释"
+            },
+          ]
+        },
+        {
+          recordType: 3,
+          recordName: "其他",
+          recordList: [
+            {
+              recordModel: 0,
+              recordModelName: "安装机具"
+            },
+            {
+              recordModel: 1,
+              recordModelName: "移机"
+            },
+            {
+              recordModel: 2,
+              recordModelName: "工厂/检测设备"
+            },
+            {
+              recordModel: 3,
+              recordModelName: "网络"
+            },
+            {
+              recordModel: 4,
+              recordModelName: "银行要求"
+            },
+          ]
+        }
+      ]
     };
   },
   mounted() {
-    var _this = this
-    layui.use(["element","upload","jquery"], function() {
+    this.getImg();
+    var _this = this;
+    layui.use(["form","element", "upload", "jquery"], function() {
+      var form = layui.form
       var element = layui.element;
-      var $ = layui.jquery
+      var $ = layui.jquery;
       var upload = layui.upload;
+      form.on('select(recordType)',function(data){
+        console.log(data)
+        for(var i = 0; i < _this.record.length; i++){
+          if(data.value == _this.record[i].recordType){
+            console.log(_this.record[i].recordList)
+            _this.recordList = _this.record[i].recordList
+            form.render();
+          }
+        }
+      })
       element.render();
       //上传图片
       upload.render({
@@ -80,14 +380,16 @@ export default {
         auto: true, // 是否自动上传
         field: "file", // 设定文件域字段
         choose: function(obj) {
-
           obj.preview(function(index, file, result) {
-            console.log(file)
-            $("#imgBox").html('<img class="layui-upload-img" style="width:100px;height:100px" src="'+ result +'" alt />');
+            console.log(file);
+            $("#imgBox").html(
+              '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
+                result +
+                '" alt />'
+            );
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
-          this.data = {orderInfoId: _this.orderInfoId, soreId: 1}
-
+          this.data = { orderInfoId: _this.orderInfoId, soreId: 1 };
         },
         before: function(obj) {
           //预读本地文件示例，不支持ie8
@@ -99,10 +401,38 @@ export default {
         // },
         done: function(res) {
           //上传完毕
-          console.log(res);       
+          console.log(res);
+          if (res.retCode == 0) {
+            layer.msg(res.retMsg, { icon: 1 });
+          } else {
+            layer.msg(res.retMsg, { icon: 2 });
+          }
           $("input[name='recordPhoto']").val(res.body.url);
         }
       });
+    });
+  },
+  methods: {
+    getImg() {
+      if (this.workOrderInfo.recordPhoto) {
+        this.$("#imgBox").html(
+          '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+            this.workOrderInfo.recordPhoto.split(",")[0] +
+            '" alt />'
+        );
+      }
+    }
+  },
+  created() {
+    // if(this.workOrderInfo.recordPhoto){
+    //   this.$("#imgBox").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' + this.workOrderInfo.recordPhoto.split(",")[0] +'" alt />')
+    // }
+  },
+  updated() {
+    this.getImg();
+    layui.use(["form", "upload"], function() {
+      layui.form.render();
+      layui.upload.render();
     });
   }
 };

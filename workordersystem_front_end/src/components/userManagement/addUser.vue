@@ -115,7 +115,7 @@
         </div>
       </div>
 
-      <div class="layui-form-item">
+      <div class="Plane layui-form-item">
         <label class="layui-form-label">座机/分机</label>
         <div class="layui-input-block" style="display:flex">
           <!-- <input
@@ -207,6 +207,7 @@
             lay-verify=""
             name="graduateTime"
             id="graduateTime"
+            autocomplete="off"
             placeholder="毕业时间"
           />
         </div>
@@ -429,6 +430,9 @@ export default {
   color: red;
   line-height: 30px;
   height: 20px;
+}
+.basicInfo .Plane label::before{
+  content: ''
 }
 .layui-form-label {
   display: flex;

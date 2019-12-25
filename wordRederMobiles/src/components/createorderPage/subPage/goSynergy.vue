@@ -5,8 +5,8 @@
         <label for>
           <span>紧急程度</span>：
         </label>
-        <input type="checkbox" name="orderUrgency" value="1" />紧急
-        <input type="checkbox" name="orderUrgency" value="0" />一般
+        <input type="radio" name="orderUrgency" value="1" />紧急
+        <input type="radio" name="orderUrgency" value="0" />一般
       </div>
       <router-link to="/userList" tag="div">
         <label for>
@@ -130,7 +130,7 @@ input[type="text"] {
   height: 35px;
   padding-left: 5px;
 }
-input[type="checkbox"] {
+input[type="radio"] {
   margin: 0 5px;
 }
 textarea {

@@ -24,7 +24,7 @@
         <div class="layui-input-block">
           <select name="menuPno" lay-verify="required">
             <option value>请选择菜单类型</option>
-            <option v-for="(item) in menuList" :key="item.menuId" :value="item.menuNo">{{item.menuName}}</option>
+            <option v-for="(item) in menuList" :key="item.menuId" autocomplete="off" :value="item.menuNo">{{item.menuName}}</option>
           </select>
         </div>
       </div>
@@ -74,7 +74,8 @@ export default {
   data() {
     return {
       menuPno: '',
-      menuList: []
+      menuList: [],
+      menuInfo: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : ''
     };
   },
   methods:{
@@ -87,6 +88,48 @@ export default {
         console.log(res)
         this.menuList = res.data.body.menuList
       })
+    },
+    getInstitution() {
+      // 公司
+      var companyId = this.menuInfo.companyId
+      var companyIdLen = this.$("#companyId option").length;
+      for (var i = 0; i < companyIdLen; i++) {
+        var companyIdVal = this.$("#companyId option")
+          .eq(i)
+          .val();
+        if (companyId == companyIdVal) {
+          this.$("#companyId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
+      // 部门
+      var deptId = this.menuInfo.deptId;
+      var deptIdLen = this.$("#deptId option").length;
+      for (var i = 0; i < deptIdLen; i++) {
+        var deptIdVal = this.$("#deptId option")
+          .eq(i)
+          .val();
+        if (deptId == deptIdVal) {
+          this.$("#deptId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
+      // 职务
+      var jobId = this.menuInfo.jobId;
+      var jobIdLen = this.$("#jobId option").length;
+
+      for (var i = 0; i < jobIdLen; i++) {
+        var jobIdVal = this.$("#jobId option")
+          .eq(i)
+          .val();
+        if (jobId == jobIdVal) {
+          this.$("#jobId option")
+            .eq(i)
+            .attr("selected", "selected");
+        }
+      }
     },
     cancel(){
       this.$router.push('/menuManagement?type=menuManagement')
@@ -144,6 +187,7 @@ export default {
   beforeDestroy(){
     sessionStorage.removeItem('menuId')
     sessionStorage.removeItem('menuPno')
+    sessionStorage.removeItem('data')
   },
   updated(){
     layui.use("form",function(){

@@ -99,9 +99,8 @@ export default {
           console.log(data);
           var modelId = data.modelId;
           if (obj.event === "deletion") {
-            layer.confirm("你确定要删除这条记录？", function(index) {
-              obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-              layer.close(index);
+            layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
+              
               //向服务端发送删除指令
               var delParam = {
                 userId: _this.$store.state.userId,
@@ -111,6 +110,10 @@ export default {
                 console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                }else{
+                  layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
             });

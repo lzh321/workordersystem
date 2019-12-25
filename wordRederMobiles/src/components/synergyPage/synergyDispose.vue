@@ -50,10 +50,6 @@
         <textarea name="handleContent" id cols="30" rows="5" placeholder="请输入/非必填项"></textarea>
       </div>
 
-      <div v-if="synergyList.coordinateState == 0" class="result">
-        <label for>驳&nbsp;&nbsp;回&nbsp;&nbsp;内&nbsp;&nbsp;容：</label>
-        <textarea name="rejectContent" id cols="30" rows="5" placeholder="请输入/非必填项"></textarea>
-      </div>
       <div v-if="synergyList.coordinateState == 3">
         <label for>驳&nbsp;&nbsp;回&nbsp;&nbsp;内&nbsp;&nbsp;容：</label>
         <span>{{synergyList.rejectContent}}</span>
@@ -109,7 +105,7 @@ export default {
       this.resData(1);
     },
     reject() {
-      this.resData(3);
+      this.$router.push('/kuantanState?handleState=3&id='+this.synergyList.id)
     },
     finish() {
       this.resData(2);

@@ -7,7 +7,7 @@
       </div>
       <router-link to="/selectBank" tag="div">
         <label for>
-          <span>银行名称</span>：
+          <span>客户名称</span>：
         </label>
         <input name="customerName" :value="bankList.customerId" type="hidden" />
         <input type="text" :value="bankList.customerName" />
@@ -15,7 +15,7 @@
       </router-link>
       <router-link to="/network" tag="div">
         <label for>
-          <span>网点名称</span>：
+          <span>设备投放点</span>：
         </label>
         <input name="networkId" :value="networkList.id" type="hidden" />
         <input type="text" :value="networkList.networName" />
@@ -23,7 +23,7 @@
       </router-link>
       <div>
         <label for>
-          <span>网点地址</span>：
+          <span>投放点地址</span>：
         </label>
         <input type="text" :value="networkList.networAddress" />
       </div>
@@ -68,8 +68,8 @@
         <label for>
           <span>紧急程度</span>：
         </label>
-        <input type="checkbox" name="orderUrgency" value="1" />紧急
-        <input type="checkbox" name="orderUrgency" value="0" />一般
+        <input type="radio" name="orderUrgency" value="1" />紧急
+        <input type="radio" name="orderUrgency" value="0" />一般
       </div>
       <div>
         <label for>
@@ -333,7 +333,7 @@ input[type="text"] {
   height: 35px;
   padding-left: 5px;
 }
-input[type="checkbox"] {
+input[type="radio"] {
   margin: 0 5px;
 }
 

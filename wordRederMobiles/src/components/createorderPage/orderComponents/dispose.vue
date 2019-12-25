@@ -217,14 +217,14 @@ export default {
       }
       if (h < 10) h = "0" + h;
       if (sec < 10) sec = "0" + sec;
-      var timer = date.getFullYear() + "-" + m + "-" + d + " " + h + ":" + sec;
+      var timer = date.getFullYear() + "-" + m + "-" + d + " " + h + ":" + sec +":" +"00";
       console.log(timer);
       // this.$refs[this.datePicker].innerHTML = timer;
       this.show = false;
       var data = {
         userId: this.$store.state.userId,
         orderInfoId: this.orderInfoId,
-        handleState: 4,
+        handleState: 3,
         appoinmentTime: timer
       };
       console.log(data);

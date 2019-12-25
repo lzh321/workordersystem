@@ -1,5 +1,5 @@
 <template>
-<!-- 公司、部门、职务 配置 -->
+  <!-- 公司、部门、职务 配置 -->
   <div class="deploy">
     <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
       <ul class="layui-tab-title">
@@ -226,11 +226,8 @@ export default {
         var data = obj.data;
         console.log(data);
         if (obj.event === "deletion") {
-          layer.confirm("真的删除行么", function(index) {
-            obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-            layer.close(index);
-            
-            if(data.companyName){
+          layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
+            if (data.companyName) {
               var companyId = data.id;
               //向服务端发送删除指令
               var delParam = {
@@ -241,12 +238,14 @@ export default {
                 console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
-                }else{
-                  layer.msg(res.data.retMsg,{icon: 2})
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
             }
-            if(data.deptName){
+            if (data.deptName) {
               var deptId = data.deptId;
               //向服务端发送删除指令
               var delParam = {
@@ -257,12 +256,14 @@ export default {
                 console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
-                }else{
-                  layer.msg(res.data.retMsg,{icon: 2})
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
             }
-            if(data.jobName){
+            if (data.jobName) {
               var jobId = data.id;
               //向服务端发送删除指令
               var delParam = {
@@ -273,31 +274,31 @@ export default {
                 console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
-                }else{
-                  layer.msg(res.data.retMsg,{icon: 2})
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
                 }
               });
             }
-
           });
         } else if (obj.event === "edit") {
-          if(data.companyName == '' || data.companyName){
+          if (data.companyName == "" || data.companyName) {
             var companyId = data.id;
             sessionStorage.setItem("companyId", companyId);
-            console.log(companyId)
+            console.log(companyId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
-          if(data.deptName){
+          if (data.deptName) {
             var deptId = data.deptId;
             sessionStorage.setItem("deptId", deptId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
-          if(data.jobName){
+          if (data.jobName) {
             var jobId = data.id;
             sessionStorage.setItem("jobId", jobId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
-          
         }
       });
     });

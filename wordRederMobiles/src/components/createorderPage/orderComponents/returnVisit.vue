@@ -8,14 +8,14 @@
       </div>
       <div>
         <label for=""><span class="problem">问题是否已解决</span>：</label>
-        <input type="checkbox" name="isFinish" value="0">已解决
-        <input type="checkbox" name="isFinish" value="1">未解决
+        <input type="radio" name="isFinish" value="0">已解决
+        <input type="radio" name="isFinish" value="1">未解决
       </div>
       <div>
         <label for=""><span>满意度情况</span>：</label>
-        <input type="checkbox" name="satisfiedState" value="0">满意
-        <input type="checkbox" name="satisfiedState" value="1">基本满意
-        <input type="checkbox" name="satisfiedState" value="2">不满意
+        <input type="radio" name="satisfiedState" value="0">满意
+        <input type="radio" name="satisfiedState" value="1">基本满意
+        <input type="radio" name="satisfiedState" value="2">不满意
       </div>
       <div>
         <label for=""><span>意见/建议</span>：</label>
@@ -56,7 +56,7 @@ export default {
   methods:{
     kuantan(){
       var createData = this.$("#formData").serializeObject();
-      
+      this.orderInfo.userId = this.$store.state.userId
       this.orderInfo.isFinish = createData.isFinish
       this.orderInfo.adviseContent = createData.adviseContent
       this.orderInfo.remark = createData.remark

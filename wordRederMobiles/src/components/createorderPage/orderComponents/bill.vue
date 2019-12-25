@@ -9,41 +9,41 @@
         <label for>
           <span>银行名称</span>：
         </label>
-        <input name="customerName" :value="bankList.customerId" type="hidden" />
-        <input type="text" :value="bankList.customerName" />
+        <input name="customerName" :value="orderInfo.customerId" type="hidden" />
+        <input type="text" :value="orderInfo.customerName" />
         <span>可选</span>
       </router-link>
       <router-link to="/network" tag="div">
         <label for>
           <span>网点名称</span>：
         </label>
-        <input name="networkId" :value="networkList.id" type="hidden" />
-        <input type="text" :value="networkList.networName" />
+        <input name="networkId" :value="orderInfo.id" type="hidden" />
+        <input type="text" :value="orderInfo.networName" />
         <span>可选</span>
       </router-link>
       <div>
         <label for>
           <span>网点地址</span>：
         </label>
-        <input type="text" :value="networkList.networAddress" />
+        <input type="text" :value="orderInfo.networAddress" />
       </div>
       <div>
         <label for>
           <span>联系人</span>：
         </label>
-        <input type="text" name="contactName" />
+        <input type="text" :value="orderInfo.contactName" name="contactName" />
       </div>
       <div>
         <label for>
           <span>联系电话</span>：
         </label>
-        <input type="text" name="contactPhone" />
+        <input type="text" :value="orderInfo.contactPhone" name="contactPhone" />
       </div>
       <div>
         <label for>
           <span>合同</span>：
         </label>
-        <input type="text" name="agreenmentId" />
+        <input type="text" :value="orderInfo.agreenmentId" name="agreenmentId" />
       </div>
       <div>
         <h2>故障信息</h2>
@@ -52,64 +52,69 @@
         <label for>
           <span>工单来源</span>：
         </label>
-        <input type="text" :value="orderSource.name" />
-        <input name="orderSource" :value="orderSource.id" type="hidden" />
+        <input type="text" :value="orderInfo.orderSource == 0 ? '电话' : orderInfo.orderSource == 1 ? '微信' : orderInfo.orderSource == 2 ? '其他' : ''" />
+        <input name="orderSource" :value="orderInfo.orderSource" type="hidden" />
         <span>可选</span>
       </router-link>
       <router-link tag="div" to="/orderType">
         <label for>
           <span>工单类型</span>：
         </label>
-        <input type="text" :value="orderType.name" />
-        <input name="orderType" :value="orderType.id" type="hidden" />
+        <input type="text" :value="orderInfo.orderType == 0 ? '电话' : orderInfo.orderType == 1 ? '微信' : orderInfo.orderType == 2 ? '其他' : ''" />
+        <input name="orderType" :value="orderInfo.orderType" type="hidden" />
         <span>可选</span>
       </router-link>
       <div>
         <label for>
           <span>紧急程度</span>：
         </label>
-        <input type="checkbox" name="orderUrgency" value="1" />紧急
-        <input type="checkbox" name="orderUrgency" value="0" />一般
+        <input type="radio" name="orderUrgency" value="1" :checked="orderInfo.orderUrgency == 1 ? true : false" />紧急
+        <input type="radio" name="orderUrgency" value="0" :checked="orderInfo.orderUrgency == 0 ? true : false" />一般
       </div>
       <div>
         <label for>
           <span>保障时间</span>：
         </label>
-        <input type="text" id="reportTime" name="reportTime" />
+        <input type="text" :value="orderInfo.reportTime" id="reportTime" name="reportTime" />
         <span>可选</span>
       </div>
       <router-link to="/modelType" tag="div">
         <label for>
           <span>设备型号</span>：
         </label>
-        <input type="text" :value="modelType.modelType" />
-        <input name="modelId" :value="modelType.modelId" type="hidden" />
+        <input type="text"  :value="orderInfo.modelType" />
+        <input name="modelId" :value="orderInfo.modelId" type="hidden" />
         <span>可选</span>
       </router-link>
       <div class="deviceNumber">
         <label for>
           <span>存货编码</span>：
         </label>
-        <input type="text" name="deviceNumber" />
+        <input type="text" :value="orderInfo.deviceNumber" name="deviceNumber" />
       </div>
       <div class="problem">
         <label for>
           <span>问题描述</span>：
         </label>
-        <textarea name="problemDescription" id cols="30" rows="10"></textarea>
+        <textarea name="problemDescription" :value="orderInfo.problemDescription" id cols="30" rows="10"></textarea>
       </div>
       <div class="affix">
         <label for>
           <span>附件</span>：
         </label>
-        <van-uploader :after-read="afterRead" v-model="fileList" multiple />
+        <div>
+        <van-uploader :after-read="afterRead" v-model="fileList" multiple >
+        </van-uploader>
+
+        </div>
+        <van-button icon="photo" type="primary" @click="uploadImg">上传图片</van-button>
       </div>
       <router-link to="/userList" tag="div">
         <label for>
           <span>指派给</span>：
         </label>
-        <input type="hidden" name="acceptUserId" :value="userList.userId" />
-        <input type="text" :value="userList.userName" />
+        <input type="hidden" name="acceptUserId" :value="orderInfo.userId" />
+        <input type="text" :value="orderInfo.userName" />
         <span>可选</span>
       </router-link>
       <div class="remakeInfo">
@@ -145,12 +150,7 @@ export default {
     return {
       fileList: [],
       orderInfoId: sessionStorage.getItem("orderInfoId"),
-      bankList: {},
-      networkList: {},
-      orderSource: {},
-      orderType: {},
-      modelType: {},
-      userList: {}
+      orderInfo: {}
     };
   },
   mounted() {
@@ -167,9 +167,34 @@ export default {
     });
   },
   methods: {
+    uploadImg(){
+      if(this.fileList.length > 0){
+        console.log(this.fileList[0].file)
+        var data = {
+          userId: this.$store.state.userId,
+          orderInfoId: this.orderInfoId,
+          file: this.fileList[0].file,
+          soreId: 1
+        }
+        console.log(data)
+        this.axios.post("/api/uploadImagesInfo",data).then(res=>{
+          console.log(res)
+        })
+      }
+    },
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
       console.log(file);
+      var data = {
+          userId: this.$store.state.userId,
+          orderInfoId: this.orderInfoId,
+          file: file,
+          soreId: 1
+        }
+        console.log(data)
+        this.axios.post("/api/uploadImagesInfo",data).then(res=>{
+          console.log(res)
+        })
     },
     showPopup() {
       this.show = true;
@@ -186,39 +211,6 @@ export default {
         }
       })
       
-    },
-    send() {
-      var bankList = sessionStorage.getItem("bankList");
-      var networkList = sessionStorage.getItem("networkdata");
-      var orderSource = sessionStorage.getItem("orderSource");
-      var orderType = sessionStorage.getItem("orderType");
-      var modelType = sessionStorage.getItem("modelType");
-      var userList = sessionStorage.getItem("userList");
-      console.log(bankList);
-      if (bankList) {
-        //客户名称
-        this.bankList = JSON.parse(bankList);
-      }
-      if (networkList) {
-        //投放点
-        this.networkList = JSON.parse(networkList);
-      }
-      if (orderSource) {
-        //工单来源
-        this.orderSource = JSON.parse(orderSource);
-      }
-      if (orderType) {
-        //工单类型
-        this.orderType = JSON.parse(orderType);
-      }
-      if (modelType) {
-        //设备类型
-        this.modelType = JSON.parse(modelType);
-      }
-      if (userList) {
-        //用户列表
-        this.userList = JSON.parse(userList);
-      }
     },
     bill() {
       // 发单
@@ -267,11 +259,9 @@ export default {
     }
   },
   created() {
-    this.send();
     this.getOrderInfo()
   },
   activated() {
-    this.send();
   }
 };
 </script>
@@ -329,7 +319,7 @@ input[type="text"] {
   height: 35px;
   padding-left: 5px;
 }
-input[type="checkbox"] {
+input[type="radio"] {
   margin: 0 5px;
 }
 

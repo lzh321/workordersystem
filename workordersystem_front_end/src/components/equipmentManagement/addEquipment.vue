@@ -7,137 +7,175 @@
         <span>为必填项</span>
       </div>
       <div class="basicInfo">
-      <div class="layui-form-item">
-        <label class="layui-form-label">存货编码</label>
-        <div class="layui-input-block">
-          <input
-            type="text"
-            name="deviceNumber"
-            required
-            :value="DeviceInfo.deviceNumber ? DeviceInfo.deviceNumber : ''"
-            lay-verify="required"
-            placeholder="请输入存货编码"
-            autocomplete="off"
-            class="layui-input"
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label">存货编码</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              name="deviceNumber"
+              required
+              autocomplete="off"
+              v-if="DeviceInfo.deviceNumber"
+              :value="DeviceInfo.deviceNumber ?  DeviceInfo.deviceNumber : ''"
+              lay-verify="required"
+              placeholder="请输入存货编码"
+              class="layui-input"
+            />
+            <input
+              v-else
+              type="text"
+              name="deviceNumber"
+              required
+              value
+              autocomplete="off"
+              lay-verify="required"
+              placeholder="请输入存货编码"
+              class="layui-input"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">设备型号</label>
-        <div class="layui-input-block" layui-filter>
-          <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
-            <option value>请选择设备型号</option>
-            <option
-              v-for="(item) in DeviceModelType"
-              :key="item.modelId"
-              :value="item.modelId"
-            >{{item.modelType}}</option>
-          </select>
+        <div class="layui-form-item">
+          <label class="layui-form-label">设备型号</label>
+          <div class="layui-input-block" layui-filter>
+            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
+              <option value>请选择设备型号</option>
+              <option
+                v-for="(item) in DeviceModelType"
+                :key="item.modelId"
+                :value="item.modelId"
+              >{{item.modelType}}</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">存货名称</label>
-        <div class="layui-input-block" layui-filter>
-          <input
-            type="text"
-            name="inventoryName"
-            :value="inventoryName ? inventoryName : DeviceInfo.modelName"
-            class="layui-input"
-            disabled
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label">存货名称</label>
+          <div class="layui-input-block" layui-filter>
+            <input
+              type="text"
+              name="inventoryName"
+              :value="inventoryName ? inventoryName : DeviceInfo.modelName"
+              class="layui-input"
+              disabled
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">客户名称</label>
-        <div class="layui-input-block" layui-filter="test2">
-          <select name="customerName" id="customerName" lay-verify="required">
-            <option value>请选择一个客户</option>
-            <option
-              v-for="(item) in customerNameList"
-              :key="item.customerId"
-              :value="item.customerId"
-            >{{item.customerName}}</option>
-          </select>
+        <div class="layui-form-item">
+          <label class="layui-form-label">客户名称</label>
+          <div class="layui-input-block" layui-filter="test2">
+            <select name="customerName" id="customerName" lay-verify="required">
+              <option value>请选择一个客户</option>
+              <option
+                v-for="(item) in customerNameList"
+                :key="item.customerId"
+                :value="item.customerId"
+              >{{item.customerName}}</option>
+            </select>
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">设备投放点</label>
-        <div class="layui-input-block">
-          <select
-            name="networkId"
-            lay-filter="seleNetworkName"
-            id="networkId"
-            lay-verify="required"
-          >
-            <option value>请选择一个投放点</option>
-            <option
-              v-for="(item) in networkList"
-              :key="item.id"
-              :value="item.id"
-            >{{item.networName}}</option>
-          </select>
+        <div class="layui-form-item">
+          <label class="layui-form-label">设备投放点</label>
+          <div class="layui-input-block">
+            <select
+              name="networkId"
+              lay-filter="seleNetworkName"
+              id="networkId"
+              lay-verify="required"
+            >
+              <option value>请选择一个投放点</option>
+              <option
+                v-for="(item) in networkList"
+                :key="item.id"
+                :value="item.id"
+              >{{item.networName}}</option>
+            </select>
+          </div>
         </div>
-      </div>
-      <div class="layui-form-item">
-        <label class="layui-form-label">所在城市</label>
-        <div class="layui-input-block">
-          <input
-            type="text"
-            name="region"
-            autocomplete="off"
-            :value="regionName ? regionName : DeviceInfo.region"
-            class="layui-input"
-            disabled
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label">所在城市</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              name="region"
+              autocomplete="off"
+              :value="regionName ? regionName : DeviceInfo.region"
+              class="layui-input"
+              disabled
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label layui">投放点详细地址</label>
-        <div class="layui-input-block">
-          <input
-            type="text"
-            name="networAddress"
-            autocomplete="off"
-            class="layui-input"
-            :value="networAddress ? networAddress : DeviceInfo.networkAddress"
-            disabled
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label layui">投放点详细地址</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              name="networAddress"
+              autocomplete="off"
+              class="layui-input"
+              :value="networAddress ? networAddress : DeviceInfo.networkAddress"
+              disabled
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">维保开始时间</label>
-        <div class="layui-input-block">
-          <input
-            type="text"
-            class="layui-input"
-            lay-verify="required"
-            name="seviceBegintime"
-            id="Maintenance_start"
-            :value="DeviceInfo.seviceBegintime"
-            placeholder="请选择维保开始时间"
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label">维保开始时间</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              class="layui-input"
+              lay-verify="required"
+              name="seviceBegintime"
+              id="Maintenance_start"
+              autocomplete="off"
+              v-if="DeviceInfo.seviceBegintime"
+              :value="DeviceInfo.seviceBegintime"
+              placeholder="请选择维保开始时间"
+            />
+            <input
+              v-else
+              type="text"
+              class="layui-input"
+              lay-verify="required"
+              name="seviceBegintime"
+              id="Maintenance_start"
+              autocomplete="off"
+              value
+              placeholder="请选择维保开始时间"
+            />
+          </div>
         </div>
-      </div>
-      <div class="layui-form-item">
-        <label class="layui-form-label">维保结束时间</label>
-        <div class="layui-input-block">
-          <input
-            type="text"
-            class="layui-input"
-            lay-verify="required"
-            name="seviceEndtime"
-            :value="DeviceInfo.seviceEndtime"
-            id="Maintenance_end"
-            placeholder="请选择维保结束时间"
-          />
+        <div class="layui-form-item">
+          <label class="layui-form-label">维保结束时间</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              class="layui-input"
+              lay-verify="required"
+              name="seviceEndtime"
+              autocomplete="off"
+              :value="DeviceInfo.seviceEndtime"
+              v-if="DeviceInfo.seviceEndtime"
+              id="Maintenance_end"
+              placeholder="请选择维保结束时间"
+            />
+            <input
+              v-else
+              type="text"
+              class="layui-input"
+              lay-verify="required"
+              name="seviceEndtime"
+              value=""
+              autocomplete="off"
+              id="Maintenance_end"
+              placeholder="请选择维保结束时间"
+            />
+          </div>
         </div>
-      </div>
       </div>
       <div class="info">其他信息</div>
 
@@ -149,7 +187,19 @@
             name="deviceState"
             required
             lay-verify
+            v-if="DeviceInfo.deviceState"
             :value="DeviceInfo.deviceState"
+            placeholder="请输入设备状态"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+          v-else
+            type="text"
+            name="deviceState"
+            required
+            lay-verify
+            value=""
             placeholder="请输入设备状态"
             autocomplete="off"
             class="layui-input"
@@ -164,7 +214,19 @@
             name="deviceBatch"
             required
             lay-verify
+            v-if="DeviceInfo.deviceBatch"
             :value="DeviceInfo.deviceBatch"
+            placeholder="请输入生产批次"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+          v-else
+            type="text"
+            name="deviceBatch"
+            required
+            lay-verify
+          value=""
             placeholder="请输入生产批次"
             autocomplete="off"
             class="layui-input"
@@ -180,7 +242,19 @@
             name="deviceSignNumber"
             required
             lay-verify
+            v-if="DeviceInfo.deviceSignNumber"
             :value="DeviceInfo.deviceSignNumber"
+            placeholder="请输入签报号"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+          v-else
+            type="text"
+            name="deviceSignNumber"
+            required
+            lay-verify
+            value=""
             placeholder="请输入签报号"
             autocomplete="off"
             class="layui-input"
@@ -196,7 +270,19 @@
             name="deviceType"
             required
             lay-verify
+            v-if="DeviceInfo.deviceType"
             :value="DeviceInfo.deviceType"
+            placeholder="请输入物料类型"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="deviceType"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入物料类型"
             autocomplete="off"
             class="layui-input"
@@ -208,11 +294,23 @@
         <label class="layui-form-label">发货时间</label>
         <div class="layui-input-block">
           <input
+          v-if="DeviceInfo.deliveryTime"
             type="text"
             class="layui-input"
             name="deliveryTime"
             id="shipments"
             :value="DeviceInfo.deliveryTime"
+            placeholder="请选择发货时间"
+            autocomplete="off"
+          />
+          <input
+          v-else
+            type="text"
+            class="layui-input"
+            name="deliveryTime"
+            id="shipments"
+            value=""
+            autocomplete="off"
             placeholder="请选择发货时间"
           />
         </div>
@@ -226,7 +324,19 @@
             name="waybillNumber"
             required
             lay-verify
+            v-if="DeviceInfo.waybillNumber"
             :value="DeviceInfo.waybillNumber"
+            placeholder="请输入运单号"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="waybillNumber"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入运单号"
             autocomplete="off"
             class="layui-input"
@@ -253,7 +363,19 @@
             name="transportProcess"
             required
             lay-verify
+            v-if="DeviceInfo.transportProcess"
             :value="DeviceInfo.transportProcess"
+            placeholder="请输入转运流程"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="transportProcess"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入转运流程"
             autocomplete="off"
             class="layui-input"
@@ -268,7 +390,19 @@
             name="checkNumber"
             required
             lay-verify
+            v-if="DeviceInfo.checkNumber"
             :value="DeviceInfo.checkNumber"
+            placeholder="请输入验收单"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="checkNumber"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入验收单"
             autocomplete="off"
             class="layui-input"
@@ -283,7 +417,19 @@
             type="text"
             class="layui-input"
             name="checkTime"
+            v-if="DeviceInfo.checkTime"
             :value="DeviceInfo.checkTime"
+            id="checkTime"
+            autocomplete="off"
+            placeholder="请选择验收时间"
+          />
+          <input
+            type="text"
+            class="layui-input"
+            name="checkTime"
+            v-else
+            value=""
+            autocomplete="off"
             id="checkTime"
             placeholder="请选择验收时间"
           />
@@ -298,7 +444,19 @@
             name="linkman"
             required
             lay-verify
+            v-if="DeviceInfo.linkman"
             :value="DeviceInfo.linkman"
+            placeholder="请输入客户联系人"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="linkman"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入客户联系人"
             autocomplete="off"
             class="layui-input"
@@ -314,7 +472,19 @@
             name="linkmanPhone"
             required
             lay-verify
+            v-if="DeviceInfo.linkmanPhone"
             :value="DeviceInfo.linkmanPhone"
+            placeholder="请输入联系电话"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="linkmanPhone"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入联系电话"
             autocomplete="off"
             class="layui-input"
@@ -329,7 +499,19 @@
             name="assetState"
             required
             lay-verify
+            v-if="DeviceInfo.assetState"
             :value="DeviceInfo.assetState"
+            placeholder="请输入资产状态"
+            autocomplete="off"
+            class="layui-input"
+          />
+          <input
+            type="text"
+            name="assetState"
+            required
+            lay-verify
+            v-else
+            value=""
             placeholder="请输入资产状态"
             autocomplete="off"
             class="layui-input"
@@ -356,7 +538,19 @@
             class="layui-input"
             name="bollotTime"
             id="payment"
+            autocomplete="off"
+            v-if="DeviceInfo.bollotTime"
             :value="DeviceInfo.bollotTime"
+            placeholder="请选择开票时间"
+          />
+          <input
+            type="text"
+            class="layui-input"
+            name="bollotTime"
+            id="payment"
+            v-else
+            autocomplete="off"
+            value=""
             placeholder="请选择开票时间"
           />
         </div>
@@ -379,9 +573,21 @@
           <input
             type="text"
             class="layui-input"
+            v-if="DeviceInfo.retMoneyTime"
             :value="DeviceInfo.retMoneyTime"
             name="retMoneyTime"
+            autocomplete="off"
             id="returnedMoney"
+            placeholder="请选择回款时间"
+          />
+          <input
+            type="text"
+            class="layui-input"
+            v-else
+            value=""
+            name="retMoneyTime"
+            id="returnedMoney"
+            autocomplete="off"
             placeholder="请选择回款时间"
           />
         </div>
@@ -409,6 +615,7 @@ export default {
       regionName: "",
       networAddress: "",
       inventoryName: "",
+      deviceNumber: "",
       DeviceInfo: {}
     };
   },
@@ -430,6 +637,7 @@ export default {
       });
     },
     getDeviceInfo() {
+      console.log(111);
       var deviceId = sessionStorage.getItem("deviceId")
         ? sessionStorage.getItem("deviceId")
         : "";
@@ -542,7 +750,11 @@ export default {
   mounted() {
     this.getDeviceInfo();
     var _this = this;
-    layui.use("laydate", function() {
+    //Demo
+    layui.use(["form", "laydate"], function() {
+      var form = layui.form;
+      form.render();
+
       var laydate = layui.laydate;
       //日期时间选择器
       laydate.render({
@@ -582,14 +794,11 @@ export default {
         type: "datetime",
         trigger: "click"
       });
-    });
-    //Demo
-    layui.use("form", function() {
-      var form = layui.form;
+
       // select监听
       form.on("select(seleNetworkName)", function(data) {
         for (var i = 0; i < _this.networkList.length; i++) {
-          console.log(data.value);
+          // console.log(data.value);
           if (data.value == _this.networkList[i].id) {
             _this.regionName = _this.networkList[i].regionName;
             _this.networAddress = _this.networkList[i].networAddress;
@@ -602,7 +811,7 @@ export default {
       });
       form.on("select(seleModelType)", function(data) {
         for (var i = 0; i < _this.DeviceModelType.length; i++) {
-          console.log(data.value, _this.DeviceModelType);
+          // console.log(data.value, _this.DeviceModelType);
           if (data.value == _this.DeviceModelType[i].modelId) {
             _this.inventoryName = _this.DeviceModelType[i].modelName;
           }
@@ -610,6 +819,7 @@ export default {
         if (data.value == "") {
           _this.inventoryName = "";
         }
+        form.render();
       });
       // 监听radio
       form.on("radio(filter)", function(data) {
@@ -631,6 +841,8 @@ export default {
               setTimeout(function() {
                 _this.$router.push("/equipmentList?type=equipmentList");
               }, 3000);
+            }else{
+              layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
         } else {
@@ -643,6 +855,8 @@ export default {
               setTimeout(function() {
                 _this.$router.push("/equipmentList?type=equipmentList");
               }, 3000);
+            }else{
+              layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
         }
@@ -698,16 +912,16 @@ export default {
 label {
   width: 130px !important;
 }
-.info{
+.info {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 15px;
 }
-.info span{
+.info span {
   display: flex;
   align-items: center;
-  font-weight: 600
+  font-weight: 600;
 }
 .basicInfo .layui-form-label::before {
   content: "*";
@@ -721,12 +935,12 @@ label {
   display: flex;
   align-items: center;
 }
-.info span:nth-child(2){
+.info span:nth-child(2) {
   font-weight: 400;
   font-size: 15px;
   color: #c2c2c2;
 }
-.info span:nth-child(2)::before{
+.info span:nth-child(2)::before {
   content: "*";
   font-size: 20px;
   display: inline-block;

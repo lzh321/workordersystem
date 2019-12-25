@@ -9,14 +9,14 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备类型</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" :value="echoContent.modelType ? echoContent.modelType : ''" name="modelType" placeholder="请输入设备类型">
+          <input type="text" class="layui-input" autocomplete="off" lay-verify="required" :value="echoContent.modelType ? echoContent.modelType : ''" name="modelType" placeholder="请输入设备类型">
         </div>
       </div>
 
       <div class="layui-form-item">
         <label class="layui-form-label">存货名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" :value="echoContent.modelName ? echoContent.modelName : ''" name="modelName" placeholder="请输入存货名称">
+          <input type="text" class="layui-input" autocomplete="off" lay-verify="required" :value="echoContent.modelName ? echoContent.modelName : ''" name="modelName" placeholder="请输入存货名称">
         </div>
       </div>
 

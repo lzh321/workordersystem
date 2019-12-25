@@ -26,10 +26,10 @@
               </div>
             </div>
 
-            <div class="layui-form-item">
+            <div class="agreenmentId layui-form-item">
               <label class="layui-form-label">合同ID</label>
               <div class="layui-input-block">
-                <input type="text" name="agreenmentId" value class="layui-input" />
+                <input type="text" name="agreenmentId" autocomplete="off" value class="layui-input" />
               </div>
             </div>
 
@@ -69,14 +69,14 @@
             <div class="layui-form-item">
               <label class="layui-form-label">联系人</label>
               <div class="layui-input-block">
-                <input type="text" name="contactName" value class="layui-input" />
+                <input type="text" name="contactName" autocomplete="off" value class="layui-input" />
               </div>
             </div>
 
             <div class="layui-form-item">
               <label class="layui-form-label">联系电话</label>
               <div class="layui-input-block">
-                <input type="text" name="contactPhone" value class="layui-input" />
+                <input type="text" name="contactPhone" autocomplete="off" value class="layui-input" />
               </div>
             </div>
 
@@ -138,6 +138,7 @@
                   value
                   lay-verify="required"
                   class="layui-input"
+                  autocomplete="off"
                   id="reportedBarrierTime"
                 />
                 <i></i>
@@ -166,14 +167,19 @@
             <div class="layui-form-item">
               <label class="layui-form-label">存货编码</label>
               <div class="layui-input-block">
-                <input
-                  type="text"
+                <select
                   name="deviceNumber"
-                  :value="deviceNumber"
-                  class="layui-input"
+                  lay-filter="seleModelType"
+                  id="modelType"
                   lay-verify="required"
-                  disabled
-                />
+                >
+                  <option value>请选择设备型号</option>
+                  <option
+                    v-for="(item) in deviceNumber"
+                    :key="item.deviceId"
+                    :value="item.modelId"
+                  >{{item.modelType}}</option>
+                </select>
               </div>
             </div>
             <!-- </div> -->
@@ -186,11 +192,12 @@
                   placeholder="请输入内容"
                   lay-verify="required"
                   class="layui-textarea"
+                  autocomplete="off"
                 ></textarea>
               </div>
             </div>
 
-            <div class="layui-form-item">
+            <div class="affix layui-form-item">
               <label class="layui-form-label">附件</label>
               <button type="button" class="layui-btn" id="selectImage">选择图片</button>
               <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
@@ -227,6 +234,7 @@
               :value="orderInfo.remark ? orderInfo.remark : ''"
               placeholder="请输入内容"
               class="layui-textarea"
+              autocomplete="off"
             ></textarea>
           </div>
         </div>
@@ -238,12 +246,14 @@
           <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
+      <workOrderLog v-if="orderState == 0"></workOrderLog>
     </form>
   </div>
 </template>
 
 <script>
 import customerInfo from "./workOrderDetails/customerInfo";
+import workOrderLog from './workOrderDetails/workOrderLog'
 import progressBar from "../progressBar";
 export default {
   name: "workOrderCreate",
@@ -254,6 +264,7 @@ export default {
       deviceInfoList: [],
       userList: [],
       orderInfo: {},
+      deviceNumber:{},
       networAddress: "",
       deviceNumber: "",
       agreenmentId: "",
@@ -266,7 +277,8 @@ export default {
   },
   components: {
     customerInfo,
-    progressBar
+    progressBar,
+    workOrderLog
   },
   methods: {
     cancel() {
@@ -274,10 +286,10 @@ export default {
     },
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getDeviceInfoList", userId).then(res => {
+      this.$axios.post("/api/getDeviceModelList", userId).then(res => {
         // 设备型号
         // console.log(res)
-        this.deviceInfoList = res.data.body.deviceInfoList;
+        this.deviceInfoList = res.data.body.modelList;
       });
       this.$axios.post("/api/getCustomerNameList", userId).then(res => {
         // 客户名称
@@ -460,6 +472,11 @@ export default {
         done: function(res) {
           //上传完毕
           console.log(res);
+          if(res.retCode == 0){
+            layer.msg(res.retMsg,{icon: 1})
+          }else{
+            layer.msg(res.retMsg,{icon: 2})
+          }
           $("input[name='orderImg']").val(res.body.url);
         }
       });
@@ -531,5 +548,11 @@ h2 {
   color: red;
   line-height: 30px;
   height: 20px;
+}
+.basicInfo .affix label::before{
+  content: ''
+}
+.basicInfo .agreenmentId label::before{
+  content: ''
 }
 </style>

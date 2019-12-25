@@ -16,6 +16,7 @@
                 name
                 :value="workOrderInfo.customerName ? workOrderInfo.customerName : null"
                 class="layui-input"
+                autocomplete="off"
                 disabled
               />
             </div>
@@ -29,6 +30,7 @@
                 name
                 :value="workOrderInfo.agreenmentId"
                 class="layui-input"
+                autocomplete="off"
                 disabled
               />
             </div>
@@ -186,6 +188,32 @@
               <div class="uploadImg"></div>
             </div>
           </div>
+
+           <div v-if="orderState == 1 ? true : false" class="layui-form-item">
+            <label class="layui-form-label">派单人</label>
+            <div class="layui-input-block">
+              <input
+                type="text"
+                name
+                :value="workOrderInfo.singlePerson"
+                class="layui-input"
+                autocomplete="off"
+                disabled
+              />
+            </div>
+          </div>
+           <div  v-if="orderState == 2 ? true : false" class="layui-form-item">
+            <label class="layui-form-label">受理人</label>
+            <div class="layui-input-block">
+              <input
+                type="text"
+                name
+                :value="workOrderInfo.userName"
+                class="layui-input"
+                disabled
+              />
+            </div>
+          </div>
         </div>
       </div>
       <!-- 故障处理记录 详情 -->
@@ -198,7 +226,7 @@
         v-if="orderState == 4 || orderState == 5 || orderState == 7 || orderState == 9 || orderState == 10 ? true : false"
       ></reservation>
       <!-- 故障处理中 -->
-      <inProcess :orderState="orderState" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
+      <inProcess :orderState="orderState" :workOrderInfo="workOrderInfo" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
       <!-- 协同 -->
       <synergy
         v-if="orderState == 7 || orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false"

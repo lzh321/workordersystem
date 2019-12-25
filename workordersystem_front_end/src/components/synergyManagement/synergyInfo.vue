@@ -4,25 +4,25 @@
       <div class="layui-form-item">
         <label class="layui-form-label">编号</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.id" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.id" autocomplete="off" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">协同内容</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.content" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.content" autocomplete="off" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">创建人</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.createrId" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.createrId" autocomplete="off" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
         <label class="layui-form-label">创建时间</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.createTime" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.createTime" autocomplete="off" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
@@ -31,6 +31,7 @@
           <input
             type="text"
             name
+            autocomplete="off"
             :value="synergyInfo.orderUrgency == 0 ? '一般' : '紧急'"
             class="layui-input"
             disabled
@@ -40,13 +41,13 @@
       <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">
         <label class="layui-form-label">受理人</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.responsibleId" class="layui-input" disabled />
+          <input type="text" name  autocomplete="off" :value="synergyInfo.responsibleId" class="layui-input" disabled />
         </div>
       </div>
       <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">
         <label class="layui-form-label">受理时间</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.responsibleTime" class="layui-input" disabled />
+          <input type="text" name autocomplete="off" :value="synergyInfo.responsibleTime" class="layui-input" disabled />
         </div>
       </div>
 
@@ -59,6 +60,7 @@
                 placeholder=""
                 class="layui-textarea"
                 disabled
+                autocomplete="off"
               ></textarea>
         </div>
       </div>
@@ -70,6 +72,7 @@
                 id="handleContent"
                 value=""
                 placeholder=""
+                autocomplete="off"
                 class="layui-textarea"
               ></textarea>
         </div>
@@ -83,6 +86,7 @@
                 placeholder=""
                 class="layui-textarea"
                 disabled
+                autocomplete="off"
               ></textarea>
         </div>
       </div>

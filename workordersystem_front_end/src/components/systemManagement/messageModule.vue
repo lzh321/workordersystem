@@ -13,7 +13,7 @@
         </p>
       </div>
       <div class="dataList_table" >
-        <table id="demo" lay-filter="test"></table>
+        <table id="messageModule" lay-filter="test"></table>
         <div id="barDemo" style="display:none">
           <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
           <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a>
@@ -43,27 +43,49 @@ export default {
     dataScreening
   },
   mounted() {
-    
+    var _this = this
     layui.use("table", function() {
       var table = layui.table;
       //第一个实例
       table.render({
-        elem: "#demo",
-        height: 485,
-        url: "../../../static/table.json", //数据接口
+        elem: "#messageModule",
+        url: "/api/getNewsmodelInfoList", //数据接口
+        method: "post",
+        where:{
+          userId: _this.$store.state.userId
+        },
+        id: "serachData",
+        parseData: function(res) {
+          //res 即为原始返回的数据
+          return {
+            code: res.retCode, //解析接口状态
+            msg: res.retMsg, //解析提示文本
+            count: res.body.totalCount, //解析数据长度
+            data: res.body.newsmodelInfoList //解析数据列表
+          };
+        },
+        request: {
+          pageName: "currentPage", //页码的参数名称，默认：page
+          // curr: 'indexCount', //页码的参数名称，默认：page
+          limitName: "everyCount" //每页数据量的参数名，默认：limit
+        },
         page: true, //开启分页
         limit: 10,
         cols: [
           [
             //表头
-            {field: "workOrderId", width:80, title: "<input type='checkbox' name='' lay-skin='primary'>", fixed: "left",align: "center",toolbar: '#barInput'},
-            { field: "workOrderId", title: "模板编号", width:200, sort: false,align: "center"},
-            { field: "workOrderStatus", title: "模板名称", width:260, sort: false,align: "center"},
-            { field: "bankName", title: "模板内容",  sort: false,align: "center" },
-            { field: "subBranchName", title: "接收对象", width:150, align: "center" },
-            { field: "creator", title: "推送渠道", width:150, align: "center" },
-            { field: "PriorityDescription", title: "启用", align: "center", toolbar: '#Enable_Disable'},
-            { field: "operation", title: "操作", align: "center", toolbar: '#barDemo' }
+            { field: "id", title: "模板编号", width:200, sort: false,align: "center"},
+            { field: "modelName", title: "模板名称", width:260, sort: false,align: "center"},
+            { field: "newsContent", title: "模板内容", sort: false,align: "center" },
+            { field: "responserName", title: "接收对象", width:150, align: "center" },
+            { field: "newsType", title: "推送渠道", width:150, align: "center",templet: function(d){
+              if(d.newsType == 0){
+                return '微信'
+              }
+              if(d.newsType == 1){
+                return '短信'
+              }
+            } },
           ]
         ]
       });

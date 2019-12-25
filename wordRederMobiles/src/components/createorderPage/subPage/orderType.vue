@@ -25,6 +25,38 @@ export default {
         },
         {
           id: 2,
+          name: "钞空/存满"
+        },
+        {
+          id: 3,
+          name: "吞卡"
+        },
+        {
+          id: 4,
+          name: "通讯中断"
+        },
+        {
+          id: 5,
+          name: "卡钞"
+        },
+        {
+          id: 6,
+          name: "PM"
+        },
+        {
+          id: 7,
+          name: "软硬件升级"
+        },
+        {
+          id: 8,
+          name: "咨询"
+        },
+        {
+          id: 9,
+          name: "设备确认"
+        },
+        {
+          id: 10,
           name: "其他"
         },
       ]
