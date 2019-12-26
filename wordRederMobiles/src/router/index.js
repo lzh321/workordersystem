@@ -17,8 +17,10 @@ import userList from '@/components/createorderPage/subPage/userList'
 import goSynergy from '@/components/createorderPage/subPage/goSynergy'
 import recordType from '@/components/createorderPage/subPage/recordType'
 import kuantanState from '@/components/createorderPage/subPage/kuantanState'
+import DeviceNumber from '@/components/createorderPage/subPage/DeviceNumber'
 import bill from '@/components/createorderPage/orderComponents/bill'
 import orderDetails from '@/components/createorderPage/orderDetails'
+import create from '@/components/createorderPage/create'
 import synergyManagement from '@/components/synergyPage/synergyManagement'
 import synergyDispose from '@/components/synergyPage/synergyDispose'
 
@@ -38,6 +40,15 @@ export default new Router({
       component: Login,
       meta: {
         title: '登录'
+      }
+    },
+    {
+      path: '/create',
+      name: 'create',
+      component: create,
+      meta:{
+        isBack: false,  // 这个字段的意思稍后再说      
+        keepAlive: true
       }
     },
     {
@@ -99,9 +110,7 @@ export default new Router({
       path:'/createOrder',
       name: 'createOrder',
       component: createOrder,
-      meta:{
-        title: '创建工单',
-      }
+      
     },
     {
       path: '/selectBank',
@@ -140,9 +149,18 @@ export default new Router({
       component: kuantanState
     },
     {
+      path: '/DeviceNumber',
+      name: 'DeviceNumber',
+      component: DeviceNumber
+    },
+    {
       path: '/goSynergy',
       name: 'goSynergy',
-      component: goSynergy
+      component: goSynergy,
+      meta:{
+        isBack: false,  // 这个字段的意思稍后再说      
+        keepAlive: true
+      }
     },
     {
       path: '/recordType',

@@ -21,7 +21,7 @@
         <label for=""><span>意见/建议</span>：</label>
         <textarea name="adviseContent" id="" cols="30" rows="10"></textarea>
       </div>
-      <div>
+      <div class="remakeInfo">
         <label for=""><span>备注</span>：</label>
         <textarea name="remark" id="" cols="30" rows="10"></textarea>
       </div>
@@ -182,5 +182,8 @@ h2{
 .actionBtn ul li:nth-child(2) {
   color: #999999;
   font-size:14px; 
+}
+.remakeInfo label::before{
+  content: ''
 }
 </style>

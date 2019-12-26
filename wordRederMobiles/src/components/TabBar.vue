@@ -23,15 +23,15 @@ export default {
         },
         {
           name: "协同",
-          active: require("../assets/Images/home_selected.png"),
-          inactive: require("../assets/Images/home_default.png"),
+          active: require("../assets/Images/synergy_in.png"),
+          inactive: require("../assets/Images/synergy_grey.png"),
           path: "/synergyManagement?type=synergyManagement"
         },
         {
           name: "创建",
-          active: require("../assets/Images/create.png"),
-          inactive: require("../assets/Images/create.png"),
-          path: "/createOrder"
+          active: require("../assets/Images/create_in.png"),
+          inactive: require("../assets/Images/create_grey.png"),
+          path: "/create"
         },
         {
           name: "我的",

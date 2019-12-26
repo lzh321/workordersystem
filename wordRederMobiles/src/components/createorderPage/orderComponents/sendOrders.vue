@@ -88,9 +88,11 @@ export default {
       this.$router.push('/kuantanState?handleState=8')
     }
   },
-  created() {},
-  activated() {
+  created() {
     this.send();
+  },
+  activated() {
+    
   }
 };
 </script>

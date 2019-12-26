@@ -70,6 +70,8 @@ export default {
 .Login {
   padding: 77px 28px 0;
   overflow: hidden;
+  flex: 1;
+  background: #FFFFFF;
 }
 .logo {
   background: url("../assets/Images/logo.png") no-repeat;
@@ -106,7 +108,10 @@ input {
   border: none;
   font-size: 16px;
   border-bottom: 1px solid #f7f7f7;
-}
+  padding: 8px 0 0 5px;
+  color: #333333;
+  margin-top:5px; 
+  }
 input::placeholder {
   color: #dddddd;
   font-size: 13px;

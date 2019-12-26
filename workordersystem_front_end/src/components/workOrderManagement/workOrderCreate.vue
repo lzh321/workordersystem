@@ -15,7 +15,7 @@
             <div class="layui-form-item">
               <label class="layui-form-label">客户名称</label>
               <div class="layui-input-block">
-                <select name="customerName" id="customerName" lay-verify="required">
+                <select name="customerName" id="customerName" lay-filter="customerName" lay-verify="required">
                   <option value>请选择一个客户</option>
                   <option
                     v-for="(item) in customerNameList"
@@ -169,17 +169,25 @@
               <div class="layui-input-block">
                 <select
                   name="deviceNumber"
-                  lay-filter="seleModelType"
+                  lay-filter="deviceNumber"
                   id="modelType"
                   lay-verify="required"
                 >
                   <option value>请选择设备型号</option>
                   <option
-                    v-for="(item) in deviceNumber"
+                    v-for="(item) in deviceNumberList"
                     :key="item.deviceId"
-                    :value="item.modelId"
-                  >{{item.modelType}}</option>
+                    :value="item.deviceId"
+                  >{{item.deviceNumber}}</option>
                 </select>
+                <!-- <input
+                  type="text"
+                  name="deviceNumber"
+                  value
+                  lay-verify="required"
+                  class="layui-input"
+                  autocomplete="off"
+                /> -->
               </div>
             </div>
             <!-- </div> -->
@@ -263,6 +271,7 @@ export default {
       networkList: [],
       deviceInfoList: [],
       userList: [],
+      deviceNumberList:[],
       orderInfo: {},
       deviceNumber:{},
       networAddress: "",
@@ -294,11 +303,6 @@ export default {
       this.$axios.post("/api/getCustomerNameList", userId).then(res => {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
-      });
-      this.$axios.post("/api/getNetworkList", userId).then(res => {
-        // 设备投放地点
-        // console.log(res)
-        this.networkList = res.data.body.networkList;
       });
       this.$axios.post("/api/getUserList", userId).then(res => {
         // 员工列表
@@ -340,16 +344,42 @@ export default {
         trigger: "click"
       });
       // select监听
+      form.on("select(customerName)", function(data) {
+        for (var i = 0; i < _this.customerNameList.length; i++) {
+          // console.log(data.value)
+          if (data.value == _this.customerNameList[i].customerId) {
+            _this.$axios.post("/api/getNetworkInfoByCustomerId",{userId: _this.$store.state.userId,customerId:data.value}).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                _this.networkList = res.data.body.networkList
+              }
+            })
+          }
+        }
+        if (data.value == "") {
+          _this.networAddress = ""
+          _this.networkList = [];
+        }
+        
+      });
       form.on("select(seleNetworkName)", function(data) {
         for (var i = 0; i < _this.networkList.length; i++) {
           // console.log(data.value)
           if (data.value == _this.networkList[i].id) {
             _this.networAddress = _this.networkList[i].networAddress;
+            _this.$axios.post("/api/getDeviceNumberListByNetworkId",{userId: _this.$store.state.userId,networkId:data.value}).then(res=>{
+              console.log(res)
+              if(res.data.retCode == '000000'){
+                _this.deviceNumberList = res.data.body.deviceNumberList
+              }
+            })
           }
         }
         if (data.value == "") {
           _this.networAddress = "";
+          _this.deviceNumberList = [];
         }
+        
       });
 
       form.on("select(seleModelType)", function(data) {

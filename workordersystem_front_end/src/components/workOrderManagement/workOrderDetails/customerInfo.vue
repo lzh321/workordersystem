@@ -26,7 +26,7 @@
             :value="orderInfo.agreenmentId ? orderInfo.agreenmentId : ''"
             class="layui-input"
             autocomplete="off"
-            lay-verify="required"
+            lay-verify=""
           />
         </div>
       </div>

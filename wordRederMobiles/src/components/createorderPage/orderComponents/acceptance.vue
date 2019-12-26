@@ -3,7 +3,7 @@
     <form action="">
       <div class="remakeInfo">
         <label for=""><span>备注</span>：</label>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
+        <textarea name="remark" id="" cols="30" rows="10"></textarea>
       </div>
     </form>
     <orderLog></orderLog>
@@ -83,8 +83,16 @@ form{
   color: #666666;
   font-size: 14px;
 }
-textarea{
+textarea {
   width: 100%;
   margin-top: 10px;
+  background: #FFFFFF;
+  border: 1px solid #F3F3F3;
+  color: #666666;
+  font-size: 13px;
+  padding: 5px;
+}
+.remakeInfo label::before{
+  content: ''
 }
 </style>

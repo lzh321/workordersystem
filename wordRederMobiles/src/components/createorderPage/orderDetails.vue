@@ -1,6 +1,6 @@
 <template>
   <div class="orderDetails">
-    <customerInfo :orderInfo="orderInfo"></customerInfo>
+    <customerInfo :orderInfo="orderInfo" :orderStatus="orderStatus" ></customerInfo>
     <!-- 待派单 -->
     <sendOrders :orderStatus="orderStatus" v-if="orderStatus == 1"></sendOrders> 
     <!-- 待受理 -->
@@ -59,14 +59,16 @@ export default {
     this.getOrderInfo()
     
   },
-  beforeDestroy(){
-    sessionStorage.clear()
-  }
+  // beforeDestroy(){
+  //   sessionStorage.clear()
+  // }
 }
 </script>
 
 <style>
-
+.orderDetails{
+  background: #FFFFFF;
+}
 .actionBtn {
   padding: 0;
   margin-top: 20px;
@@ -101,4 +103,19 @@ export default {
   font-size:14px; 
 }
 
+textarea {
+  width: 100%;
+  margin-top: 10px;
+  background: #FFFFFF;
+  border: 1px solid #F3F3F3;
+  color: #666666;
+  font-size: 13px;
+  padding: 5px;
+}
+span{
+  font-size: 13px;
+}
+.remakeInfo label::before{
+  content: ''
+}
 </style>

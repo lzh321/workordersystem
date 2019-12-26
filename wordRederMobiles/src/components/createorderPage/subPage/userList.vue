@@ -2,7 +2,6 @@
   <div class="userList">
     <ul>
       <li v-for="item in userList" :key="item.userId" @click="seleUser(item)">
-        <img src="" alt="">
         <span>{{item.userName}}</span>
       </li>
     </ul>
@@ -53,6 +52,7 @@ ul li{
   align-items: center;
   font-size: 14px;
   color: #333333;
+  border-bottom: 1px solid #F3F3F3;
 }
 ul li img{
   width: 14px;

@@ -2,7 +2,6 @@
   <div>
     <ul>
       <li v-for="item in orderUrgency" :key="item.id" @click="selectBank(item)">
-        <img src alt />
         <span>{{item.name}}</span>
       </li>
     </ul>
@@ -46,6 +45,7 @@ ul li {
   align-items: center;
   font-size: 14px;
   color: #333333;
+  border-bottom: 1px solid #F3F3F3;
 }
 ul li img {
   width: 14px;

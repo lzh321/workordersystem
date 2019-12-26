@@ -69,16 +69,19 @@ export default {
     },
     confirm() {
       this.resData(this.handleState);
+      this.$destroy("goSynergy")
     }
   },
   created() {
+    this.handleState = this.$route.query.handleState;
+    this.orderInfoId = sessionStorage.getItem("orderInfoId");
     if (this.handleState == 8) {
       this.title = "关单说明";
     }
     if (this.handleState == 9) {
       this.title = "驳回说明";
     }
-    
+    this.send()
   },
   activated() {
     this.handleState = this.$route.query.handleState;

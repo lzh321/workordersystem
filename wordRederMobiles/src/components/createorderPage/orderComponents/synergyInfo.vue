@@ -1,6 +1,6 @@
 <template>
   <!-- 协同 -->
-  <div class="synergyInfo">
+  <div v-if="synergyList.legth > 0 ? true : false" class="synergyInfo">
     <div class="info">
       <h2>协同作业</h2>
     </div>

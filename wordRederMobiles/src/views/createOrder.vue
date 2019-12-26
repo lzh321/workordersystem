@@ -15,10 +15,16 @@ export default {
   },
   components:{
     create
-  }
+  },
+  created(){
+    
+  },
+
 }
 </script>
 
 <style scoped>
-
+.createOrder{
+  background: #FFFFFF;
+}
 </style>

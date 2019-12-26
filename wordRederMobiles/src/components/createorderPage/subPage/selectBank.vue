@@ -2,7 +2,7 @@
   <div class="selectBank">
     <ul>
       <li v-for="item in bankList" :key="item.customerId" @click="selectBank(item)">
-        <img src="" alt="">
+        <!-- <img src="" alt=""> -->
         <span>{{item.customerName}}</span>
       </li>
     </ul>
@@ -47,6 +47,7 @@ ul li{
   align-items: center;
   font-size: 14px;
   color: #333333;
+  border-bottom: 1px solid #F3F3F3;
 }
 ul li img{
   width: 14px;

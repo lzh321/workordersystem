@@ -1,9 +1,8 @@
 <template>
   <div>
     <ul>
-      <li v-for="item in recordType" :key="item.id" @click="selectBank(item)">
-        <img src alt />
-        <span>{{item.name}}</span>
+      <li v-for="item in record" :key="item.recordName" @click="selectBank(item)">
+        <span>{{item.recordName}}</span>
       </li>
     </ul>
   </div>
@@ -14,23 +13,27 @@ export default {
   name: "recordType",
   data() {
     return {
-      recordType: [
+      recordList: [],
+      record: [
         {
-          id: 0,
-          name: "硬件"
+          recordType: 0,
+          recordName: "硬件",
         },
         {
-          id: 1,
-          name: "软件"
+          recordType: 1,
+          recordName: "软件",
+          
         },
         {
-          id: 2,
-          name: "辅助"
+          recordType: 2,
+          recordName: "辅助",
+         
         },
         {
-          id: 3,
-          name: "其他"
-        },
+          recordType: 3,
+          recordName: "其他",
+    
+        }
       ]
     };
   },
@@ -54,6 +57,7 @@ ul li {
   align-items: center;
   font-size: 14px;
   color: #333333;
+  border-bottom: 1px solid #F3F3F3;
 }
 ul li img {
   width: 14px;

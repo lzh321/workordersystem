@@ -2,7 +2,6 @@
   <div class="modelType">
     <ul>
       <li v-for="item in modelType" :key="item.modelId" @click="selemodelType(item)">
-        <img src="" alt="">
         <span>{{item.modelType}}</span>
       </li>
     </ul>
@@ -38,7 +37,7 @@ export default {
 </script>
 
 <style scoped>
-.selectBank{
+.modelType{
   padding: 0 15px;
 }
 ul li{
@@ -47,6 +46,7 @@ ul li{
   align-items: center;
   font-size: 14px;
   color: #333333;
+  border-bottom: 1px solid #F3F3F3;
 }
 ul li img{
   width: 14px;

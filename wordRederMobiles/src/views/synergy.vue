@@ -27,6 +27,6 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: scroll
+  overflow-y: scroll;
 }
 </style>

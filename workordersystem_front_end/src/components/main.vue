@@ -15,7 +15,7 @@
           <router-view v-if="isRouterAlive"></router-view>
         </div>
       </div>
-      <footer>票联金融工单系统</footer>
+      <!-- <footer>票联金融工单系统</footer> -->
     </div>
   </main>
 </template>

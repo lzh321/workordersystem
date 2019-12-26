@@ -42,8 +42,8 @@
                 <span>{{items.orderId}}</span>
               </div>
               <div class="urgency">
-                <img :src="items.orderUrgency == 0 ? urgency.Urgent : urgency.ordinary" alt />
-                <span>{{items.orderUrgency == 0 ? '紧急' : '一般'}}</span>
+                <img :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''" alt />
+                <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
               </div>
             </li>
           </van-list>

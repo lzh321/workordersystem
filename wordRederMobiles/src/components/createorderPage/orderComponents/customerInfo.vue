@@ -96,6 +96,20 @@
         </label>
         <img :src="orderInfo.orderPhoto ? 'http://192.168.1.245/' + orderInfo.orderPhoto : ''" alt="">
       </div>
+      <div v-if="orderStatus == 1 ? true : false">
+        <label for>
+          <span>派单人</span>：
+        </label>
+
+        <span>{{orderInfo.singlePerson}}</span>
+      </div>
+      <div v-if="orderStatus == 2 ? true : false">
+        <label for>
+          <span>受理人</span>：
+        </label>
+
+        <span>{{orderInfo.userName}}</span>
+      </div>
     </form>
     
   </div>
@@ -103,8 +117,8 @@
 
 <script>
 export default {
-  name: "create",
-  props:["orderInfo"],
+  name: "customerInfo",
+  props:["orderInfo","orderStatus"],
   data() {
     return {
       fileList: []
@@ -133,6 +147,7 @@ form div > span {
   align-items: center;
   margin-left: 5px;
   color: #999999;
+  font-size: 14px;
 }
 
 label {
@@ -188,7 +203,10 @@ textarea {
   width: 100%;
   margin-top: 10px;
   background: #FFFFFF;
+  border: 1px solid #F3F3F3;
   color: #666666;
+  font-size: 13px;
+  padding: 5px;
 }
 
 

@@ -10,13 +10,13 @@
         <label for>
           <span>故障类型</span>：
         </label>
-        <span>{{orderInfo.recordType == 0 ? '硬件' : orderInfo.recordType == 1 ? '软件' : orderInfo.recordType == 2 ? '辅助' : orderInfo.recordType == 3 ? '其他' : ''}}</span>
+        <span>{{orderInfo.recordType}}</span>
       </div>
       <div class="fault">
         <label for>
           <span>故障模块</span>：
         </label>
-        <span>{{orderInfo.recordModel == 0 ? '显示屏' : orderInfo.recordModel == 1 ? '密码键盘' : ''}}</span>
+        <span>{{orderInfo.modelName}}</span>
       </div>
       <div>
         <label for>

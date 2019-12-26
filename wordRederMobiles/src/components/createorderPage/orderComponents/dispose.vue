@@ -10,37 +10,44 @@
           <label for>
             <span>故障类型</span>：
           </label>
-          <input type="hidden" name="recordType" :value="recordType.id" />
-          <input type="text" :value="recordType.name" />
+          <input type="hidden" name="recordType" :value="recordType.recordName ? recordType.recordName : orderInfo.recordType" />
+          <input type="text" :value="recordType.recordName ? recordType.recordName : orderInfo.recordType" />
           <span>可选</span>
         </router-link>
-        <router-link to="/recordModel" tag="div" class="fault">
+        <div @click="gorecordModel(recordType.recordType)" class="fault">
           <label for>
             <span>故障模块</span>：
           </label>
-          <input type="hidden" name="recordModel" :value="recordModel.id" />
-          <input type="text" :value="recordModel.name" />
+          <input type="hidden" name="recordModel" :value="recordModel.recordModel ? recordModel.recordModel : orderInfo.modelName" />
+          <input type="text" :value="recordModel.recordModelName ? recordModel.recordModelName : orderInfo.modelName" />
           <span>可选</span>
-        </router-link>
+        </div>
         <div>
           <label for>
             <span>问题记录</span>：
           </label>
-          <textarea name="recordContent" id cols="30" rows="10"></textarea>
+          <textarea name="recordContent" :value="orderInfo.recordContent" id cols="30" rows="10"></textarea>
         </div>
         <div>
           <label for>
             <span>解决办法</span>：
           </label>
-          <textarea name="recordSettle" id cols="30" rows="10"></textarea>
+          <textarea name="recordSettle" :value="orderInfo.recordSettle" id cols="30" rows="10"></textarea>
+        </div>
+        <div v-if="orderInfo.appoinmentTime" class="affix">
+          <label for>
+            <span>附件</span>：
+          </label>
+          <van-uploader :after-read="afterRead" v-model="fileList" multiple />
+          <button type="button" class="layui-btn" @click="uploadImg">上传图片</button>
         </div>
       </div>
       <synergyInfo></synergyInfo>
-      <div>
+      <div class="remakeInfo">
         <label for>
           <span>备注</span>：
         </label>
-        <textarea name="remark" id cols="30" rows="10"></textarea>
+        <textarea class="remark" name="remark" id cols="30" rows="10"></textarea>
       </div>
       <div class="seleTime">
         <van-popup v-model="show" position="bottom" :style="{ height: '52%' }">
@@ -69,6 +76,10 @@
         <li @click="start" v-if="orderStatus == 4">
           <img src="../../../assets/Images/operation_order.png" alt />
           <span>出发</span>
+        </li>
+        <li @click="showPopup" v-if="orderStatus == 4 ">
+          <img src="../../../assets/Images/operation_order.png" alt />
+          <span>更改预约</span>
         </li>
         <li @click="reach" v-if="orderStatus == 5">
           <img src="../../../assets/Images/operation_order.png" alt />
@@ -106,6 +117,7 @@ export default {
   props: ["orderStatus", "orderInfo"],
   data() {
     return {
+      fileList:[],
       show: false,
       minHour: 10,
       maxHour: 20,
@@ -123,6 +135,12 @@ export default {
     appointment
   },
   methods: {
+    afterRead(file){
+
+    },
+    uploadImg(){
+
+    },
     send() {
       var recordType = sessionStorage.getItem("recordType");
       if (recordType) {
@@ -134,6 +152,10 @@ export default {
         //用户列表
         this.recordModel = JSON.parse(recordModel);
       }
+    },
+    gorecordModel(recordType) {
+      console.log(recordType);
+      this.$router.push("/recordModel?recordType=" + recordType);
     },
     showPopup() {
       this.show = true;
@@ -176,7 +198,7 @@ export default {
       var createData = this.$("#formData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
-      console.log(createData)
+      console.log(createData);
       this.axios.post("/api/finishOrderInfo", createData).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
@@ -203,7 +225,8 @@ export default {
       this.resData(6);
     },
 
-    confirm(val) {  //预约
+    confirm(val) {
+      //预约
       var date = val;
       var m = date.getMonth() + 1;
       var d = date.getDate();
@@ -217,15 +240,32 @@ export default {
       }
       if (h < 10) h = "0" + h;
       if (sec < 10) sec = "0" + sec;
-      var timer = date.getFullYear() + "-" + m + "-" + d + " " + h + ":" + sec +":" +"00";
+      var timer =
+        date.getFullYear() +
+        "-" +
+        m +
+        "-" +
+        d +
+        " " +
+        h +
+        ":" +
+        sec +
+        ":" +
+        "00";
       console.log(timer);
       // this.$refs[this.datePicker].innerHTML = timer;
       this.show = false;
+      if(this.orderStatus == 4){
+        var handleState = 12
+      }else{
+        var handleState = 3
+      }
       var data = {
         userId: this.$store.state.userId,
         orderInfoId: this.orderInfoId,
-        handleState: 3,
-        appoinmentTime: timer
+        handleState: handleState,
+        appoinmentTime: timer,
+        remark: this.$(".remark").val()
       };
       console.log(data);
       this.axios.post("/api/handleOrderInfo", data).then(res => {
@@ -245,8 +285,11 @@ export default {
       this.show = false;
     }
   },
-  activated() {
+  created(){
     this.send();
+  },
+  activated() {
+    // this.send();
   }
 };
 </script>
@@ -312,6 +355,10 @@ textarea {
   width: 100%;
   margin-top: 10px;
   background: #ffffff;
+  border: 1px solid #f3f3f3;
+  color: #666666;
+  font-size: 13px;
+  padding: 5px;
 }
 .info {
   justify-content: space-between;
@@ -347,5 +394,8 @@ h2 {
 .actionBtn ul li:nth-child(4) {
   color: #999999;
   font-size: 14px;
+}
+.remakeInfo label::before{
+  content: ''
 }
 </style>

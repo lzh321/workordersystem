@@ -18,7 +18,7 @@ import wordOrder from '@/components/wordOrderPage/wordOrder'
     components:{
       NavBar,
       wordOrder
-    }
+    },
   }
 </script>
 

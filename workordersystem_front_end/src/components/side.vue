@@ -138,17 +138,21 @@ export default {
   background: #393D49;
   height: 100%;
   color: aliceblue;
+  overflow: hidden;
   /* overflow: hidden;
   overflow-y: scroll; */
 }
 .side_nav{
   position: initial;
-  width: 180px;
+  width: 197px;
   height: 100%;
   overflow: hidden;
   overflow-y: scroll;
 }
+.side_nav li {
+  width: 180px;
 
+}
 /* .side_nav li {
   min-height: 70px;
   width: 100%;

@@ -1,8 +1,8 @@
 <template>
   <div>
     <ul>
-      <li v-for="item in networkList" :key="item.networkId" @click="selectBank(item)">
-        <span>{{item.networName}}</span>
+      <li v-for="item in DeviceNumber" :key="item.deviceId" @click="select(item)">
+        <span>{{item.deviceNumber}}</span>
       </li>
     </ul>
   </div>
@@ -10,40 +10,42 @@
 
 <script>
 export default {
-  name: "selectBank",
+  name: "DeviceNumber",
   data() {
     return {
-      networkList: []
+      DeviceNumber: []
     };
   },
   methods: {
-    selectBank(data) {
+    select(data) {
       console.log(data);
-      sessionStorage.setItem("networkdata", JSON.stringify(data));
+      sessionStorage.setItem("DeviceNumber", JSON.stringify(data));
       this.$router.go(-1);
     },
     getNetworkList() {
-      var customerId = this.$route.query.customerId;
-      if (customerId !== 'undefined' ) {
-        console.log(1)
+      var networkId = this.$route.query.networkId;
+      if (networkId !== 'undefined') {
         this.axios
-          .post("/api/getNetworkInfoByCustomerId", {
+          .post("/api/getDeviceNumberListByNetworkId", {
             userId: this.$store.state.userId,
-            customerId: customerId
+            networkId: networkId
           })
           .then(res => {
             console.log(res);
             if (res.data.retCode == "000000") {
-              this.networkList = res.data.body.networkList;
+              this.DeviceNumber = res.data.body.deviceNumberList;
             }
           });
       }
     }
   },
+
   created() {
     this.getNetworkList();
   },
-
+  // activated() {
+  //   this.getNetworkList();
+  // }
 };
 </script>
 

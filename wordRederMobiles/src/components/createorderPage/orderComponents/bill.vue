@@ -5,25 +5,25 @@
         <h2>客户信息</h2>
         <i>为必填项</i>
       </div>
-      <router-link to="/selectBank" tag="div">
+      <div @click="selectCustomer">
         <label for>
-          <span>银行名称</span>：
+          <span>客户名称</span>：
         </label>
-        <input name="customerName" :value="orderInfo.customerId" type="hidden" />
-        <input type="text" :value="orderInfo.customerName" />
+        <input name="customerName" :value="bankList.customerId ? bankList.customerId : orderInfo.customerId" type="hidden" />
+        <input type="text" :value="bankList.customerName ? bankList.customerName : orderInfo.customerName" />
         <span>可选</span>
-      </router-link>
-      <router-link to="/network" tag="div">
+      </div>
+      <div @click="selectNetwork(bankList.customerId)">
         <label for>
-          <span>网点名称</span>：
+          <span>设备投放点</span>：
         </label>
-        <input name="networkId" :value="orderInfo.id" type="hidden" />
-        <input type="text" :value="orderInfo.networName" />
+        <input name="networkId" :value="networkList.id ? networkList.id : orderInfo.networkId" type="hidden" />
+        <input type="text" :value="networkList.networName ? networkList.networName : orderInfo.networName" />
         <span>可选</span>
-      </router-link>
+      </div>
       <div>
         <label for>
-          <span>网点地址</span>：
+          <span>投放点地址</span>：
         </label>
         <input type="text" :value="orderInfo.networAddress" />
       </div>
@@ -52,7 +52,10 @@
         <label for>
           <span>工单来源</span>：
         </label>
-        <input type="text" :value="orderInfo.orderSource == 0 ? '电话' : orderInfo.orderSource == 1 ? '微信' : orderInfo.orderSource == 2 ? '其他' : ''" />
+        <input
+          type="text"
+          :value="orderInfo.orderSource == 0 ? '电话' : orderInfo.orderSource == 1 ? '微信' : orderInfo.orderSource == 2 ? '其他' : ''"
+        />
         <input name="orderSource" :value="orderInfo.orderSource" type="hidden" />
         <span>可选</span>
       </router-link>
@@ -60,7 +63,10 @@
         <label for>
           <span>工单类型</span>：
         </label>
-        <input type="text" :value="orderInfo.orderType == 0 ? '电话' : orderInfo.orderType == 1 ? '微信' : orderInfo.orderType == 2 ? '其他' : ''" />
+        <input
+          type="text"
+          :value="orderInfo.orderType == 0 ? '电话' : orderInfo.orderType == 1 ? '微信' : orderInfo.orderType == 2 ? '其他' : ''"
+        />
         <input name="orderType" :value="orderInfo.orderType" type="hidden" />
         <span>可选</span>
       </router-link>
@@ -68,8 +74,18 @@
         <label for>
           <span>紧急程度</span>：
         </label>
-        <input type="radio" name="orderUrgency" value="1" :checked="orderInfo.orderUrgency == 1 ? true : false" />紧急
-        <input type="radio" name="orderUrgency" value="0" :checked="orderInfo.orderUrgency == 0 ? true : false" />一般
+        <input
+          type="radio"
+          name="orderUrgency"
+          value="1"
+          :checked="orderInfo.orderUrgency == 1 ? true : false"
+        />紧急
+        <input
+          type="radio"
+          name="orderUrgency"
+          value="0"
+          :checked="orderInfo.orderUrgency == 0 ? true : false"
+        />一般
       </div>
       <div>
         <label for>
@@ -82,30 +98,35 @@
         <label for>
           <span>设备型号</span>：
         </label>
-        <input type="text"  :value="orderInfo.modelType" />
+        <input type="text" :value="orderInfo.modelType" />
         <input name="modelId" :value="orderInfo.modelId" type="hidden" />
         <span>可选</span>
       </router-link>
-      <div class="deviceNumber">
+      <div @click="selectDeviceNumber(networkList.id)">
         <label for>
           <span>存货编码</span>：
         </label>
-        <input type="text" :value="orderInfo.deviceNumber" name="deviceNumber" />
+        <input type="text" :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber" />
+        <input name="deviceNumber" :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber" type="hidden" />
       </div>
       <div class="problem">
         <label for>
           <span>问题描述</span>：
         </label>
-        <textarea name="problemDescription" :value="orderInfo.problemDescription" id cols="30" rows="10"></textarea>
+        <textarea
+          name="problemDescription"
+          :value="orderInfo.problemDescription"
+          id
+          cols="30"
+          rows="10"
+        ></textarea>
       </div>
       <div class="affix">
         <label for>
           <span>附件</span>：
         </label>
         <div>
-        <van-uploader :after-read="afterRead" v-model="fileList" multiple >
-        </van-uploader>
-
+          <van-uploader :after-read="afterRead" v-model="fileList" multiple></van-uploader>
         </div>
         <van-button icon="photo" type="primary" @click="uploadImg">上传图片</van-button>
       </div>
@@ -113,8 +134,15 @@
         <label for>
           <span>指派给</span>：
         </label>
-        <input type="hidden" name="acceptUserId" :value="orderInfo.userId" />
-        <input type="text" :value="orderInfo.userName" />
+        <!-- <div class="seleUser" v-if="orderInfo.userId ? true : false">
+          <input type="hidden" name="acceptUserId" :value="orderInfo.userId" />
+          <input type="text" :value="orderInfo.singlePerson" />
+        </div> -->
+        <div class="seleUser">
+          <input type="hidden" name="acceptUserId" :value="userList.userId ? userList.userId : orderInfo.singlePersonId" />
+          <input type="text" :value="userList.userName ? userList.userName : orderInfo.singlePerson" />
+        </div>
+        
         <span>可选</span>
       </router-link>
       <div class="remakeInfo">
@@ -122,6 +150,9 @@
           <span>备注</span>：
         </label>
         <textarea name="remark" id cols="30" rows="10"></textarea>
+      </div>
+      <div class="Log">
+        <orderLog></orderLog>
       </div>
     </form>
     <div class="actionBtn">
@@ -144,14 +175,25 @@
 </template>
 
 <script>
+import orderLog from "../orderComponents/orderLog";
 export default {
-  name: "create",
+  name: "bill",
   data() {
     return {
       fileList: [],
       orderInfoId: sessionStorage.getItem("orderInfoId"),
-      orderInfo: {}
+      orderInfo:{},
+      bankList: {},
+      networkList: {},
+      orderSource: {},
+      orderType: {},
+      modelType: {},
+      userList: {},
+      DeviceNumber:{}
     };
+  },
+  components: {
+    orderLog
   },
   mounted() {
     layui.use("laydate", function() {
@@ -167,50 +209,98 @@ export default {
     });
   },
   methods: {
-    uploadImg(){
-      if(this.fileList.length > 0){
-        console.log(this.fileList[0].file)
+    selectCustomer(){
+      this.$router.push('/selectBank')
+      this.networkList = {}
+      this.DeviceNumber = {}
+    },
+    selectNetwork(customerId){
+      this.$router.push('/network?customerId='+customerId)
+    },
+    selectDeviceNumber(networkId){
+      this.$router.push('/DeviceNumber?networkId='+networkId)
+    },
+    send() {
+      var bankList = sessionStorage.getItem("bankList");
+      var networkList = sessionStorage.getItem("networkdata");
+      var orderSource = sessionStorage.getItem("orderSource");
+      var orderType = sessionStorage.getItem("orderType");
+      var modelType = sessionStorage.getItem("modelType");
+      var userList = sessionStorage.getItem("userList");
+      var DeviceNumber = sessionStorage.getItem("DeviceNumber");
+      console.log(bankList);
+      if (bankList) {
+        //客户名称
+        this.bankList = JSON.parse(bankList);
+      }
+      if (networkList) {
+        //投放点
+        this.networkList = JSON.parse(networkList);
+      }
+      if (orderSource) {
+        //工单来源
+        this.orderSource = JSON.parse(orderSource);
+      }
+      if (orderType) {
+        //工单类型
+        this.orderType = JSON.parse(orderType);
+      }
+      if (modelType) {
+        //设备类型
+        this.modelType = JSON.parse(modelType);
+      }
+      if (userList) {
+        //用户列表
+        this.userList = JSON.parse(userList);
+      }
+      if (DeviceNumber) {
+        //存货编号列表
+        this.DeviceNumber = JSON.parse(DeviceNumber);
+      }
+    },
+    uploadImg() {
+      if (this.fileList.length > 0) {
+        console.log(this.fileList[0].file);
         var data = {
           userId: this.$store.state.userId,
           orderInfoId: this.orderInfoId,
           file: this.fileList[0].file,
           soreId: 1
-        }
-        console.log(data)
-        this.axios.post("/api/uploadImagesInfo",data).then(res=>{
-          console.log(res)
-        })
+        };
+        console.log(data);
+        this.axios.post("/api/uploadImagesInfo", data).then(res => {
+          console.log(res);
+        });
       }
     },
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
       console.log(file);
       var data = {
-          userId: this.$store.state.userId,
-          orderInfoId: this.orderInfoId,
-          file: file,
-          soreId: 1
-        }
-        console.log(data)
-        this.axios.post("/api/uploadImagesInfo",data).then(res=>{
-          console.log(res)
-        })
+        userId: this.$store.state.userId,
+        orderInfoId: this.orderInfoId,
+        file: file,
+        soreId: 1
+      };
+      console.log(data);
+      this.axios.post("/api/uploadImagesInfo", data).then(res => {
+        console.log(res);
+      });
     },
     showPopup() {
       this.show = true;
     },
-    getOrderInfo(){
+    getOrderInfo() {
       var data = {
         userId: this.$store.state.userId,
         orderInfoId: this.orderInfoId
-      }
-      this.axios.post("/api/getOrderInfo",data).then(res=>{
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          this.orderInfo = res.data.body
+      };
+      this.axios.post("/api/getOrderInfo", data).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          this.orderInfo = res.data.body;
         }
-      })
-      
+      });
     },
     bill() {
       // 发单
@@ -219,49 +309,52 @@ export default {
       createData.orderInfoId = this.orderInfoId;
       createData.isClose = 0;
       console.log(createData);
-      this.axios.post("/api/alterOrderInfo",createData).then(res=>{
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          layer.msg(res.data.retMsg, {icon: 1})
+      this.axios.post("/api/alterOrderInfo", createData).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
-          setTimeout(()=>{
-            this.$router.push('/wordOrder')
-          },3000)
-        }else{
-          layer.msg(res.data.retMsg, {icon: 2})
+          setTimeout(() => {
+            this.$router.push("/wordOrder");
+          }, 3000);
+        } else {
+          layer.msg(res.data.retMsg, { icon: 2 });
         }
-      })
+      });
     },
     cancel() {
       //取消
       this.$router.push("/wordOrder");
       sessionStorage.clear();
     },
-    kuantan(){
+    kuantan() {
       // 关单
       var createData = this.$("#createData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
       createData.isClose = 1;
       console.log(createData);
-      this.axios.post("/api/alterOrderInfo",createData).then(res=>{
-        console.log(res)
-        if(res.data.retCode == '000000'){
-          layer.msg(res.data.retMsg, {icon: 1})
+      this.axios.post("/api/alterOrderInfo", createData).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
-          setTimeout(()=>{
-            this.$router.push('/wordOrder')
-          },3000)
-        }else{
-          layer.msg(res.data.retMsg, {icon: 2})
+          setTimeout(() => {
+            this.$router.push("/wordOrder");
+          }, 3000);
+        } else {
+          layer.msg(res.data.retMsg, { icon: 2 });
         }
-      })
+      });
     }
   },
   created() {
-    this.getOrderInfo()
+    this.getOrderInfo();
+    this.send()
   },
   activated() {
+    this.getOrderInfo();
+    this.send()
   }
 };
 </script>
@@ -272,7 +365,7 @@ export default {
 form {
   padding: 0px 15px;
 }
-.create div {
+form >div {
   display: flex;
   align-items: center;
   padding: 10px 0;
@@ -356,8 +449,11 @@ input[type="radio"] {
 textarea {
   width: 100%;
   margin-top: 10px;
-  color: #666666;
+  background: #ffffff;
   border: 1px solid #f3f3f3;
+  color: #666666;
+  font-size: 13px;
+  padding: 5px;
 }
 
 .create .actionBtn {
@@ -398,5 +494,14 @@ textarea {
 }
 .affix label::before {
   content: "";
+}
+.remakeInfo label::before{
+  content: '';
+}
+.seleUser{
+  flex: 1
+}
+.seleUser input{
+  width: 100%;
 }
 </style>

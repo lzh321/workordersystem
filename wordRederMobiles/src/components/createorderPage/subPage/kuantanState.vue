@@ -90,6 +90,7 @@ export default {
     }
   },
   created() {
+    this.handleState = this.$route.query.handleState;
     if (this.handleState == 8) {
       this.title = "关单说明";
     }

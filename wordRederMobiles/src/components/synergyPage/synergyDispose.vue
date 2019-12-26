@@ -47,7 +47,7 @@
 
       <div v-if="synergyList.coordinateState == 1" class="result">
         <label for>处&nbsp;&nbsp;理&nbsp;&nbsp;结&nbsp;&nbsp;果：</label>
-        <textarea name="handleContent" id cols="30" rows="5" placeholder="请输入/非必填项"></textarea>
+        <textarea name="handleContent" id cols="30" rows="5" placeholder="请输入必填项"></textarea>
       </div>
 
       <div v-if="synergyList.coordinateState == 3">
