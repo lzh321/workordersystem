@@ -12,6 +12,11 @@
 import Tabbar from '@/components/TabBar'
 export default {
   name: 'App',
+  data() {
+    return {
+      
+    }
+  },
   components:{
     Tabbar,
   }
@@ -28,4 +33,5 @@ export default {
   flex-direction: column;
   background: #FFFFFF;
 }
+
 </style>

@@ -16,7 +16,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">创建人</label>
         <div class="layui-input-block">
-          <input type="text" name :value="synergyInfo.createrId" autocomplete="off" class="layui-input" disabled />
+          <input type="text" name :value="synergyInfo.createrName" autocomplete="off" class="layui-input" disabled />
         </div>
       </div>
       <div class="layui-form-item">
@@ -41,7 +41,7 @@
       <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">
         <label class="layui-form-label">受理人</label>
         <div class="layui-input-block">
-          <input type="text" name  autocomplete="off" :value="synergyInfo.responsibleId" class="layui-input" disabled />
+          <input type="text" name  autocomplete="off" :value="synergyInfo.responsibleName" class="layui-input" disabled />
         </div>
       </div>
       <div v-if="coordinateState == 2 || coordinateState == 1" class="layui-form-item">

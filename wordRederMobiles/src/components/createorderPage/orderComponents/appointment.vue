@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="fault">
+    <div v-if="orderInfo.appoinmentTime" class="fault">
       <label for>
         <span>上门时间</span>：
       </label>
@@ -44,12 +44,12 @@ form div > span {
   display: flex;
   align-items: center;
   margin-left: 8px;
-  font-size: 13px;
+  font-size: 16px;
 }
 
 
 label {
-  font-size: 14px;
+  font-size: 15px;
   display: flex;
   align-items: center;
 }
@@ -61,8 +61,8 @@ label::before{
 }
 
 label span {
-  width: 60px;
-  font-size: 14px;
+  width: 70px;
+  font-size: 16px;
   color: #666666;
   text-align-last: justify;
 }
@@ -70,5 +70,6 @@ input[type="text"] {
   flex: 1;
   border: 1px solid #f3f3f3;
   height: 35px;
+  font-size: 15px
 }
 </style>

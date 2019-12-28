@@ -19,20 +19,15 @@ export default {
           name: "工单",
           active: require("../assets/Images/home_selected.png"),
           inactive: require("../assets/Images/home_default.png"),
-          path: "/wordOrder?type=wordOrder"
+          path: "/wordOrder"
         },
         {
           name: "协同",
           active: require("../assets/Images/synergy_in.png"),
           inactive: require("../assets/Images/synergy_grey.png"),
-          path: "/synergyManagement?type=synergyManagement"
+          path: "/synergyManagement"
         },
-        {
-          name: "创建",
-          active: require("../assets/Images/create_in.png"),
-          inactive: require("../assets/Images/create_grey.png"),
-          path: "/create"
-        },
+
         {
           name: "我的",
           active: require("../assets/Images/my_selected.png"),

@@ -173,21 +173,13 @@
                   id="modelType"
                   lay-verify="required"
                 >
-                  <option value>请选择设备型号</option>
+                  <option value>请选择存货编码</option>
                   <option
                     v-for="(item) in deviceNumberList"
                     :key="item.deviceId"
                     :value="item.deviceId"
                   >{{item.deviceNumber}}</option>
                 </select>
-                <!-- <input
-                  type="text"
-                  name="deviceNumber"
-                  value
-                  lay-verify="required"
-                  class="layui-input"
-                  autocomplete="off"
-                /> -->
               </div>
             </div>
             <!-- </div> -->
@@ -227,6 +219,7 @@
                   v-for="(item) in userList"
                   :key="item.userId"
                   :value="item.userId"
+                  v-if="item.userId == 'admin' ? false : true"
                 >{{item.userName}}</option>
               </select>
             </div>
@@ -254,7 +247,7 @@
           <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
-      <workOrderLog v-if="orderState == 0"></workOrderLog>
+      <workOrderLog v-if="orderState == 0 "></workOrderLog>
     </form>
   </div>
 </template>
@@ -281,7 +274,7 @@ export default {
       orderInfoId: "",
       orderState: sessionStorage.getItem("orderState")
         ? sessionStorage.getItem("orderState")
-        : ""
+        : null
     };
   },
   components: {
@@ -447,24 +440,43 @@ export default {
 
         var orderInfoId = sessionStorage.getItem("orderInfoId")
           ? sessionStorage.getItem("orderInfoId")
-          : _this.orderInfoId;
-
-        data.field.userId = _this.$store.state.userId;
-        data.field.orderInfoId = orderInfoId;
-        data.field.isClose = "1";
-        _this.$axios.post("/api/alterOrderInfo", data.field).then(res => {
-          console.log(res);
-          if (res.data.retCode == "000000") {
-            layer.msg(res.data.retMsg, { icon: 1 });
-            setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
-            }, 2000);
-          } else {
-            layer.msg(res.data.retMsg, { icon: 2 });
+          : "";
+        if(orderInfoId === null ||
+          orderInfoId === "" ||
+          orderInfoId === undefined){
+            data.field.userId = _this.$store.state.userId;
+            data.field.orderInfoId = _this.orderInfoId;
+            data.field.isClose = "1";
+            _this.$axios.post("/api/addOrderInfo", data.field).then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.push(
+                    "/workOrderManagement?type=workOrderManagement"
+                  );
+                }, 2000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
+              }
+            });
+          }else{
+            data.field.userId = _this.$store.state.userId;
+            data.field.orderInfoId = orderInfoId;
+            _this.$axios.post("/api/alterOrderInfo", data.field).then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.push(
+                    "/workOrderManagement?type=workOrderManagement"
+                  );
+                }, 2000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
+              }
+            });
           }
-        });
 
         return false;
       });
@@ -473,16 +485,16 @@ export default {
       upload.render({
         elem: "#selectImage",
         url: "/api/uploadImagesInfo",
-        bindAction:"#uploadImage",
+        // bindAction:"#uploadImage",
         method: "post",
-        multiple: true, //是否多文件上传
+        multiple: false, //是否多文件上传
         accept: "images", // 规定上传文件类型 ，images/file/video/audio
-        auto: false, // 是否自动上传
+        auto: true, // 是否自动上传
         field: "file", // 设定文件域字段
         choose: function(obj) {
           obj.preview(function(index, file, result) {
             console.log(index, file);
-            $("#imgBox").append(
+            $("#imgBox").html(
               '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
                 result +
                 '" alt />'

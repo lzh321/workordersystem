@@ -7,7 +7,7 @@
       <div class="layui-input-block">
         <select name="recordType" lay-filter="recordType">
           <option value>请选择故障类型</option>
-          <option v-for="(item,index) in record" :key="index" :value="item.recordType" :selected="workOrderInfo.recordType == item.recordType ? true : false">{{item.recordName}}</option>
+          <option v-for="(item,index) in record" :key="index" :value="item.recordName ? item.recordName : workOrderInfo.recordType" :selected="workOrderInfo.recordType == item.recordName ? true : false">{{item.recordName}}</option>
 
         </select>
       </div>
@@ -17,7 +17,7 @@
       <div class="layui-input-block">
         <select name="recordModel">
           <option value>请选择故障模块</option>
-          <option v-for="(items,index) in recordList" :key="index" :value="items.recordModel" :selected="workOrderInfo.recordModel == items.recordModel ? true : false">{{items.recordModelName}}</option>
+          <option v-for="(items,index) in recordList" :key="index" :value="items.recordModelName ? items.recordModelName : workOrderInfo.recordModel" :selected="workOrderInfo.recordModel == items.recordModelName ? true : false">{{items.recordModelName}}</option>
         </select>
       </div>
     </div>
@@ -53,7 +53,7 @@
       <div class="layui-upload">
         <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
           预览
-          <div class="layui-upload-list" id="imgBox"></div>
+          <div class="layui-upload-list" id="AfterimgBox"></div>
           <input type="hidden" name="recordPhoto" />
         </blockquote>
       </div>
@@ -61,6 +61,7 @@
   </div>
 </template>
 <script>
+import { send } from 'q';
 export default {
   name: "inProcess",
   props: ["orderState", "workOrderInfo"],
@@ -351,7 +352,10 @@ export default {
     };
   },
   mounted() {
-    this.getImg();
+    // this.getImg();
+    setTimeout(()=>{
+      this.send()
+    },1000)
     var _this = this;
     layui.use(["form","element", "upload", "jquery"], function() {
       var form = layui.form
@@ -361,7 +365,7 @@ export default {
       form.on('select(recordType)',function(data){
         console.log(data)
         for(var i = 0; i < _this.record.length; i++){
-          if(data.value == _this.record[i].recordType){
+          if(data.value == _this.record[i].recordName){
             console.log(_this.record[i].recordList)
             _this.recordList = _this.record[i].recordList
             form.render();
@@ -413,23 +417,38 @@ export default {
     });
   },
   methods: {
-    getImg() {
-      if (this.workOrderInfo.recordPhoto) {
-        this.$("#imgBox").html(
-          '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-            this.workOrderInfo.recordPhoto.split(",")[0] +
-            '" alt />'
-        );
+    // getImg() {
+    //   if (this.workOrderInfo.recordPhoto) {
+    //     this.$("#AfterimgBox").html(
+    //       '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+    //         this.workOrderInfo.recordPhoto.split(",")[0] +
+    //         '" alt />'
+    //     );
+    //   }
+    //   if (this.workOrderInfo.recordPhoto) {
+    //     this.$("#imgBox").html(
+    //       '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+    //         this.workOrderInfo.recordPhoto.split(",")[0] +
+    //         '" alt />'
+    //     );
+    //   }
+    // },
+    send(){
+      if(this.workOrderInfo.recordType){
+        for(var i = 0; i < this.record.length; i++){
+          if(this.workOrderInfo.recordType == this.record[i].recordName){
+            console.log(this.record[i].recordList)
+            this.recordList = this.record[i].recordList
+          }
+        }
       }
     }
   },
   created() {
-    // if(this.workOrderInfo.recordPhoto){
-    //   this.$("#imgBox").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' + this.workOrderInfo.recordPhoto.split(",")[0] +'" alt />')
-    // }
+    // this.getImg();
   },
   updated() {
-    this.getImg();
+    // this.getImg();
     layui.use(["form", "upload"], function() {
       layui.form.render();
       layui.upload.render();

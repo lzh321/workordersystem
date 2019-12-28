@@ -7,7 +7,7 @@ import axios from 'axios'
 import qs from 'qs'
 import store from './store'
 import jquery from 'jquery'
-import {Tabbar,TabbarItem,NavBar,Tab, Tabs,List,Button,Field,Icon,Uploader,Dialog,Toast,DatetimePicker,Popup} from 'vant'
+import { Tabbar, TabbarItem, NavBar, Tab, Tabs, List, Button, Field, Icon, Uploader, Dialog, Toast, DatetimePicker, Popup } from 'vant'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'
@@ -30,14 +30,14 @@ Vue.prototype.$ = jquery
 Vue.config.productionTip = false
 
 // 自定义方法
-jquery.prototype.serializeObject=function(){
+jquery.prototype.serializeObject = function () {
 
-  var obj=new Object();
+  var obj = new Object();
 
-  jquery.each(this.serializeArray(),function(index,param){
-      if(!(param.name in obj)){
-          obj[param.name]=param.value;
-      }
+  jquery.each(this.serializeArray(), function (index, param) {
+    if (!(param.name in obj)) {
+      obj[param.name] = param.value;
+    }
   });
 
   return obj;
@@ -47,7 +47,8 @@ jquery.prototype.serializeObject=function(){
 axios.create({
   timeout: 6000,
   headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
+    // 'Content-Type': 'application/x-www-form-urlencoded',
+    'Content-Type': 'multipart/form-data'
   }
 })
 
@@ -71,7 +72,7 @@ axios.interceptors.request.use(
 
 // 路由拦截
 router.beforeEach((to, from, next) => {
-  
+
   if (to.path === '/Login') {
     next();
   } else {
@@ -82,6 +83,7 @@ router.beforeEach((to, from, next) => {
       next();
     }
   }
+
 })
 
 

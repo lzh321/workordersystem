@@ -3,21 +3,24 @@
     <!-- <NavBar :titleNaem="title"></NavBar> -->
     <!-- <wordOrder></wordOrder> -->
     <router-view></router-view>
+
   </div>
 </template>
 
 <script>
 import NavBar from '@/components/NavBar'
 import wordOrder from '@/components/wordOrderPage/wordOrder'
+import Tabbar from '@/components/TabBar'
   export default {
     data() {
       return {
-        title: "工单管理"
+        title: "工单管理",
+        
       }
     },
     components:{
       NavBar,
-      wordOrder
+      wordOrder,
     },
   }
 </script>
@@ -28,4 +31,5 @@ import wordOrder from '@/components/wordOrderPage/wordOrder'
   flex-direction: column;
   height: 100%;
 }
+
 </style>

@@ -6,25 +6,13 @@
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
       <div class="layui-input-block">
-        <input
-          type="text"
-          name
-          :value="workOrderInfo.recordType == 0 ? '硬件' : (workOrderInfo.recordType == 1 ? '软件' : (workOrderInfo.recordType == 2 ? '辅助' : ''))"
-          class="layui-input"
-          disabled
-        />
+        <input type="text" name :value="workOrderInfo.recordType" class="layui-input" disabled />
       </div>
     </div>
     <div class="layui-form-item">
       <label class="layui-form-label">故障模块</label>
       <div class="layui-input-block">
-        <input
-          type="text"
-          name
-          :value="workOrderInfo.recordModel == 0 ? '显示屏' : (workOrderInfo.recordModel == 1 ? '密码键盘' : '')"
-          class="layui-input"
-          disabled
-        />
+        <input type="text" name :value="workOrderInfo.recordModel" class="layui-input" disabled />
       </div>
     </div>
     <div class="layui-form-item layui-form-text">
@@ -54,8 +42,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">售后单</label>
       <div id="affix">
-        <div class="uploadImg" v-html="img">
-        </div>
+        <div class="uploadImg" v-html="img"></div>
       </div>
     </div>
   </div>
@@ -68,19 +55,32 @@ export default {
   props: ["workOrderInfo"],
   data() {
     return {
-      img:''
+      img: ""
     };
   },
-  mounted(){
-    console.log(this.workOrderInfo.recordPhoto)
-     this.img = '<img style="width:100px;height:100px" src=" http://192.168.1.245/' + this.workOrderInfo.recordPhoto.split(",")[0] +'" alt />'
+  methods:{
+    send(){
+      if(this.workOrderInfo.recordPhoto){
+      this.$(".uploadImg").html(
+        '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+          this.workOrderInfo.recordPhoto.split(",")[0] +
+          '" alt />'
+      );
+    }
+    }
+  },
+  mounted() {
+    this.send()
   },
   components: {
     reservation
   },
-  created(){
-   
-  }
+  created() {
+    
+  },
+  updated() {
+    this.send()
+  },
 };
 </script>
 

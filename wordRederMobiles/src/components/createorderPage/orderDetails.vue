@@ -71,7 +71,16 @@ export default {
 }
 .actionBtn {
   padding: 0;
+  
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 9999;
+}
+.perch{
+  padding: 10px 0;
   margin-top: 20px;
+  height: 50px;
 }
 .actionBtn ul {
   width: 100%;
@@ -81,24 +90,26 @@ export default {
   justify-content: space-around;
   background: #f0f0f0;
 }
-.actionBtn ul li {
+.actionBtn ul li button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: none;
+  background: #f0f0f0;
 }
-.actionBtn ul li img {
+.actionBtn ul li button img {
   width: 21px;
   height: 21px;
 }
-.actionBtn ul li:nth-child(1) {
+.actionBtn ul li:nth-child(1) button{
   color: #7CA6F7;
   font-size:14px; 
 }
-.actionBtn ul li:nth-child(2) {
+.actionBtn ul li:nth-child(2) button{
   color: #F8A32C;
   font-size:14px; 
 }
-.actionBtn ul li:nth-child(3) {
+.actionBtn ul li:nth-child(3) button{
   color: #999999;
   font-size:14px; 
 }
@@ -117,5 +128,8 @@ span{
 }
 .remakeInfo label::before{
   content: ''
+}
+form>div>input[type="text"]{
+  border: none !important;
 }
 </style>

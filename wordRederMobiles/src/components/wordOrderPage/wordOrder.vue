@@ -24,8 +24,11 @@
               </div>
               <div class="orderStatus">
                 <div>
-                  <img :src="items.orderState == 0 ? orderStatus.bill : items.orderState == 1 ? orderStatus.sendOrders : items.orderState == 2 ? orderStatus.acceptance: items.orderState == 3 ? orderStatus.dispose : items.orderState == 4 ? orderStatus.appointment : items.orderState == 5 ? orderStatus.sendOrders : items.orderState == 6 ? orderStatus.sendOrders : items.orderState == 7 ? orderStatus.visit : items.orderState == 8 ? orderStatus.kuantan : items.orderState == 9 ? orderStatus.sendOrders : items.orderState == 10 ? orderStatus.dispose : ''" alt />
-                  
+                  <img
+                    :src="items.orderState == 0 ? orderStatus.bill : items.orderState == 1 ? orderStatus.sendOrders : items.orderState == 2 ? orderStatus.acceptance: items.orderState == 3 ? orderStatus.dispose : items.orderState == 4 ? orderStatus.appointment : items.orderState == 5 ? orderStatus.sendOrders : items.orderState == 6 ? orderStatus.sendOrders : items.orderState == 7 ? orderStatus.visit : items.orderState == 8 ? orderStatus.kuantan : items.orderState == 9 ? orderStatus.sendOrders : items.orderState == 10 ? orderStatus.dispose : ''"
+                    alt
+                  />
+
                   <span>{{items.orderState == 0 ? '待发单' : items.orderState == 1 ? '待派单' : items.orderState == 2 ? '待受理' : items.orderState == 3 ? '处理中' : items.orderState == 4 ? '已预约' : items.orderState == 5 ? '已出发' : items.orderState == 6 ? '已开始' : items.orderState == 7 ? '待回访' : items.orderState == 8 ? '已关单' : items.orderState == 9 ? '已到达' : items.orderState == 10 ? '故障处理中' : ''}}</span>
                 </div>
                 <div>
@@ -46,7 +49,10 @@
                 <span>{{items.networAddress}}</span>
               </div>
               <div class="urgency">
-                <img :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''" alt />
+                <img
+                  :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''"
+                  alt
+                />
                 <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
               </div>
             </li>
@@ -54,6 +60,27 @@
         </ul>
       </van-tab>
     </van-tabs>
+    <!-- <div
+      class="xuanfu"
+      id="moveDiv"
+      @mousedown="down()"
+      @touchstart="down()"
+      @mousemove="move()"
+      @touchmove="move()"
+      @mouseup="end()"
+      @touchend="end()"
+    >
+      <div class="yuanqiu">11</div>
+    </div> -->
+
+    <img class="xuanfu"
+      id="moveDiv"
+      @mousedown="down()"
+      @touchstart="down()"
+      @mousemove="move()"
+      @touchmove="move()"
+      @mouseup="end()"
+      @touchend="end()" @click="goCreate" src="../../assets/Images/create_in.png" alt />
   </div>
 </template>
 
@@ -63,6 +90,14 @@ export default {
   data() {
     return {
       active: 0,
+      flags: false,
+      position: { x: 0, y: 0 },
+      nx: "",
+      ny: "",
+      dx: "",
+      dy: "",
+      xPum: "",
+      yPum: "",
       list: [],
       currentPage: 1,
       everyCount: 100,
@@ -87,17 +122,87 @@ export default {
     };
   },
   methods: {
-    chanage(active){
-      console.log(active)
-      if(active == 0){
-        this.getOrderInfoList("/api/getOrderPlanList",this.currentPage, this.everyCount);
+    // 实现移动端拖拽
+    goCreate(){
+      this.$router.push("/create")
+    },
+    down() {
+      this.flags = true;
+      let touch;
+      if (event.touches) {
+        touch = event.touches[0];
+      } else {
+        touch = event;
       }
-      if(active == 1){
-        this.getOrderInfoList("/api/getOrderInfoList",this.currentPage, this.everyCount);
+      this.position.x = touch.clientX;
+      this.position.y = touch.clientY;
+      this.dx = moveDiv.offsetLeft;
+      this.dy = moveDiv.offsetTop;
+    },
+    move() {
+      if (this.flags) {
+        let touch;
+        if (event.touches) {
+          touch = event.touches[0];
+        } else {
+          touch = event;
+        }
+        this.nx = touch.clientX - this.position.x;
+        this.ny = touch.clientY - this.position.y;
+        this.xPum = this.dx + this.nx;
+        this.yPum = this.dy + this.ny;
+        //添加限制：只允许在屏幕内拖动
+        const maxWidth = document.body.clientWidth - 54; //屏幕宽度减去悬浮框宽高
+        const maxHeight = document.body.clientHeight - 54;
+        if (this.xPum < 0) {
+          //屏幕x限制
+          this.xPum = 0;
+        } else if (this.xPum > maxWidth) {
+          this.xPum = maxWidth;
+        }
+        if (this.yPum < 0) {
+          //屏幕y限制
+          this.yPum = 0;
+        } else if (this.yPum > maxHeight) {
+          this.yPum = maxHeight;
+        }
+        moveDiv.style.left = this.xPum + "px";
+        moveDiv.style.top = this.yPum + "px";
+        //阻止页面的滑动默认事件
+        document.addEventListener(
+          "touchmove",
+          function() {
+            // 1.2 如果碰到滑动问题，请注意是否获取到 touchmove
+            // event.preventDefault(); //jq 阻止冒泡事件
+            event.stopPropagation(); // 如果没有引入jq 就用 stopPropagation()
+          },
+          false
+        );
+      }
+    },
+    //鼠标释放时候的函数
+    end() {
+      this.flags = false;
+    },
+    chanage(active) {
+      console.log(active);
+      if (active == 0) {
+        this.getOrderInfoList(
+          "/api/getOrderPlanList",
+          this.currentPage,
+          this.everyCount
+        );
+      }
+      if (active == 1) {
+        this.getOrderInfoList(
+          "/api/getOrderInfoList",
+          this.currentPage,
+          this.everyCount
+        );
       }
     },
     onLoad() {
-       // 异步更新数据
+      // 异步更新数据
       setTimeout(() => {
         // for (let i = 0; i < 10; i++) {
         //   this.list.push(this.list.length + 1);
@@ -111,55 +216,66 @@ export default {
         }
       }, 500);
     },
-    goOrderPage(orderStatus,orderInfoId) {
-      console.log(orderStatus,orderInfoId);
-      if (orderStatus == 0) {   //发单
+    goOrderPage(orderStatus, orderInfoId) {
+      console.log(orderStatus, orderInfoId);
+      if (orderStatus == 0) {
+        //发单
         this.$router.push("/bill?orderStatus=" + orderStatus);
-        sessionStorage.setItem("orderInfoId",orderInfoId)
-        sessionStorage.setItem("orderStatus",orderStatus)
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+        sessionStorage.setItem("orderStatus", orderStatus);
       }
-      if (orderStatus == 1) {   //派单
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 2) {   //待受理
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 3) {   //处理中
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 4) {   //已预约
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 5) {   //已出发
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 6) {   //已开始
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 7) {   //已回访
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 8) {   //已关单
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 9) {   //已到达
-         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-         sessionStorage.setItem("orderInfoId",orderInfoId)
-      }
-      if (orderStatus == 10) {   //已故障处理中
+      if (orderStatus == 1) {
+        //派单
         this.$router.push("/orderDetails?orderStatus=" + orderStatus);
-        sessionStorage.setItem("orderInfoId",orderInfoId)
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 2) {
+        //待受理
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 3) {
+        //处理中
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 4) {
+        //已预约
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 5) {
+        //已出发
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 6) {
+        //已开始
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 7) {
+        //已回访
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 8) {
+        //已关单
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 9) {
+        //已到达
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
+      }
+      if (orderStatus == 10) {
+        //已故障处理中
+        this.$router.push("/orderDetails?orderStatus=" + orderStatus);
+        sessionStorage.setItem("orderInfoId", orderInfoId);
       }
     },
-    getOrderInfoList(url,currentPage, everyCount) {
+    getOrderInfoList(url, currentPage, everyCount) {
       var data = {
         userId: this.$store.state.userId,
         currentPage: currentPage,
@@ -175,14 +291,14 @@ export default {
     }
   },
   created() {
-    sessionStorage.clear()
-    this.getOrderInfoList("/api/getOrderPlanList",this.currentPage, this.everyCount);
-    
+    sessionStorage.clear();
+    this.getOrderInfoList(
+      "/api/getOrderPlanList",
+      this.currentPage,
+      this.everyCount
+    );
   },
-  activated() {
-    this.getOrderInfoList("/api/getOrderPlanList",this.currentPage, this.everyCount);
-    
-  },
+
 };
 </script>
 
@@ -190,12 +306,9 @@ export default {
 .wordOrder {
   background: #f3f3f3;
   flex: 1;
-}
-.van-tabs {
-  height: 100%;
-}
-.van-tabs__content {
-  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+  position: relative;
 }
 .list {
   padding: 15px;
@@ -204,7 +317,7 @@ export default {
 .list li {
   background: #ffffff;
   border-radius: 8px;
-  padding: 15px 15px 5px;
+  padding: 20px 15px 15px;
   position: relative;
   margin-bottom: 10px;
 }
@@ -222,10 +335,10 @@ export default {
   line-height: 21px;
   color: #fff;
   margin-right: 10px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .orderId span {
-  font-size: 14px;
+  font-size: 16px;
   color: #2f6cff;
 }
 
@@ -235,6 +348,7 @@ export default {
 .orderStatus > div {
   display: flex;
   align-items: center;
+  margin: 5px 0;
 }
 .orderStatus > div:nth-child(1) img {
   width: 16px;
@@ -243,7 +357,7 @@ export default {
 }
 .orderStatus > div:nth-child(1) span {
   color: #ff4c42;
-  font-size: 11px;
+  font-size: 13px;
 }
 .orderStatus > div:nth-child(2) i {
   width: 16px;
@@ -254,16 +368,16 @@ export default {
 }
 .orderStatus > div:nth-child(2) span {
   color: #2f6cff;
-  font-size: 11px;
+  font-size: 13px;
 }
 .orderContent label {
-  font-size: 11px;
+  font-size: 13px;
   color: #999999;
   text-align-last: justify;
-  width: 70px;
+  width: 75px;
 }
 .orderContent span {
-  font-size: 11px;
+  font-size: 13px;
   color: #333333;
 }
 .orderContent span {
@@ -293,4 +407,17 @@ export default {
   right: 1px;
   font-size: 10px;
 }
+
+.xuanfu {
+  height: 54px; /* rem = 12px */
+  width: 54px;
+  /*1.3  如果碰到滑动问题，请检查 z-index。z-index需比web大一级*/
+  z-index: 999;
+  position: fixed;
+  bottom: 60px;
+  right: 0;
+  border-radius: 0.8rem;
+}
+
+
 </style>

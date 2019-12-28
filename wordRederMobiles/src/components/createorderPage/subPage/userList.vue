@@ -1,7 +1,7 @@
 <template>
   <div class="userList">
     <ul>
-      <li v-for="item in userList" :key="item.userId" @click="seleUser(item)">
+      <li v-for="item in userList" :key="item.userId" v-show="item.userId == 'admin' ? false : true" @click="seleUser(item)">
         <span>{{item.userName}}</span>
       </li>
     </ul>

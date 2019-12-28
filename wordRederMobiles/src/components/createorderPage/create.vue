@@ -10,7 +10,7 @@
           <span>客户名称</span>：
         </label>
         <input name="customerName" :value="bankList.customerId" type="hidden" />
-        <input type="text" :value="bankList.customerName" />
+        <input type="text" :value="bankList.customerName" placeholder="请选择客户名称" />
         <span>可选</span>
       </div>
       <div @click="selectNetwork(bankList.customerId)">
@@ -18,41 +18,41 @@
           <span>设备投放点</span>：
         </label>
         <input name="networkId" :value="networkList.id" type="hidden" />
-        <input type="text" :value="networkList.networName" />
+        <input type="text" :value="networkList.networName" placeholder="请选择设备投放点" />
         <span>可选</span>
       </div>
       <div>
         <label for>
           <span>投放点地址</span>：
         </label>
-        <input type="text" :value="networkList.networAddress" />
+        <input type="text" :value="networkList.networAddress" disabled />
       </div>
       <div>
         <label for>
           <span>联系人</span>：
         </label>
-        <input type="text" name="contactName" />
+        <input type="text" name="contactName" placeholder="请输入联系人" />
       </div>
       <div>
         <label for>
           <span>联系电话</span>：
         </label>
-        <input type="text" name="contactPhone" />
+        <input type="text" name="contactPhone" placeholder="请输入联系电话" />
       </div>
       <div class="agreenmentId">
         <label for>
           <span>合同</span>：
         </label>
-        <input type="text" name="agreenmentId" />
+        <input type="text" name="agreenmentId" placeholder="请输入合同" />
       </div>
-      <div>
+      <div class="info">
         <h2>故障信息</h2>
       </div>
       <router-link to="/orderSource" tag="div">
         <label for>
           <span>工单来源</span>：
         </label>
-        <input type="text" :value="orderSource.name" />
+        <input type="text" :value="orderSource.name" placeholder="请选择工单来源" />
         <input name="orderSource" :value="orderSource.id" type="hidden" />
         <span>可选</span>
       </router-link>
@@ -60,28 +60,29 @@
         <label for>
           <span>工单类型</span>：
         </label>
-        <input type="text" :value="orderType.name" />
+        <input type="text" :value="orderType.name" placeholder="请选择工单类型" />
         <input name="orderType" :value="orderType.id" type="hidden" />
         <span>可选</span>
       </router-link>
-      <div>
+      <div class="orderUrgency">
         <label for>
           <span>紧急程度</span>：
         </label>
         <input type="radio" name="orderUrgency" value="1" />紧急
         <input type="radio" name="orderUrgency" value="0" />一般
+        <input type="radio" class="Urgency" name="orderUrgency" />
       </div>
       <div>
         <label for="reportTime">
-          <span>保障时间</span>：
+          <span>报障时间</span>：
         </label>
-        <input type="text" id="reportTime" name="reportTime" />
+        <input type="text" id="reportTime" placeholder="请选择保障时间" name="reportTime" />
       </div>
       <router-link to="/modelType" tag="div">
         <label for>
           <span>设备型号</span>：
         </label>
-        <input type="text" :value="modelType.modelType" />
+        <input type="text" :value="modelType.modelType" placeholder="请选择设备型号" />
         <input name="modelId" :value="modelType.modelId" type="hidden" />
         <span>可选</span>
       </router-link>
@@ -89,27 +90,37 @@
         <label for>
           <span>存货编码</span>：
         </label>
-        <input type="text" :value="DeviceNumber.deviceNumber" />
+        <input type="text" :value="DeviceNumber.deviceNumber" placeholder="请选择存货编码" />
         <input name="deviceNumber" :value="DeviceNumber.deviceNumber" type="hidden" />
       </div>
       <div class="problem">
         <label for>
           <span>问题描述</span>：
         </label>
-        <textarea name="problemDescription" id cols="30" rows="10"></textarea>
+        <textarea name="problemDescription" cols="30" placeholder="请输入问题描述" rows="10"></textarea>
       </div>
       <div class="affix">
+        <div>
         <label for>
           <span>附件</span>：
         </label>
-        <van-uploader :after-read="afterRead" v-model="fileList" multiple />
-        <button type="button" class="layui-btn  layui-btn-normal" @click="uploadImg">上传图片</button>
+            <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
+        </div>
+        <div class="uploadImg">
+          <div class="layui-upload">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+              预览
+              <div class="layui-upload-list" id="imgBox"></div>
+              <input type="hidden" name="orderImg" value />
+            </blockquote>
+          </div>
+        </div>
       </div>
       <router-link to="/userList" tag="div">
         <label for>
           <span>指派给</span>：
         </label>
-        <input type="hidden" name="acceptUserId" :value="userList.userId" />
+        <input type="hidden" name="acceptUserId" placeholder="请选择指派人" :value="userList.userId" />
         <input type="text" :value="userList.userName" />
         <span class="seleUser"></span>
       </router-link>
@@ -117,25 +128,32 @@
         <label for>
           <span>备注</span>：
         </label>
-        <textarea name="remark" id cols="30" rows="10"></textarea>
+        <textarea name="remark" cols="30" placeholder="请输入备注" rows="10"></textarea>
       </div>
     </form>
     <div class="actionBtn">
       <ul>
-        <li @click="bill">
-          <img src="../../assets/Images/operation_receipt.png" alt />
-          <span>发单</span>
+        <li>
+          <button :disabled="isDisabled" @click="bill">
+            <img src="../../assets/Images/operation_receipt.png" alt />
+            <span>发单</span>
+          </button>
         </li>
-        <li @click="cancel">
-          <img src="../../assets/Images/operation_cancel.png" alt />
-          <span>取消</span>
+        <li>
+          <button @click="cancel">
+            <img src="../../assets/Images/operation_cancel.png" alt />
+            <span>取消</span>
+          </button>
         </li>
-        <li @click="kuantan">
-          <img src="../../assets/Images/operation_kuantan.png" alt />
-          <span>关单</span>
+        <li>
+          <button @click="kuantan">
+            <img src="../../assets/Images/operation_kuantan.png" alt />
+            <span>关单</span>
+          </button>
         </li>
       </ul>
     </div>
+    <div class="perch"></div>
   </div>
 </template>
 
@@ -153,13 +171,15 @@ export default {
       modelType: {},
       userList: {},
       DeviceNumber: {},
-      isFirstEnter: false
+      isFirstEnter: false,
+      isDisabled: false
     };
   },
   mounted() {
-    layui.use("laydate", function() {
+    var _this = this
+    layui.use(["laydate", "upload"], function() {
       var laydate = layui.laydate;
-
+      var upload = layui.upload;
       //执行一个laydate实例
       laydate.render({
         elem: "#reportTime", //指定元素
@@ -167,42 +187,61 @@ export default {
         closeStop: "#reportTime",
         trigger: "click"
       });
+
+      //上传图片
+      upload.render({
+        elem: "#uploadImage",
+        url: "/api/uploadImagesInfo",
+        // bindAction: "#uploadImage",
+        method: "post",
+        multiple: false, //是否多文件上传
+        accept: "images", // 规定上传文件类型 ，images/file/video/audio
+        auto: true, // 是否自动上传
+        field: "file", // 设定文件域字段
+        choose: function(obj) {
+          obj.preview(function(index, file, result) {
+            console.log(index, file);
+            _this.$("#imgBox").html(
+              '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
+                result +
+                '" alt />'
+            );
+            // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
+          });
+          this.data = { orderInfoId: _this.orderInfoId, soreId: 1 };
+        },
+        before: function(obj) {
+          //预读本地文件示例，不支持ie8
+        },
+        // allDone:function(obj){
+        //   console.log(obj.total); //得到总文件数
+        //   console.log(obj.successful); //请求成功的文件数
+        //   console.log(obj.aborted); //请求失败的文件数
+        // },
+        done: function(res) {
+          //上传完毕
+          console.log(res);
+          if (res.retCode == 0) {
+            layer.msg(res.retMsg, { icon: 1 });
+          } else {
+            layer.msg(res.retMsg, { icon: 2 });
+          }
+          _this.$("input[name='orderImg']").val(res.body.url);
+        }
+      });
     });
   },
   methods: {
-    afterRead(file) {
-      // 此时可以自行将文件上传至服务器
-      console.log(file);
-      let content = file.file;
-      //创建一个新的FormData
-      let formData = new FormData();
-      // upload这个名字是后台给的
-      formData.append("file", content);
-      //获取formdata表单所有的数据
-      var data = formData.getAll("file")
-      const config = {
-        headers: { "Content-Type": "multipart/form-data" }
-      };
-
-      data.userId = this.$store.state.userId
-      data.soreId = 1
-      data.orderInfoId = this.orderInfoId
-      console.log(data);
-      // this.axios.post("/api/uploadImagesInfo",data,config).then(res=>{
-      //   console.log(res)
-      // })
-    },
     showPopup() {
       this.show = true;
     },
     uploadImg() {
       console.log("上传");
-
     },
     selectCustomer() {
       this.$router.push("/selectBank");
-      this.networkList = {};
-      this.DeviceNumber = {};
+      sessionStorage.removeItem("networkdata");
+      sessionStorage.removeItem("DeviceNumber");
     },
     selectNetwork(customerId) {
       this.$router.push("/network?customerId=" + customerId);
@@ -267,11 +306,13 @@ export default {
     bill() {
       // 发单
       // this.getOrderInfoId();
+      this.isDisabled = true;
       var createData = this.$("#createData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
       createData.isClose = 0;
       console.log(createData);
+
       this.axios.post("/api/addOrderInfo", createData).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
@@ -279,10 +320,13 @@ export default {
           sessionStorage.clear();
           setTimeout(() => {
             this.$router.push("/wordOrder");
-            this.$("input[type='text']").val("")
-            this.$destroy('create')
+            this.$("input[type='text']").val("");
+            // this.$destroy("create");
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.isDisabled = false;
+          }, 2000);
           layer.msg(res.data.retMsg, { icon: 2 });
         }
       });
@@ -290,13 +334,16 @@ export default {
     cancel() {
       //取消
       this.$router.push("/wordOrder");
-      this.$("input[type='text']").val("")
-      this.$destroy('create')
+      this.$("input[type='text']").val("");
+      this.$(".Urgency").attr("checked", true);
+      this.$("textarea").val("");
+      // this.$destroy("create");
       sessionStorage.clear();
     },
     kuantan() {
       // 关单
       // this.getOrderInfoId();
+      this.isDisabled = true;
       var createData = this.$("#createData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
@@ -309,10 +356,13 @@ export default {
           sessionStorage.clear();
           setTimeout(() => {
             this.$router.push("/wordOrder");
-            this.$("input[type='text']").val("")
-            this.$destroy('create')
+            this.$("input[type='text']").val("");
+            this.$destroy("create");
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.isDisabled = false;
+          }, 2000);
           layer.msg(res.data.retMsg, { icon: 2 });
         }
       });
@@ -321,18 +371,22 @@ export default {
   created() {
     this.send();
     this.isFirstEnter = true;
-    this.getOrderInfoId()
+    this.getOrderInfoId();
+    this.$("input[type='text']").val("");
+    this.$(".Urgency").attr("checked", true);
+    this.$("textarea").val("");
+    sessionStorage.clear();
   },
   beforeRouteEnter(to, from, next) {
-    if (from.name == 'create') {
+    if (to.path == "/create") {
+      console.log("00000");
       // 这个name是下一级页面的路由name
-      console.log('00000')
-      to.meta.isBack = true; // 设置为true说明你是返回到这个页面，而不是通过跳转从其他页面进入到这个页面
+      to.meta.isBack = true;
+      // 设置为true说明你是返回到这个页面，而不是通过跳转从其他页面进入到这个页面
     }
     next();
   },
   activated() {
-    
     if (!this.$route.meta.isBack || this.isFirstEnter) {
       // 如果isBack是false，表明需要获取新数据，否则就不再请求，直接使用缓存的数据
       // 如果isFirstEnter是true，表明是第一次进入此页面或用户刷新了页面，需获取新数据
@@ -344,35 +398,37 @@ export default {
       this.modelType = {};
       this.userList = {};
       this.DeviceNumber = {};
-      // this.$destroy('create')
       this.send();
     }
     // 恢复成默认的false，避免isBack一直是true，导致下次无法获取数据
     this.$route.meta.isBack = false;
     // 恢复成默认的false，避免isBack一直是true，导致每次都获取新数据
-    this.isFirstEnter = false
-    // this.send();
-    
-  },
-  beforeDestroy(){
-    thsi.$destroy("create")
+    this.isFirstEnter = false;
+    this.send();
   }
-  
 };
 </script>
 
 <style scoped>
 .create {
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
 }
 form {
-  padding: 0px 15px;
+  /* padding: 0px 15px; */
+  flex: 1;
+  overflow: hidden;
+  overflow-y: scroll;
 }
 form div {
   display: flex;
   align-items: center;
-  padding: 10px 0;
-  margin-bottom: 10px;
+  padding: 5px 10px;
+  /* margin-bottom: 10px; */
   border-bottom: 1px solid #f0f0f0;
 }
 h2 {
@@ -430,9 +486,15 @@ label span {
 input[type="text"] {
   flex: 1;
   border: none;
-  border: 1px solid #f3f3f3;
   height: 35px;
   padding-left: 5px;
+  font-size: 15px;
+  background: #ffffff;
+  color: #666666;
+}
+input[type="text"]::placeholder {
+  color: #dddddd;
+  font-size: 15px;
 }
 input[type="radio"] {
   margin: 0 5px;
@@ -440,6 +502,7 @@ input[type="radio"] {
 
 .info {
   justify-content: space-between;
+  height: 50px;
 }
 .info i {
   display: flex;
@@ -480,10 +543,21 @@ textarea {
   font-size: 13px;
   padding: 5px;
 }
-
-.create .actionBtn {
+.orderUrgency {
+  height: 50px;
+}
+.actionBtn {
   padding: 0;
+  /* height: 50px; */
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 9999;
+}
+.perch{
+  padding: 10px 0;
   margin-top: 20px;
+  height: 50px;
 }
 .actionBtn ul {
   width: 100%;
@@ -493,24 +567,26 @@ textarea {
   justify-content: space-around;
   background: #f0f0f0;
 }
-.actionBtn ul li {
+.actionBtn ul li button {
   display: flex;
   flex-direction: column;
   align-items: center;
+  border: none;
+  background: #f0f0f0;
 }
-.actionBtn ul li img {
+.actionBtn ul li button img {
   width: 21px;
   height: 21px;
 }
-.actionBtn ul li:nth-child(1) {
+.actionBtn ul li:nth-child(1) button {
   color: #7ca6f7;
   font-size: 14px;
 }
-.actionBtn ul li:nth-child(2) {
+.actionBtn ul li:nth-child(2) button {
   color: #f8a32c;
   font-size: 14px;
 }
-.actionBtn ul li:nth-child(3) {
+.actionBtn ul li:nth-child(3) button {
   color: #999999;
   font-size: 14px;
 }
@@ -522,5 +598,26 @@ textarea {
 }
 .agreenmentId label::before {
   content: "";
+}
+.Urgency {
+  display: none;
+}
+.uploadImg{
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  width: 100%;
+  padding: 0;
+}
+.layui-upload {
+  width: 100%;
+  padding: 0
+}
+.layui-elem-quote{
+  width: 100%;
+}
+.layui-btn{
+  height: 35px;
+  line-height: 35px;
 }
 </style>

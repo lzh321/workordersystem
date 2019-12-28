@@ -23,7 +23,7 @@
         <textarea name="content" id cols="30" rows="10"></textarea>
       </div>
       <div class="btn">
-        <a type="button" @click="confirm" class="confirm layui-btn">确定</a>
+        <button type="button" @click="confirm" :disabled="isDisabled" class="confirm layui-btn">确定</button>
       </div>
     </form>
   </div>
@@ -37,7 +37,8 @@ export default {
       title: "",
       handleState: "",
       orderInfoId: "",
-      userList:{}
+      userList:{},
+      isDisabled: false
     };
   },
   methods: {
@@ -49,6 +50,7 @@ export default {
       }
     },
     resData(handleState) {
+      this.isDisabled = true
       var formData = this.$("#formData").serializeObject();
       formData.userId = this.$store.state.userId;
       formData.orderInfoId = this.orderInfoId;
@@ -59,17 +61,21 @@ export default {
         if (res.data.retCode == "000000") {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
+          this.$destroy("goSynergy")
           setTimeout(() => {
             this.$router.push("/wordOrder");
           }, 3000);
         } else {
+          setTimeout(()=>{
+            this.isDisabled = false
+          },2000)
           layer.msg(res.data.retMsg, { icon: 2 });
         }
       });
     },
     confirm() {
+      this.isDisabled = true
       this.resData(this.handleState);
-      this.$destroy("goSynergy")
     }
   },
   created() {
@@ -155,5 +161,6 @@ textarea {
   background: #2f6cff;
   color: #f3f3f3;
   margin: auto;
+  border: none;
 }
 </style>

@@ -179,6 +179,11 @@
         </div>
       </div>
     </form>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+          <button type="reset" @click="cancel" class="layui-btn ">返回</button>
+        </div>
+      </div>
   </div>
 </template>
 
@@ -191,6 +196,9 @@ export default {
     };
   },
   methods:{
+    cancel() {
+      this.$router.push("/equipmentList?type=equipmentList");
+    },
     getDeviceInfo(){
       var data = {
         userId: this.$store.state.userId,

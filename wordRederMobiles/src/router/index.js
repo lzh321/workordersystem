@@ -29,7 +29,7 @@ Vue.use(Router)
 // 重写路由
 const routerPush = Router.prototype.push
 Router.prototype.push = function push(location) {
-  return routerPush.call(this, location).catch(error=> error)
+  return routerPush.call(this, location).catch(error => error)
 }
 
 export default new Router({
@@ -46,71 +46,102 @@ export default new Router({
       path: '/create',
       name: 'create',
       component: create,
-      meta:{
+      meta: {
         isBack: false,  // 这个字段的意思稍后再说      
-        keepAlive: true
+        keepAlive: true,
+        // showTab: true,
       }
     },
     {
       path: '/Home',
       name: 'Home',
       component: Home,
-      meta:{
+      meta: {
         showTab: true,
         title: '首页'
       },
-      children:[
+      children: [
         {
-          path:'/wordOrder',
+          path: '/wordOrder',
           name: 'wordOrder',
           component: wordOrder,
-          meta:{
+          meta: {
             showTab: true,
             title: '工单'
           },
         },
+        
         {
-          path:'/orderDetails',
+          path: '/orderDetails',
           name: 'orderDetails',
           component: orderDetails,
-          meta:{
+          meta: {
             showTab: false,
             title: '工单详情'
           },
         },
         {
-          path:'/customerInfo',
+          path: '/customerInfo',
           name: 'customerInfo',
           component: customerInfo,
-          meta:{
+          meta: {
             showTab: false,
           },
         },
         {
-          path:'/bill',
+          path: '/bill',
           name: 'bill',
           component: bill,
-          meta:{
+          meta: {
             showTab: false,
           },
         },
-        
+        {
+          path: '/synergy',
+          name: 'synergy',
+          component: synergy,
+          meta: {
+            showTab: true,
+            title: '协同'
+          },
+          children: [
+            {
+              path: '/synergyManagement',
+              name: 'synergyManagement',
+              component: synergyManagement,
+              meta: {
+                showTab: true,
+              },
+            },
+            {
+              path: '/synergyDispose',
+              name: 'synergyDispose',
+              component: synergyDispose,
+              meta: {
+                showTab: true,
+              },
+            }
+          ]
+        },
+        {
+          path: '/myCenter',
+          name: 'myCenter',
+          component: myCenter,
+          meta: {
+            showTab: true,
+            title: '个人中心'
+          },
+        },
       ]
     },
+
     {
-      path:'/myCenter',
-      name: 'myCenter',
-      component: myCenter,
-      meta:{
-        showTab: true,
-        title: '个人中心'
-      },
-    },
-    {
-      path:'/createOrder',
+      path: '/createOrder',
       name: 'createOrder',
       component: createOrder,
-      
+      meta: {
+        showTab: true,
+      },
     },
     {
       path: '/selectBank',
@@ -132,7 +163,7 @@ export default new Router({
       name: 'orderType',
       component: orderType
     },
-    
+
     {
       path: '/modelType',
       name: 'modelType',
@@ -157,7 +188,7 @@ export default new Router({
       path: '/goSynergy',
       name: 'goSynergy',
       component: goSynergy,
-      meta:{
+      meta: {
         isBack: false,  // 这个字段的意思稍后再说      
         keepAlive: true
       }
@@ -172,33 +203,7 @@ export default new Router({
       name: 'recordModel',
       component: recordModel
     },
-    {
-      path:'/synergy',
-      name: 'synergy',
-      component: synergy,
-      meta:{
-        showTab: true,
-        title: '协同'
-      },
-      children:[
-        {
-          path: '/synergyManagement',
-          name: 'synergyManagement',
-          component: synergyManagement,
-          meta:{
-            showTab: true,
-          },
-        },
-        {
-          path: '/synergyDispose',
-          name: 'synergyDispose',
-          component: synergyDispose,
-          meta:{
-            showTab: true,
-          },
-        }
-      ]
-    },
+
     {
       path: "*",
       redirect: '/Login'

@@ -9,7 +9,7 @@
         <textarea name="content" id cols="30" rows="10"></textarea>
       </div>
       <div class="btn">
-        <a type="button" @click="confirm" class="confirm layui-btn">确定</a>
+        <button type="button" :disabled="isDisabled" @click="confirm"  class="confirm layui-btn">确定</button>
       </div>
     </form>
   </div>
@@ -23,7 +23,8 @@ export default {
       title: "",
       handleState: "",
       orderInfoId: sessionStorage.getItem("orderInfoId"),
-      orderInfo: {}
+      orderInfo: {},
+      isDisabled: false
     };
   },
   methods: {
@@ -56,6 +57,9 @@ export default {
               this.$router.push("/synergyManagement");
             }, 3000);
           } else {
+              setTimeout(() => {
+                this.isDisabled = false
+              }, 3000);
             layer.msg(res.data.retMsg, { icon: 2 });
           }
         });
@@ -80,12 +84,16 @@ export default {
               this.$router.push("/wordOrder");
             }, 3000);
           } else {
+            setTimeout(() => {
+                this.isDisabled = false
+              }, 3000);
             layer.msg(res.data.retMsg, { icon: 2 });
           }
         });
       }
     },
     confirm() {
+      this.isDisabled = true
       this.resData(this.handleState);
     }
   },
@@ -100,6 +108,12 @@ export default {
       this.handleState == 3
     ) {
       this.title = "驳回说明";
+    }
+    if (
+      this.handleState == 10
+
+    ) {
+      this.title = "改派说明";
     }
     this.getOrderInfo();
   },

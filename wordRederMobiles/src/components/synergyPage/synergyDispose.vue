@@ -13,7 +13,7 @@
       <div class="creator">
         <div>
           <label for>创&nbsp;&nbsp;&nbsp;建&nbsp;&nbsp;&nbsp;人：</label>
-          <span>{{synergyList.createrId}}</span>
+          <span>{{synergyList.createrName}}</span>
         </div>
         <div>
           <label for>创&nbsp;&nbsp;建&nbsp;&nbsp;时&nbsp;&nbsp;间：</label>
@@ -27,7 +27,7 @@
       >
         <div>
           <label for>受&nbsp;&nbsp;&nbsp;理&nbsp;&nbsp;&nbsp;人：</label>
-          <span>{{synergyList.responsibleId}}</span>
+          <span>{{synergyList.responsibleName}}</span>
         </div>
         <div>
           <label for>受&nbsp;&nbsp;理&nbsp;&nbsp;时&nbsp;&nbsp;间：</label>

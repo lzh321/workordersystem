@@ -7,7 +7,7 @@
         <span>为必填项</span>
       </div>
       <div class="basicInfo">
-        <div class="layui-form-item">
+        <!-- <div class="layui-form-item">
           <label class="layui-form-label">存货编码</label>
           <div class="layui-input-block">
             <input
@@ -32,6 +32,25 @@
               placeholder="请输入存货编码"
               class="layui-input"
             />
+          </div>
+        </div>-->
+        <div class="layui-form-item">
+          <label class="layui-form-label">客户名称</label>
+          <div class="layui-input-block">
+            <select
+              name="customerName"
+              id="customerName"
+              lay-filter="customerName"
+              lay-verify="required"
+            >
+              <option value>请选择一个客户</option>
+              <option
+                v-for="(item) in customerNameList"
+                :key="item.customerId"
+                :value="item.customerId"
+                :selected="item.customerId == DeviceInfo.customerId ? true : false"
+              >{{item.customerName}}</option>
+            </select>
           </div>
         </div>
 
@@ -63,20 +82,6 @@
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label">客户名称</label>
-          <div class="layui-input-block" layui-filter="test2">
-            <select name="customerName" id="customerName" lay-verify="required">
-              <option value>请选择一个客户</option>
-              <option
-                v-for="(item) in customerNameList"
-                :key="item.customerId"
-                :value="item.customerId"
-              >{{item.customerName}}</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="layui-form-item">
           <label class="layui-form-label">设备投放点</label>
           <div class="layui-input-block">
             <select
@@ -89,7 +94,8 @@
               <option
                 v-for="(item) in networkList"
                 :key="item.id"
-                :value="item.id"
+                :value="item.id ? item.id : DeviceInfo.networkId"
+                :selected="item.id == DeviceInfo.networkId ? true : false"
               >{{item.networName}}</option>
             </select>
           </div>
@@ -119,6 +125,25 @@
               :value="networAddress ? networAddress : DeviceInfo.networkAddress"
               disabled
             />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">存货编码</label>
+          <div class="layui-input-block">
+            <select
+              name="deviceNumber"
+              lay-filter="deviceNumber"
+              id="modelType"
+              lay-verify="required"
+            >
+              <option value>请选择存货编码</option>
+              <option
+                v-for="(item) in deviceNumberList"
+                :key="item.deviceId"
+                :value="item.deviceId"
+                :selected="item.deviceId == DeviceInfo.deviceId ? true : false"
+              >{{item.deviceNumber}}</option>
+            </select>
           </div>
         </div>
 
@@ -169,7 +194,7 @@
               class="layui-input"
               lay-verify="required"
               name="seviceEndtime"
-              value=""
+              value
               autocomplete="off"
               id="Maintenance_end"
               placeholder="请选择维保结束时间"
@@ -194,12 +219,12 @@
             class="layui-input"
           />
           <input
-          v-else
+            v-else
             type="text"
             name="deviceState"
             required
             lay-verify
-            value=""
+            value
             placeholder="请输入设备状态"
             autocomplete="off"
             class="layui-input"
@@ -221,12 +246,12 @@
             class="layui-input"
           />
           <input
-          v-else
+            v-else
             type="text"
             name="deviceBatch"
             required
             lay-verify
-          value=""
+            value
             placeholder="请输入生产批次"
             autocomplete="off"
             class="layui-input"
@@ -249,12 +274,12 @@
             class="layui-input"
           />
           <input
-          v-else
+            v-else
             type="text"
             name="deviceSignNumber"
             required
             lay-verify
-            value=""
+            value
             placeholder="请输入签报号"
             autocomplete="off"
             class="layui-input"
@@ -282,7 +307,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入物料类型"
             autocomplete="off"
             class="layui-input"
@@ -294,7 +319,7 @@
         <label class="layui-form-label">发货时间</label>
         <div class="layui-input-block">
           <input
-          v-if="DeviceInfo.deliveryTime"
+            v-if="DeviceInfo.deliveryTime"
             type="text"
             class="layui-input"
             name="deliveryTime"
@@ -304,12 +329,12 @@
             autocomplete="off"
           />
           <input
-          v-else
+            v-else
             type="text"
             class="layui-input"
             name="deliveryTime"
             id="shipments"
-            value=""
+            value
             autocomplete="off"
             placeholder="请选择发货时间"
           />
@@ -336,7 +361,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入运单号"
             autocomplete="off"
             class="layui-input"
@@ -375,7 +400,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入转运流程"
             autocomplete="off"
             class="layui-input"
@@ -402,7 +427,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入验收单"
             autocomplete="off"
             class="layui-input"
@@ -428,7 +453,7 @@
             class="layui-input"
             name="checkTime"
             v-else
-            value=""
+            value
             autocomplete="off"
             id="checkTime"
             placeholder="请选择验收时间"
@@ -456,7 +481,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入客户联系人"
             autocomplete="off"
             class="layui-input"
@@ -484,7 +509,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入联系电话"
             autocomplete="off"
             class="layui-input"
@@ -511,7 +536,7 @@
             required
             lay-verify
             v-else
-            value=""
+            value
             placeholder="请输入资产状态"
             autocomplete="off"
             class="layui-input"
@@ -550,7 +575,7 @@
             id="payment"
             v-else
             autocomplete="off"
-            value=""
+            value
             placeholder="请选择开票时间"
           />
         </div>
@@ -584,7 +609,7 @@
             type="text"
             class="layui-input"
             v-else
-            value=""
+            value
             name="retMoneyTime"
             id="returnedMoney"
             autocomplete="off"
@@ -616,7 +641,8 @@ export default {
       networAddress: "",
       inventoryName: "",
       deviceNumber: "",
-      DeviceInfo: {}
+      DeviceInfo: {},
+      deviceNumberList: []
     };
   },
   methods: {
@@ -631,10 +657,10 @@ export default {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
       });
-      this.$axios.post("/api/getNetworkList", userId).then(res => {
-        // 设备投放地点
-        this.networkList = res.data.body.networkList;
-      });
+      // this.$axios.post("/api/getNetworkList", userId).then(res => {
+      //   // 设备投放地点
+      //   this.networkList = res.data.body.networkList;
+      // });
     },
     getDeviceInfo() {
       console.log(111);
@@ -653,18 +679,32 @@ export default {
           this.DeviceInfo = res.data.body;
 
           // 设备投放点
+          var customerId = res.data.body.customerId;
+          this.$axios
+            .post("/api/getNetworkInfoByCustomerId", {
+              userId: this.$store.state.userId,
+              customerId: customerId
+            })
+            .then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                this.networkList = res.data.body.networkList;
+              }
+            });
+
+          // 存货编号
           var networkId = res.data.body.networkId;
-          var networkIdLen = this.$("#networkId option").length;
-          for (var i = 0; i < networkIdLen; i++) {
-            var networkIdVal = this.$("#networkId option")
-              .eq(i)
-              .val();
-            if (networkId == networkIdVal) {
-              this.$("#networkId option")
-                .eq(i)
-                .attr("selected", "selected");
-            }
-          }
+          this.$axios
+              .post("/api/getDeviceNumberListByNetworkId", {
+                userId: this.$store.state.userId,
+                networkId: networkId
+              })
+              .then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  this.deviceNumberList = res.data.body.deviceNumberList;
+                }
+              });
 
           // 客户名称
           var customerName = res.data.body.customerName;
@@ -795,20 +835,66 @@ export default {
         trigger: "click"
       });
 
-      // select监听
-      form.on("select(seleNetworkName)", function(data) {
-        for (var i = 0; i < _this.networkList.length; i++) {
-          // console.log(data.value);
-          if (data.value == _this.networkList[i].id) {
-            _this.regionName = _this.networkList[i].regionName;
-            _this.networAddress = _this.networkList[i].networAddress;
+      form.on("select(customerName)", function(data) {
+        for (var i = 0; i < _this.customerNameList.length; i++) {
+          // console.log(data.value)
+          if (data.value == _this.customerNameList[i].customerId) {
+            _this.$axios
+              .post("/api/getNetworkInfoByCustomerId", {
+                userId: _this.$store.state.userId,
+                customerId: data.value
+              })
+              .then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  _this.networkList = res.data.body.networkList;
+                }
+              });
           }
         }
         if (data.value == "") {
-          _this.regionName = "";
           _this.networAddress = "";
+          _this.networkList = [];
         }
       });
+      form.on("select(seleNetworkName)", function(data) {
+        for (var i = 0; i < _this.networkList.length; i++) {
+          // console.log(data.value)
+          if (data.value == _this.networkList[i].id) {
+            _this.networAddress = _this.networkList[i].networAddress;
+            _this.$axios
+              .post("/api/getDeviceNumberListByNetworkId", {
+                userId: _this.$store.state.userId,
+                networkId: data.value
+              })
+              .then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  _this.deviceNumberList = res.data.body.deviceNumberList;
+                }
+              });
+          }
+        }
+        if (data.value == "") {
+          _this.networAddress = "";
+          _this.deviceNumberList = [];
+        }
+      });
+
+      // select监听
+      // form.on("select(seleNetworkName)", function(data) {
+      //   for (var i = 0; i < _this.networkList.length; i++) {
+      //     // console.log(data.value);
+      //     if (data.value == _this.networkList[i].id) {
+      //       _this.regionName = _this.networkList[i].regionName;
+      //       _this.networAddress = _this.networkList[i].networAddress;
+      //     }
+      //   }
+      //   if (data.value == "") {
+      //     _this.regionName = "";
+      //     _this.networAddress = "";
+      //   }
+      // });
       form.on("select(seleModelType)", function(data) {
         for (var i = 0; i < _this.DeviceModelType.length; i++) {
           // console.log(data.value, _this.DeviceModelType);
@@ -841,7 +927,7 @@ export default {
               setTimeout(function() {
                 _this.$router.push("/equipmentList?type=equipmentList");
               }, 3000);
-            }else{
+            } else {
               layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
@@ -855,7 +941,7 @@ export default {
               setTimeout(function() {
                 _this.$router.push("/equipmentList?type=equipmentList");
               }, 3000);
-            }else{
+            } else {
               layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
@@ -887,6 +973,7 @@ export default {
 
   created() {
     this.send();
+    // this.getDeviceInfo()
   },
   updated() {
     layui.use("form", function() {

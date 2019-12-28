@@ -1,25 +1,28 @@
 <template>
   <div class="customerInfo">
     <form action>
+      <div class="orderId">
+        <h2>{{orderInfoId}}</h2>
+      </div>
       <div class="info">
         <h2>客户信息</h2>
       </div>
       <div>
         <label for>
-          <span>银行名称</span>：
+          <span>客户名称</span>：
         </label>
         <span>{{orderInfo.customerName}}</span>
       </div>
       <div>
         <label for>
-          <span>网点名称</span>：
+          <span>设备投放点</span>：
         </label>
 
         <span>{{orderInfo.networName}}</span>
       </div>
       <div>
         <label for>
-          <span>网点地址</span>：
+          <span>投放点地址</span>：
         </label>
         <span>{{orderInfo.networAddress}}</span>
       </div>
@@ -66,7 +69,7 @@
       </div>
       <div>
         <label for>
-          <span>保障时间</span>：
+          <span>报障时间</span>：
         </label>
 
         <span>{{orderInfo.reportTime}}</span>
@@ -94,7 +97,9 @@
         <label for>
           <span>附件</span>：
         </label>
-        <img :src="orderInfo.orderPhoto ? 'http://192.168.1.245/' + orderInfo.orderPhoto : ''" alt="">
+        <div class="orderPhoto">
+
+        </div>
       </div>
       <div v-if="orderStatus == 1 ? true : false">
         <label for>
@@ -121,10 +126,29 @@ export default {
   props:["orderInfo","orderStatus"],
   data() {
     return {
-      fileList: []
+      fileList: [],
+      orderInfoId:sessionStorage.getItem("orderInfoId"),
+      img: ''
     };
   },
-  methods: {}
+  methods: {
+    send(){
+      if(this.orderInfo.orderPhoto){
+        this.$(".orderPhoto").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+          this.orderInfo.orderPhoto.split(",")[0] +
+          '" alt />')
+      }
+    }
+  },
+  mounted(){
+    this.send()
+  },
+  created(){
+    this.send()
+  },
+  updated() {
+    this.send()
+  },
 };
 </script>
 
@@ -138,16 +162,19 @@ form div {
   align-items: center;
   padding: 5px 0;
 }
-h2 {
-  font-size: 14px;
-  font-weight: 600;
+.orderId{
+  padding: 20px 0 10px;
+  
+}
+.orderId h2{
+font-size: 18px;
 }
 form div > span {
   display: flex;
   align-items: center;
   margin-left: 5px;
   color: #999999;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 label {
@@ -157,8 +184,8 @@ label {
 }
 
 label span {
-  width: 60px;
-  font-size: 14px;
+  width: 80px;
+  font-size: 16px;
   color: #666666;
   text-align-last: justify;
 }
@@ -170,15 +197,16 @@ input[type="text"] {
 
 .info {
   justify-content: space-between;
+  font-size: 16px;
 }
 .info h2::before{
   content: "|";
-  font-size: 14px;
+  font-size: 16px;
   color: #333333;
   margin-right: 2px;
 }
 h2{
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -205,7 +233,7 @@ textarea {
   background: #FFFFFF;
   border: 1px solid #F3F3F3;
   color: #666666;
-  font-size: 13px;
+  font-size: 15px;
   padding: 5px;
 }
 

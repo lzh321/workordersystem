@@ -59,24 +59,24 @@ export default {
 <style scoped>
 .orderLog{
   padding: 0 15px;
-  margin-top: 15px;
+  margin-top: 20px;
 }
 
 .info h2::before{
   content: "|";
-  font-size: 14px;
+  font-size: 16px;
   color: #333333;
   margin-right: 2px;
 }
 h2{
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   color: #333333;
 }
 .logContent{
   display: flex;
-  margin: 10px 0 5px;
+  margin: 15px 0 5px;
 }
 .logTime{
   text-align: center;
@@ -89,11 +89,19 @@ h2{
 .logTime span:nth-child(2){
   font-size: 13px;
 }
+ul{
+  width: 100%;
+}
 ul li {
   display: flex;
-  font-size: 14px;
+  align-items: center;
+  width: 100%;
+  font-size: 16px;
   color: #666666;
-  padding: 0 0 5px;
+  padding: 0 0 10px;
+}
+li span{
+  font-size: 16px;
 }
 label{
   display: flex;
@@ -102,6 +110,7 @@ label span{
   display: inline-block;
   width: 70px;
   text-align-last: justify;
-  color: #999999
+  color: #999999;
+  font-size:16px
 }
 </style>

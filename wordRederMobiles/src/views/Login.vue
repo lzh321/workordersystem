@@ -87,7 +87,7 @@ export default {
   margin: 20px 0 10px;
 }
 .hint {
-  font-size: 13px;
+  font-size: 15px;
   color: #999999;
 }
 .loginID {
@@ -99,7 +99,7 @@ export default {
   flex-direction: column;
 }
 label {
-  font-size: 15px;
+  font-size: 16px;
   color: #333333;
   margin-top: 35px;
 }
@@ -114,9 +114,13 @@ input {
   }
 input::placeholder {
   color: #dddddd;
-  font-size: 13px;
+  font-size: 16px;
 }
 .loginBtn {
   margin-top: 77px;
+  
+}
+.loginBtn span{
+  font-size: 17px;
 }
 </style>

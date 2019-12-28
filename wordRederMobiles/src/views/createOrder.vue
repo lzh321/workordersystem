@@ -1,6 +1,7 @@
 <template>
   <div class="createOrder">
-     <create></create>
+    <router-link to="/create" tag="span" class="layui-btn">创建</router-link>
+     <!-- <create></create> -->
   </div>
 </template>
 

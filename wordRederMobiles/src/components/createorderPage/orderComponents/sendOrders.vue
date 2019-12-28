@@ -7,7 +7,7 @@
         </label>
         <input type="hidden" name="acceptUserId" :value="userList.userId" />
         <input type="text" :value="userList.userName" />
-        <span>可选</span>
+        <span class="seleUser"></span>
       </router-link>
       <div class="remakeInfo">
         <label for>
@@ -17,22 +17,30 @@
       </div>
     </form>
     <orderLog></orderLog>
+    <div class="perch"></div>
     <div class="actionBtn">
       <ul>
-        <li @click="sendOrder">
-          <img src="../../../assets/Images/operation_send-orders.png" alt />
-          <span>派单</span>
+        <li>
+          <button @click="sendOrder" :disabled="isDisabled">
+            <img src="../../../assets/Images/operation_send-orders.png" alt />
+            <span>派单</span>
+          </button>
         </li>
-        <li @click="reject">
-          <img src="../../../assets/Images/operation_rejected.png" alt />
-          <span>驳回</span>
+        <li>
+          <button @click="reject" :disabled="isDisabled">
+            <img src="../../../assets/Images/operation_rejected.png" alt />
+            <span>驳回</span>
+          </button>
         </li>
-        <li @click="kuantan">
-          <img src="../../../assets/Images/operation_kuantan.png" alt />
-          <span>关单</span>
+        <li>
+          <button @click="kuantan" :disabled="isDisabled">
+            <img src="../../../assets/Images/operation_kuantan.png" alt />
+            <span>关单</span>
+          </button>
         </li>
       </ul>
     </div>
+    
   </div>
 </template>
 
@@ -44,7 +52,8 @@ export default {
   data() {
     return {
       userList: {},
-      orderInfoId: sessionStorage.getItem("orderInfoId")
+      orderInfoId: sessionStorage.getItem("orderInfoId"),
+      isDisabled:false
     };
   },
   components: {
@@ -64,6 +73,7 @@ export default {
       createData.orderInfoId = this.orderInfoId;
       createData.handleState = handleState;
       console.log(createData);
+        
       this.axios.post("/api/handleOrderInfo", createData).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
@@ -73,31 +83,40 @@ export default {
             this.$router.push("/wordOrder");
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.isDisabled = false
+          }, 2000);
           layer.msg(res.data.retMsg, { icon: 2 });
         }
       });
     },
     sendOrder() {
+      this.isDisabled = true
       this.resData(1);
     },
     reject() {
-      this.$router.push('/kuantanState?handleState=9')
+      this.$router.push("/kuantanState?handleState=9");
     },
     kuantan() {
       // this.resData(8);
-      this.$router.push('/kuantanState?handleState=8')
+      this.$router.push("/kuantanState?handleState=8");
     }
   },
   created() {
     this.send();
   },
-  activated() {
-    
-  }
+  activated() {}
 };
 </script>
 
 <style scoped>
+.actionBtn {
+  padding: 0;
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  z-index: 9999;
+}
 form {
   padding: 0 15px;
 }
@@ -112,7 +131,6 @@ form div > span {
   align-items: center;
   margin-left: 5px;
 }
-
 
 label {
   font-size: 14px;
@@ -161,7 +179,16 @@ h2 {
   align-items: baseline;
   flex-direction: column;
 }
-.remakeInfo label::before{
-  content: ''
+.remakeInfo label::before {
+  content: "";
+}
+form div > .seleUser::after {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background: url("../../../assets/Images/assigned.png") no-repeat;
+  background-size: 100%;
+  margin-left: 5px;
 }
 </style>

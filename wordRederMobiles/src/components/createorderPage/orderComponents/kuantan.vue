@@ -21,7 +21,7 @@ export default {
   components:{
     orderInfo,
     VisitInfo,
-    orderLog
+    orderLog,
   }
 }
 </script>

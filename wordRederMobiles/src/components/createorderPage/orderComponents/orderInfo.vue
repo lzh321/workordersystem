@@ -1,5 +1,5 @@
 <template>
-<!-- 故障处理记录详情 -->
+  <!-- 故障处理记录详情 -->
   <div class="dispose">
     <form action>
       <div class="info">
@@ -30,38 +30,60 @@
         </label>
         <textarea name id cols="30" rows="10" :value="orderInfo.recordSettle" disabled></textarea>
       </div>
+      <div class="affix">
+        <label for>
+          <span>附件</span>：
+        </label>
+        <div class="UploadImg"></div>
+      </div>
       <synergyInfo></synergyInfo>
     </form>
   </div>
 </template>
 
 <script>
-import synergyInfo from './synergyInfo'
-import appointment from './appointment'
+import synergyInfo from "./synergyInfo";
+import appointment from "./appointment";
 export default {
   name: "dispose",
-  props:["orderInfo"],
+  props: ["orderInfo"],
   data() {
-    return {
-      
-    }
+    return {};
   },
-  components:{
+  components: {
     synergyInfo,
     appointment
+  },
+  methods: {
+    send(){
+      if(this.orderInfo.recordPhoto){
+        this.$(".UploadImg").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
+          this.orderInfo.recordPhoto.split(",")[0] +
+          '" alt />')
+      }
+    }
+  },
+  mounted() {
+    this.send();
+  },
+  created() {
+    this.send();
+  },
+  updated(){
+    this.send()
   }
 };
 </script>
 
 <style scoped>
-form{
+form {
   padding: 0 15px;
 }
-.fault{
+.fault {
   display: flex;
   align-items: center;
 }
-form div{
+form div {
   padding: 10px 0;
   /* border-bottom: 1px solid #F0F0F0;  */
 }
@@ -99,42 +121,42 @@ input[type="text"] {
 textarea {
   width: 100%;
   margin-top: 10px;
-  background: #FFFFFF;
+  background: #ffffff;
   color: #666666;
 }
 .info {
   justify-content: space-between;
 }
-.info h2::before{
+.info h2::before {
   content: "|";
   font-size: 14px;
   color: #333333;
   margin-right: 2px;
 }
-h2{
+h2 {
   font-size: 14px;
   font-weight: 600;
   display: flex;
   align-items: center;
 }
-.remakeInfo{
+.remakeInfo {
   align-items: baseline;
   flex-direction: column;
 }
 .actionBtn ul li:nth-child(1) {
-  color:  #3FD188;
-  font-size:14px; 
+  color: #3fd188;
+  font-size: 14px;
 }
 .actionBtn ul li:nth-child(2) {
-  color: #F8A32C;
-  font-size:14px; 
+  color: #f8a32c;
+  font-size: 14px;
 }
 .actionBtn ul li:nth-child(3) {
-  color: #7CA6F7;
-  font-size:14px; 
+  color: #7ca6f7;
+  font-size: 14px;
 }
 .actionBtn ul li:nth-child(4) {
   color: #999999;
-  font-size:14px; 
+  font-size: 14px;
 }
 </style>

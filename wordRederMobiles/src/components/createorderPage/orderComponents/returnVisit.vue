@@ -27,18 +27,26 @@
       </div>
     </form>
     <orderLog></orderLog>
+    <div class="perch"></div>
      <div class="actionBtn">
       <ul>
-        <li @click="rejeck">
-          <img src="../../../assets/Images/operation_rejected.png" alt />
-          <span>驳回</span>
+        <li >
+          <button @click="rejeck" :disabled="isDisabled">
+            <img src="../../../assets/Images/operation_rejected.png" alt />
+            <span>驳回</span>
+          </button>
+          
         </li>
-        <li @click="kuantan">
-          <img src="../../../assets/Images/operation_kuantan.png" alt />
+        <li>
+          <button @click="kuantan" :disabled="isDisabled">
+            <img src="../../../assets/Images/operation_kuantan.png" alt />
           <span>关单</span>
+          </button>
+          
         </li>
       </ul>
     </div>
+    
   </div>
 </template>
 
@@ -50,7 +58,8 @@ export default {
   props:["orderInfo"],
   data() {
     return {
-      orderInfoId: sessionStorage.getItem("orderInfoId")
+      orderInfoId: sessionStorage.getItem("orderInfoId"),
+      isDisabled:false
     }
   },
   methods:{
@@ -63,6 +72,7 @@ export default {
       this.orderInfo.satisfiedState = createData.satisfiedState
       this.orderInfo.orderInfoId = this.orderInfoId
       console.log(this.orderInfo)
+        this.isDisabled = true
       this.axios.post("/api/closeOrderInfo",this.orderInfo).then(res=>{
         console.log(res);
         if (res.data.retCode == "000000") {
@@ -72,6 +82,9 @@ export default {
             this.$router.push("/wordOrder");
           }, 3000);
         } else {
+          setTimeout(() => {
+            this.isDisabled = false
+          }, 2000);
           layer.msg(res.data.retMsg, { icon: 2 });
         }
       })
@@ -173,17 +186,27 @@ h2{
   align-items: baseline;
   flex-direction: column;
 }
-
-.actionBtn ul li:nth-child(1) {
+.actionBtn{
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+}
+.actionBtn ul li:nth-child(1) button{
   color: #F8A32C;
   font-size:14px; 
 }
 
-.actionBtn ul li:nth-child(2) {
+.actionBtn ul li:nth-child(2) button{
   color: #999999;
   font-size:14px; 
 }
 .remakeInfo label::before{
   content: ''
+}
+input[type="radio"]{
+  margin: 2px 2px 0 8px;
+}
+.perch{
+  height: 50px;
 }
 </style>
