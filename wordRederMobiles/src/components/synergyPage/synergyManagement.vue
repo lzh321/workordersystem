@@ -1,20 +1,30 @@
 <template>
-  <div class="wordOrder">
-    <van-tabs
-      v-model="active"
-      swipeable
-      color="#FFFFFF"
-      title-active-color="#FFFFFF"
-      title-inactive-color="#FFFFFF"
-      background="#2F6CFF"
-      @click="chanage(active)"
-    >
-      <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
-        <ul class="list">
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-            <li
+  <div class="synergyManage">
+    <div class="synergySearch">
+    <div class="search">
+      <div class="SearchEntrance">
+        <i></i>
+      </div>
+      <input placeholder="搜索" v-model="searchVal" />
+    </div>
+    <NavBar></NavBar>
+  </div>
+    <div class="tabs">
+      <ul>
+        <li
+          v-for="(item,index) in tab"
+          :key="index"
+          :class="index == cutId ? 'active' : ''"
+          @click="cut(index)"
+        >{{item.name}}</li>
+      </ul>
+    </div>
+
+    <div class="tabs_content">
+      <ul class="list">
+        <li
               to="/bill"
-              v-for="(items,index) in list"
+              v-for="(items,index) in NewItems"
               :key="index"
               @click="goOrderPage(items.coordinateState,items.id)"
             >
@@ -46,20 +56,22 @@
                 <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
               </div>
             </li>
-          </van-list>
-        </ul>
-      </van-tab>
-    </van-tabs>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
+import NavBar from "@/components/NavBar";
 export default {
   name: "wordOrder",
   data() {
     return {
       active: 0,
+      cutId: 0,
+      searchVal: '',
       list: [],
+      listData: [],
       currentPage: 1,
       everyCount: 100,
       totalCount: "",
@@ -82,31 +94,29 @@ export default {
       }
     };
   },
+  components: {
+    NavBar
+  },
   methods: {
-    chanage(active){
-      console.log(active)
-      if(active == 0){
+    // chanage(active){
+    //   console.log(active)
+    //   if(active == 0){
+    //     this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
+    //   }
+    //   if(active == 1){
+    //     this.getOrderInfoList("/api/getCoordinateInfoList",this.currentPage, this.everyCount);
+    //   }
+    // },
+    cut(index) {
+      this.cutId = index;
+      if(index == 0){
         this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
       }
-      if(active == 1){
+      if(index == 1){
         this.getOrderInfoList("/api/getCoordinateInfoList",this.currentPage, this.everyCount);
       }
     },
-    onLoad() {
-       // 异步更新数据
-      setTimeout(() => {
-        // for (let i = 0; i < 10; i++) {
-        //   this.list.push(this.list.length + 1);
-        // }
-        // 加载状态结束
-        this.loading = false;
 
-        // 数据全部加载完成
-        if (this.list.length >= this.totalCount) {
-          this.finished = true;
-        }
-      }, 500);
-    },
     goOrderPage(coordinateState,id) {
       console.log(coordinateState,id);
       if (coordinateState == 0) {   //发单
@@ -144,14 +154,38 @@ export default {
   },
   created() {
     this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
-  }
+  },
+  computed: {
+    //设置计算属性
+    NewItems() {
+      var _this = this;
+
+      var NewItems = [];
+
+      this.list.map(function(item) {
+        if (item.id.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.createTime.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.orderId.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.createrUserName.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.orderState.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }
+      });
+
+      return NewItems;
+    }
+  },
 };
 </script>
 
 <style scoped>
-.wordOrder {
+.synergyManage {
   background: #f3f3f3;
-  flex: 1;
+  /* height: 100%; */
 }
 .van-tabs {
   height: 100%;
@@ -254,5 +288,90 @@ export default {
   top: 6px;
   right: 1px;
   font-size: 10px;
+}
+
+
+
+.synergySearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 15px;
+  background: #2f6cff;
+  color: #ffffff;
+  height: 50px;
+}
+.tabs ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #2f6cff;
+}
+.tabs ul li {
+  flex: .4;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 15px;
+  color: #FFFFFF;
+}
+
+.tabs ul .active {
+  color: #FFFFFF;
+  font-size: 19px;
+}
+.SearchEntrance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  position: absolute;
+  color: #2f6cff;
+  top: 7px;
+  left: 5px;
+  width: 50px;
+}
+.search {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+.search input {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-radius: 30px;
+  padding-left: 45px;
+  color: #333333;
+  font-size: 15px;
+}
+.search input::placeholder {
+  color: #2f6cff;
+}
+.SearchEntrance::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../../assets/Images/personnel_search.png") no-repeat;
+  background-size: 100%;
+}
+.filtrate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  width: 30px;
+  margin-left: 10px;
+}
+
+.filtrate::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 17px;
+  background: url("../../assets/Images/screening.png") no-repeat;
+  background-size: 100%;
 }
 </style>

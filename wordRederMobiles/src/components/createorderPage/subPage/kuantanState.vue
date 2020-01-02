@@ -3,7 +3,7 @@
     <form action id="formData">
       <div>
         <label for>
-          <i v-if="handleState == 8 ? false : true">*</i>
+          <i>*</i>
           <span>{{title}}</span>：
         </label>
         <textarea name="content" id cols="30" rows="10"></textarea>

@@ -161,8 +161,7 @@ export default {
     // }).catch(err=>{
     //   console.log(err)
     // })
-    sessionStorage.removeItem("listId");
-    sessionStorage.removeItem("data");
+    sessionStorage.clear()
   }
 };
 </script>

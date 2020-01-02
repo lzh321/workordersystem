@@ -1,6 +1,6 @@
 <template>
   <!-- 协同 -->
-  <div v-if="synergyList.legth == 0 ? false : true" class="synergyInfo">
+  <div v-if="show" class="synergyInfo">
     <div class="info">
       <h2>协同作业</h2>
     </div>
@@ -50,7 +50,8 @@ export default {
   data() {
     return {
       orderInfoId: "",
-      synergyList: []
+      synergyList: [],
+      show: true
     };
   },
   methods: {
@@ -62,7 +63,11 @@ export default {
       this.axios.post("/api/getOrderCoordinateList", data).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
+          
           this.synergyList = res.data.body.coordinateList;
+          if(res.data.body.coordinateList.length == 0) {
+            this.show = false
+          }
         }
       });
     }
@@ -83,12 +88,12 @@ export default {
 }
 .info h2::before {
   content: "|";
-  font-size: 14px;
+  font-size: 16px;
   color: #333333;
   margin-right: 2px;
 }
 h2 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -101,8 +106,12 @@ li div {
   display: flex;
   /* justify-content: space-between; */
   padding: 5px 0;
-  font-size: 14px;
+  font-size: 16px;
   color: #666666;
+  align-items: center;
+}
+li div span{
+  font-size: 16px;
 }
 .sunergy ul li > div div:nth-child(1) {
   flex: 0.7;
@@ -121,7 +130,8 @@ label {
 }
 label span {
   display: inline-block;
-  width: 60px;
+  width: 70px;
   text-align-last: justify;
+  font-size: 16px;
 }
 </style>

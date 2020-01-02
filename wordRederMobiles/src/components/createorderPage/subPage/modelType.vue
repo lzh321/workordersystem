@@ -2,7 +2,7 @@
   <div class="modelType">
     <ul>
       <li v-for="item in modelType" :key="item.modelId" @click="selemodelType(item)">
-        <span>{{item.modelType}}</span>
+        <span>{{item.modelType}}（{{item.modelName}}）</span>
       </li>
     </ul>
   </div>
@@ -26,7 +26,8 @@ export default {
     }
   },
   created(){
-    this.axios.post("/api/getDeviceModelList",{userId: this.$store.state.userId}).then(res=>{
+    var networkId = this.$route.query.networkId
+    this.axios.post("/api/getDeviceNumberListByNetworkId",{networkId: networkId}).then(res=>{
       console.log(res)
       if(res.data.retCode == '000000'){
         this.modelType = res.data.body.modelList

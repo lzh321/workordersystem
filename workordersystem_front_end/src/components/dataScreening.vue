@@ -20,7 +20,6 @@
               <option value="3">处理中</option>
               <option value="4">已预约</option>
               <option value="5">已出发</option>
-              <option value="6">已开始</option>
               <option value="7">待回访</option>
               <option value="8">已关单</option>
               <option value="9">已到达</option>
@@ -100,7 +99,7 @@
             <select name="seleCustomerName" lay-verify="">
               <option value>全部</option>
               <option
-                v-for="(item) in customerNameList"
+                v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
               >{{item.customerName}}</option>
@@ -117,7 +116,7 @@
             <select name="seleCustomerName" lay-verify="">
               <option value>全部</option>
               <option
-                v-for="(item) in customerNameList"
+                v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
               >{{item.customerName}}</option>
@@ -140,13 +139,13 @@
         </div>
         <div class="search_input" v-if="equipmentList">
           <p>
-            <span>存货编码</span>
+            <span>设备序列号</span>
             <input
               type="text"
               name="seleDeviceNumber"
               required
               lay-verify
-              placeholder="请输入存货编码"
+              placeholder="请输入设备序列号"
               autocomplete="off"
             />
           </p>
@@ -253,27 +252,27 @@ export default {
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
-      customerNameList: []
+      customerList: []
     };
   },
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getDeviceModelList", userId).then(res => {
+      this.$axios.post("/api/getDeviceModelList", {userId: userId}).then(res => {
         // 设备型号
         // console.log(res)
         this.DeviceModelType = res.data.body.modelList;
       });
-      this.$axios.post("/api/getCustomerNameList", userId).then(res => {  // 客户名称
-        this.customerNameList = res.data.body.customerNameList;
+      this.$axios.post("/api/getCustomerNameList", {userId: userId}).then(res => {  // 客户名称
+        this.customerList = res.data.body.customerNameList;
       });
-      this.$axios.post('/api/getDeptList',userId).then(res=>{  //部门列表
+      this.$axios.post('/api/getDeptList',{userId: userId}).then(res=>{  //部门列表
         // console.log(res)
         if(res.data.retCode == '000000'){
           this.DeptList = res.data.body.list
         }
       })
-      this.$axios.post('/api/getJobList',userId).then(res=>{  //职务列表
+      this.$axios.post('/api/getJobList',{userId: userId}).then(res=>{  //职务列表
         // console.log(res)
         if(res.data.retCode == '000000'){
           this.JobList = res.data.body.list

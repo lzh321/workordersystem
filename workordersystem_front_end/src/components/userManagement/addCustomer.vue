@@ -9,7 +9,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" autocomplete="off" name="customerName" placeholder="请输入客户名称">
+          <input type="text" class="layui-input" lay-verify="required" :value="customerName" autocomplete="off" name="customerName" placeholder="请输入客户名称">
         </div>
       </div>
 
@@ -28,7 +28,9 @@
 export default {
   name: "addCustomer",
   data() {
-    return {};
+    return {
+      customerName: ''
+    };
   },
   methods:{
     cancel(){
@@ -78,9 +80,10 @@ export default {
       
     });
   },
-  beforeDestroy(){
-    sessionStorage.removeItem("customerId")
-  }
+  created(){
+    this.customerName = sessionStorage.getItem("customerName") ? sessionStorage.getItem("customerName") : ''
+  },
+
 };
 </script>
 

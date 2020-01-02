@@ -161,6 +161,7 @@ export default {
     });
   },
   created() {
+    sessionStorage.clear()
     this.type = this.$route.query.type;
     var data = {
       userId: this.$store.state.userId,

@@ -23,20 +23,9 @@ export default {
       this.$router.go(-1);
     },
     getNetworkList() {
-      var networkId = this.$route.query.networkId;
-      if (networkId !== 'undefined') {
-        this.axios
-          .post("/api/getDeviceNumberListByNetworkId", {
-            userId: this.$store.state.userId,
-            networkId: networkId
-          })
-          .then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              this.DeviceNumber = res.data.body.deviceNumberList;
-            }
-          });
-      }
+      var data = JSON.parse(sessionStorage.getItem("modelType"))
+      console.log(data)
+      this.DeviceNumber = data.deviceNumberList
     }
   },
 

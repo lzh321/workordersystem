@@ -40,20 +40,20 @@ export default {
   },
   methods: {
     layui: function() {
-      var _this = this
+      var _this = this;
       layui.use(["table", "form"], function() {
         var table = layui.table;
-        var form = layui.form
-        form.render()
-        form.on('submit(serach)', function(data){
-          console.log(data.field)
-          data.field.userId = _this.$store.state.userId
-          table.reload('serachData',{
+        var form = layui.form;
+        form.render();
+        form.on("submit(serach)", function(data) {
+          console.log(data.field);
+          data.field.userId = _this.$store.state.userId;
+          table.reload("serachData", {
             url: "/api/getDeviceModelList",
-            where:data.field,
-            // page:{curr: 1}
-          })
-        })
+            where: data.field,
+            page:{curr: 1}
+          });
+        });
         //第一个实例
         table.render({
           elem: "#demo",
@@ -68,14 +68,27 @@ export default {
               data: res.body.modelList //解析数据列表
             };
           },
-          id: 'serachData',
-          page: false, //开启分页
+          id: "serachData",
+          request: {
+            pageName: "currentPage", //页码的参数名称，默认：page
+            // curr: 'indexCount', //页码的参数名称，默认：page
+            limitName: "everyCount" //每页数据量的参数名，默认：limit
+          },
+          page: true, //开启分页
           // limit: 10,
           cols: [
             [
               //表头
               { field: "modelId", fixed: "left", hide: true },
-              { field: "xuhao", title: "ID", width:200, fixed: 'left', sort: false,align: "center",type: 'numbers'},
+              {
+                field: "xuhao",
+                title: "ID",
+                width: 200,
+                fixed: "left",
+                sort: false,
+                align: "center",
+                type: "numbers"
+              },
               {
                 field: "modelType",
                 title: "设备型号",
@@ -99,32 +112,35 @@ export default {
           console.log(data);
           var modelId = data.modelId;
           if (obj.event === "deletion") {
-            layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
-              
-              //向服务端发送删除指令
-              var delParam = {
-                userId: _this.$store.state.userId,
-                modelId: modelId
-              };
-              _this.$axios.post("/api/deleDeviceModelInfo", delParam).then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  layer.msg(res.data.retMsg, { icon: 1 });
-                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);
-                }else{
-                  layer.msg(res.data.retMsg, { icon: 2 });
-                }
-              });
-            });
+            layer.confirm(
+              "你确定要删除这条记录？",
+              { icon: 3, title: "提示" },
+              function(index) {
+                //向服务端发送删除指令
+                var delParam = {
+                  userId: _this.$store.state.userId,
+                  modelId: modelId
+                };
+                _this.$axios
+                  .post("/api/deleDeviceModelInfo", delParam)
+                  .then(res => {
+                    console.log(res);
+                    if (res.data.retCode == "000000") {
+                      layer.msg(res.data.retMsg, { icon: 1 });
+                      obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                      layer.close(index);
+                    } else {
+                      layer.msg(res.data.retMsg, { icon: 2 });
+                    }
+                  });
+              }
+            );
           } else if (obj.event === "edit") {
             sessionStorage.setItem("modelId", modelId);
             sessionStorage.setItem("data", JSON.stringify(data));
             _this.$router.push("/addEquipmentType");
           }
         });
-
-
       });
     }
   },
@@ -133,9 +149,8 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-    sessionStorage.removeItem("modelId")
-    sessionStorage.removeItem("data")
-  },
+    sessionStorage.clear()
+  }
 };
 </script>
 

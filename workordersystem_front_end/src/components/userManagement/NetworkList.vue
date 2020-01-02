@@ -66,11 +66,11 @@ export default {
             data: res.body.networkList //解析数据列表
           };
         },
-        // page: true, //开启分页
-        // request: {
-        //   pageName: 'currentPage', //页码的参数名称，默认：page
-        //   limitName: 'everyCount' //每页数据量的参数名，默认：limit
-        // },
+        page: true, //开启分页
+        request: {
+          pageName: 'currentPage', //页码的参数名称，默认：page
+          limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        },
         cols: [
           [
             //表头
@@ -142,12 +142,14 @@ export default {
         } else if (obj.event === "edit") {
           //编辑
           sessionStorage.setItem("networkId", networkId);
+          sessionStorage.setItem("data",JSON.stringify(data));
           _this.$router.push("/addNetwork");
         }
       });
     });
   },
   created() {
+    sessionStorage.clear()
     this.type = this.$route.query.type;
     var data = {
       userId: this.$store.state.userId

@@ -9,6 +9,32 @@
           <h2>客户信息</h2>
           <!-- <div class="customerInfo_content information"> -->
           <div class="layui-form-item">
+            <label class="layui-form-label">工单状态</label>
+            <div class="layui-input-block">
+              <input
+                type="text"
+                name
+                :value="workOrderInfo.orderStateName"
+                class="layui-input"
+                autocomplete="off"
+                disabled
+              />
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label">工单编号</label>
+            <div class="layui-input-block">
+              <input
+                type="text"
+                name
+                :value="orderInfoId"
+                class="layui-input"
+                autocomplete="off"
+                disabled
+              />
+            </div>
+          </div>
+          <div class="layui-form-item">
             <label class="layui-form-label">客户名称</label>
             <div class="layui-input-block">
               <input
@@ -101,7 +127,7 @@
               <input
                 type="text"
                 name
-                :value="workOrderInfo.orderSource == 0 ? '电话' : '其他'"
+                :value="workOrderInfo.orderSource"
                 class="layui-input"
                 disabled
               />
@@ -111,13 +137,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">工单类型</label>
             <div class="layui-input-block">
-              <input
-                type="text"
-                name
-                :value="workOrderInfo.orderStateName"
-                class="layui-input"
-                disabled
-              />
+              <input type="text" name :value="workOrderInfo.orderType" class="layui-input" disabled />
             </div>
           </div>
 
@@ -152,12 +172,17 @@
           <div class="layui-form-item">
             <label class="layui-form-label">设备型号</label>
             <div class="layui-input-block">
-              <input type="text" name :value="workOrderInfo.modelType" class="layui-input" disabled />
+              <input
+                type="text"
+                :value="workOrderInfo.modelType + '（'+workOrderInfo.modelName +'）'"
+                class="layui-input"
+                disabled
+              />
             </div>
           </div>
 
           <div class="layui-form-item">
-            <label class="layui-form-label">存货编码</label>
+            <label class="layui-form-label">设备序列号</label>
             <div class="layui-input-block">
               <input
                 type="text"
@@ -182,14 +207,32 @@
             </div>
           </div>
 
-          <div class="layui-form-item">
+          <!-- <div class="layui-form-item">
             <label class="layui-form-label">附件</label>
             <div id="affix">
-              <div class="uploadImg"></div>
+              
             </div>
+          </div>-->
+          <div class="affix layui-form-item">
+            <label class="layui-form-label">附件</label>
+          </div>
+          <div class="layui-upload">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+              附件
+              <div class="layui-upload-list" id="imgBox">
+                <img
+                  v-for="(item,index) in imgDataArray"
+                  :key="index"
+                  class="layui-upload-img"
+                  style="width:100px;height:100px;margin-right:10px"
+                  :src="DomainName+ item "
+                  alt
+                />
+              </div>
+            </blockquote>
           </div>
 
-           <div v-if="orderState == 1 ? true : false" class="layui-form-item">
+          <div v-if="orderState == 1 ? true : false" class="layui-form-item">
             <label class="layui-form-label">派单人</label>
             <div class="layui-input-block">
               <input
@@ -202,16 +245,10 @@
               />
             </div>
           </div>
-           <div  v-if="orderState == 2 ? true : false" class="layui-form-item">
+          <div v-if="orderState == 2 ? true : false" class="layui-form-item">
             <label class="layui-form-label">受理人</label>
             <div class="layui-input-block">
-              <input
-                type="text"
-                name
-                :value="workOrderInfo.userName"
-                class="layui-input"
-                disabled
-              />
+              <input type="text" name :value="workOrderInfo.userName" class="layui-input" disabled />
             </div>
           </div>
         </div>
@@ -226,7 +263,11 @@
         v-if="orderState == 4 || orderState == 5 || orderState == 7 || orderState == 9 || orderState == 10 ? true : false"
       ></reservation>
       <!-- 故障处理中 -->
-      <inProcess :orderState="orderState" :workOrderInfo="workOrderInfo" v-if="orderState == 3 || orderState == 10 ? true : false"></inProcess>
+      <inProcess
+        :orderState="orderState"
+        :workOrderInfo="workOrderInfo"
+        v-if="orderState == 3 || orderState == 10 ? true : false"
+      ></inProcess>
       <!-- 协同 -->
       <synergy
         v-if="orderState == 7 || orderState == 3 || orderState == 4 || orderState == 5 || orderState == 9 || orderState == 10? true : false"
@@ -345,8 +386,10 @@ export default {
       orderState: sessionStorage.getItem("orderState"),
       workOrderInfo: {},
       userList: [],
-      userId: sessionStorage.getItem("userId")
-        ? sessionStorage.getItem("userId")
+      imgDataArray: [],
+      DomainName: this.$store.state.url,
+      userId: this.$store.state.userId
+        ? this.$store.state.userId
         : "",
       orderInfoId: sessionStorage.getItem("orderInfoId")
         ? sessionStorage.getItem("orderInfoId")
@@ -377,13 +420,18 @@ export default {
       this.$axios.post("/api/getOrderInfo", data).then(res => {
         console.log(res);
         this.workOrderInfo = res.data.body;
-        this.$(".uploadImg").html(
-          res.data.body.orderPhoto
-            ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-                res.data.body.orderPhoto.split(",")[0] +
-                '" alt />'
-            : ""
-        );
+        for (var i = 0; i < res.data.body.orderPhoto.split(",").length; i++) {
+          if (res.data.body.orderPhoto.split(",")[i] !== "") {
+            this.imgDataArray.push(res.data.body.orderPhoto.split(",")[i]);
+          }
+        }
+        // this.$(".uploadImg").html(
+        //   res.data.body.orderPhoto
+        //     ? '<img style="width:100px;height:100px" src=" DomainName' +
+        //         res.data.body.orderPhoto.split(",")[0] +
+        //         '" alt />'
+        //     : ""
+        // );
       });
     }
   },
@@ -547,7 +595,7 @@ export default {
       });
       // 开始
       form.on("submit(begin)", function(data) {
-         data.field.userId = _this.userId;
+        data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 6;
         _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
@@ -598,13 +646,13 @@ export default {
           yes: function(index, layero) {
             var appoinmentTime = $("#reservation").val();
             if (_this.orderState == 4) {
-              data.field.handleState  = 12;
+              data.field.handleState = 12;
             } else {
-              data.field.handleState  = 3;
+              data.field.handleState = 3;
             }
             data.field.userId = _this.userId;
             data.field.orderInfoId = _this.orderInfoId;
-            data.field.appoinmentTime = appoinmentTime
+            data.field.appoinmentTime = appoinmentTime;
             console.log(data.field);
             _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
               console.log(res);
@@ -692,24 +740,26 @@ export default {
 
             data.field.userId = _this.userId;
             data.field.orderInfoId = _this.orderInfoId;
-            data.field.content = content
-            data.field.orderUrgency = orderUrgency
-            data.field.responsibleId = responsibleId
-            data.field.createrId = _this.workOrderInfo.userId
+            data.field.content = content;
+            data.field.orderUrgency = orderUrgency;
+            data.field.responsibleId = responsibleId;
+            data.field.createrId = _this.workOrderInfo.userId;
             console.log(data.field);
-            _this.$axios.post("/api/addCoordinateInfo", data.field).then(res => {
-              console.log(res);
-              if (res.data.retCode == "000000") {
-                layer.msg(res.data.retMsg, { icon: 1 });
-                setTimeout(() => {
-                  _this.$router.push(
-                    "/workOrderManagement?type=workOrderManagement"
-                  );
-                }, 3000);
-              } else {
-                layer.msg(res.data.retMsg, { icon: 2 });
-              }
-            });
+            _this.$axios
+              .post("/api/addCoordinateInfo", data.field)
+              .then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.$router.push(
+                      "/workOrderManagement?type=workOrderManagement"
+                    );
+                  }, 3000);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
             layer.close(index);
             return false;
           },
@@ -789,19 +839,26 @@ export default {
           data.field.userId = _this.userId;
           data.field.orderInfoId = _this.orderInfoId;
           console.log(data.field);
-          _this.$axios.post("/api/closeOrderInfo", data.field).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              setTimeout(() => {
-                _this.$router.push(
-                  "/workOrderManagement?type=workOrderManagement"
-                );
+          layer.confirm(
+            "是否确认关闭当前工单？",
+            { icon: 3, title: "提示" },
+            function(index) {
+              //向服务端发送关单指令
+              _this.$axios.post("/api/closeOrderInfo", data.field).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  setTimeout(() => {
+                    _this.$router.push(
+                      "/workOrderManagement?type=workOrderManagement"
+                    );
+                  });
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
               });
-            } else {
-              layer.msg(res.data.retMsg, { icon: 2 });
             }
-          });
+          );
         } else {
           layer.open({
             type: 1,
@@ -853,11 +910,9 @@ export default {
     this.send();
   },
   updated() {
-    setTimeout(function() {
-      layui.use(["form"], function() {
-        layui.form.render();
-      });
-    }, 10);
+    layui.use(["form"], function() {
+      layui.form.render();
+    });
   },
   beforeDestroy() {
     // sessionStorage.removeItem("orderState")

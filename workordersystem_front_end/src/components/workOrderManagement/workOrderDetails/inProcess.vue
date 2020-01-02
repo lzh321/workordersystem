@@ -25,10 +25,17 @@
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">问题记录</label>
       <div class="layui-input-block">
-        <textarea
+        <textarea v-if="workOrderInfo.recordContent"
           name="recordContent"
           placeholder="请输入内容"
           :value="workOrderInfo.recordContent"
+          autocomplete="off"
+          class="layui-textarea"
+        ></textarea>
+        <textarea v-else
+          name="recordContent"
+          placeholder="请输入内容"
+          value=""
           autocomplete="off"
           class="layui-textarea"
         ></textarea>
@@ -37,17 +44,24 @@
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">解决办法</label>
       <div class="layui-input-block">
-        <textarea
+        <textarea v-if="workOrderInfo.recordSettle"
           name="recordSettle"
           placeholder="请输入内容"
           :value="workOrderInfo.recordSettle"
           autocomplete="off"
           class="layui-textarea"
         ></textarea>
+        <textarea v-else
+          name="recordSettle"
+          placeholder="请输入内容"
+          value=""
+          autocomplete="off"
+          class="layui-textarea"
+        ></textarea>
       </div>
     </div>
 
-    <div class="layui-form-item">
+    <!-- <div class="layui-form-item">
       <label class="layui-form-label">售后单</label>
       <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
       <div class="layui-upload">
@@ -57,7 +71,29 @@
           <input type="hidden" name="recordPhoto" />
         </blockquote>
       </div>
-    </div>
+    </div> -->
+
+    <div class="affix layui-form-item">
+        <label class="layui-form-label">售后单</label>
+        <!-- <button type="button" class="layui-btn" id="selectImage">选择图片</button> -->
+        <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
+        <div class="layui-upload">
+          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+            预览
+            <div class="layui-upload-list" id="imgBox">
+              <img
+                v-for="(item,index) in AfterimgArray"
+                :key="index"
+                class="layui-upload-img"
+                style="width:100px;height:100px;margin-right:10px"
+                :src="DomainName+ item "
+                alt
+              />
+            </div>
+            <input type="hidden" name="recordPhoto" :value="Afterimg" />
+          </blockquote>
+        </div>
+      </div>
   </div>
 </template>
 <script>
@@ -71,6 +107,9 @@ export default {
         ? sessionStorage.getItem("orderInfoId")
         : "",
       recordList: [],
+      AfterimgArray: [],
+      Afterimg: "",
+      DomainName: this.$store.state.url,
       record: [
         {
           recordType: 0,
@@ -268,6 +307,14 @@ export default {
               recordModel: 47,
               recordModelName: "指示灯及控制板"
             },
+            {
+              recordModel: 48,
+              recordModelName: "打印机硬件"
+            },
+            {
+              recordModel: 49,
+              recordModelName: "计算机硬件"
+            },
          ]
         },
         {
@@ -297,6 +344,30 @@ export default {
             {
               recordModel: 5,
               recordModelName: "升级程序补丁"
+            },
+            {
+              recordModel: 6,
+              recordModelName: "办公软件"
+            },
+            {
+              recordModel: 7,
+              recordModelName: "办公系统"
+            },
+            {
+              recordModel: 8,
+              recordModelName: "计算机网络"
+            },
+            {
+              recordModel: 9,
+              recordModelName: "计算机系统"
+            },
+            {
+              recordModel: 10,
+              recordModelName: "打印机软件"
+            },
+            {
+              recordModel: 11,
+              recordModelName: "扫描仪软件"
             },
           ]
         },
@@ -382,15 +453,16 @@ export default {
         multiple: false, //是否多文件上传
         accept: "images", // 规定上传文件类型 ，images/file/video/audio
         auto: true, // 是否自动上传
+        size: 4096,
         field: "file", // 设定文件域字段
         choose: function(obj) {
           obj.preview(function(index, file, result) {
             console.log(file);
-            $("#imgBox").html(
-              '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
-                result +
-                '" alt />'
-            );
+            // $("#AfterimgBox").html(
+            //   '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
+            //     result +
+            //     '" alt />'
+            // );
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
           this.data = { orderInfoId: _this.orderInfoId, soreId: 1 };
@@ -411,28 +483,24 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          $("input[name='recordPhoto']").val(res.body.url);
+          _this.Afterimg += res.body.url;
+          _this.AfterimgArray.push(res.body.url.split(",")[0]);
+          console.log(_this.Afterimg);
         }
       });
     });
   },
   methods: {
-    // getImg() {
-    //   if (this.workOrderInfo.recordPhoto) {
-    //     this.$("#AfterimgBox").html(
-    //       '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-    //         this.workOrderInfo.recordPhoto.split(",")[0] +
-    //         '" alt />'
-    //     );
-    //   }
-    //   if (this.workOrderInfo.recordPhoto) {
-    //     this.$("#imgBox").html(
-    //       '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-    //         this.workOrderInfo.recordPhoto.split(",")[0] +
-    //         '" alt />'
-    //     );
-    //   }
-    // },
+    getImg() {
+      if (this.workOrderInfo.recordPhoto) {
+        this.Afterimg = this.workOrderInfo.recordPhoto
+        for(var i = 0; i < this.workOrderInfo.recordPhoto.split(",").length; i++){
+          if(this.workOrderInfo.recordPhoto.split(",")[i] !== ""){
+            this.AfterimgArray.push(this.workOrderInfo.recordPhoto.split(",")[i]) 
+          }
+        }
+      }
+    },
     send(){
       if(this.workOrderInfo.recordType){
         for(var i = 0; i < this.record.length; i++){
@@ -445,13 +513,12 @@ export default {
     }
   },
   created() {
-    // this.getImg();
+    this.getImg();
   },
   updated() {
     // this.getImg();
-    layui.use(["form", "upload"], function() {
+    layui.use(["form"], function() {
       layui.form.render();
-      layui.upload.render();
     });
   }
 };
@@ -461,5 +528,13 @@ h2 {
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 20px;
+}
+/* label{
+  display: flex;
+  align-items: center;
+} */
+label::before{
+  content: '*';
+  color: red;
 }
 </style>

@@ -52,7 +52,8 @@ export default {
         url: "/api/getNewsmodelInfoList", //数据接口
         method: "post",
         where:{
-          userId: _this.$store.state.userId
+          userId: _this.$store.state.userId,
+          page: { curr: 1 }
         },
         id: "serachData",
         parseData: function(res) {
@@ -93,6 +94,7 @@ export default {
   },
   created(){
     this.type = this.$route.query.type
+    sessionStorage.clear()
   }
 }
 </script>

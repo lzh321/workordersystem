@@ -89,9 +89,6 @@ export default {
       
     }
   },
-  beforeDestroy(){
-    sessionStorage.removeItem('menuId')
-  }
 };
 </script>
 

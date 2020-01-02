@@ -184,11 +184,7 @@ export default {
     this.menuPno = sessionStorage.getItem('menuPno')
     this.send()
   },
-  beforeDestroy(){
-    sessionStorage.removeItem('menuId')
-    sessionStorage.removeItem('menuPno')
-    sessionStorage.removeItem('data')
-  },
+
   updated(){
     layui.use("form",function(){
       var form = layui.form

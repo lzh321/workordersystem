@@ -16,25 +16,37 @@
         <label for>
           <span>故障模块</span>：
         </label>
-        <span>{{orderInfo.modelName}}</span>
+        <span>{{orderInfo.recordModel}}</span>
       </div>
       <div>
         <label for>
           <span>问题记录</span>：
         </label>
-        <textarea name id cols="30" rows="10" :value="orderInfo.recordContent" disabled></textarea>
+        <textarea cols="30" rows="10" :value="orderInfo.recordContent" disabled></textarea>
       </div>
       <div>
         <label for>
           <span>解决办法</span>：
         </label>
-        <textarea name id cols="30" rows="10" :value="orderInfo.recordSettle" disabled></textarea>
+        <textarea cols="30" rows="10" :value="orderInfo.recordSettle" disabled></textarea>
       </div>
       <div class="affix">
-        <label for>
-          <span>附件</span>：
-        </label>
-        <div class="UploadImg"></div>
+        <label class="">售后单</label>
+        <div class="layui-upload">
+          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding:0;font-size:15px">
+            附件
+            <div class="layui-upload-list" id="imgBox">
+              <img
+                v-for="(item,index) in AfterimgArray"
+                :key="index"
+                class="layui-upload-img"
+                style="width:100px;height:100px;margin-right:10px"
+                :src="DomainName+ item "
+                alt
+              />
+            </div>
+          </blockquote>
+        </div>
       </div>
       <synergyInfo></synergyInfo>
     </form>
@@ -48,29 +60,43 @@ export default {
   name: "dispose",
   props: ["orderInfo"],
   data() {
-    return {};
+    return {
+      Afterimg: "",
+      AfterimgArray: [],
+      DomainName: this.$store.state.url
+    };
   },
   components: {
     synergyInfo,
     appointment
   },
   methods: {
-    send(){
-      if(this.orderInfo.recordPhoto){
-        this.$(".UploadImg").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-          this.orderInfo.recordPhoto.split(",")[0] +
-          '" alt />')
+    send() {
+      if (this.orderInfo.recordPhoto) {
+        this.Afterimg = this.orderInfo.recordPhoto;
+        for (
+          var i = 0;
+          i < this.orderInfo.recordPhoto.split(",").length;
+          i++
+        ) {
+          if (this.orderInfo.recordPhoto.split(",")[i] !== "") {
+            this.AfterimgArray.push(
+              this.orderInfo.recordPhoto.split(",")[i]
+            );
+          }
+        }
       }
     }
   },
   mounted() {
-    this.send();
+    setTimeout(()=>{
+      this.send();
+
+    },500)
   },
   created() {
-    this.send();
   },
-  updated(){
-    this.send()
+  updated() {
   }
 };
 </script>
@@ -82,6 +108,9 @@ form {
 .fault {
   display: flex;
   align-items: center;
+}
+.fault span {
+  font-size: 16px;
 }
 form div {
   padding: 10px 0;
@@ -108,8 +137,8 @@ label {
 } */
 
 label span {
-  width: 60px;
-  font-size: 14px;
+  width: 70px;
+  font-size: 16px;
   color: #666666;
   text-align-last: justify;
 }
@@ -117,24 +146,26 @@ input[type="text"] {
   flex: 1;
   border: 1px solid #f3f3f3;
   height: 35px;
+  font-size: 16px;
 }
 textarea {
   width: 100%;
   margin-top: 10px;
   background: #ffffff;
   color: #666666;
+  font-size: 16px;
 }
 .info {
   justify-content: space-between;
 }
 .info h2::before {
   content: "|";
-  font-size: 14px;
+  font-size: 16px;
   color: #333333;
   margin-right: 2px;
 }
 h2 {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   display: flex;
   align-items: center;

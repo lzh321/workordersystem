@@ -1,19 +1,75 @@
 <template>
   <div class="wordOrder">
-    <van-tabs
-      v-model="active"
-      swipeable
-      color="#FFFFFF"
-      title-active-color="#FFFFFF"
-      title-inactive-color="#FFFFFF"
-      background="#2F6CFF"
-      @click="chanage(active)"
-    >
-      <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
+    <div class="OrderSearch">
+      <div class="search">
+        <div class="SearchEntrance">
+          <i></i>
+        </div>
+        <input placeholder="搜索" v-model="searchVal" />
+      </div>
+      <NavBar></NavBar>
+  </div>
+    <div class="tabs">
+      <ul>
+        <li
+          v-for="(item,index) in tab"
+          :key="index"
+          :class="index == cutId ? 'active' : ''"
+          @click="cut(index)"
+        >{{item.name}}</li>
+      </ul>
+    </div>
+    <div class="tabs_content">
+      <ul class="list">
+        <li
+          v-for="(items,index) in NewItems"
+          :key="index"
+          @click="goOrderPage(items.orderState,items.orderInfoId)"
+        >
+          <div class="orderId">
+            <i>工单</i>
+            <span>单号：{{items.orderInfoId}}</span>
+          </div>
+          <div class="orderStatus">
+            <div>
+              <img
+                :src="items.orderState == 0 ? orderStatus.bill : items.orderState == 1 ? orderStatus.sendOrders : items.orderState == 2 ? orderStatus.acceptance: items.orderState == 3 ? orderStatus.dispose : items.orderState == 4 ? orderStatus.appointment : items.orderState == 5 ? orderStatus.sendOrders : items.orderState == 6 ? orderStatus.sendOrders : items.orderState == 7 ? orderStatus.visit : items.orderState == 8 ? orderStatus.kuantan : items.orderState == 9 ? orderStatus.sendOrders : items.orderState == 10 ? orderStatus.dispose : ''"
+                alt
+              />
+
+              <span>{{items.orderState == 0 ? '待发单' : items.orderState == 1 ? '待派单' : items.orderState == 2 ? '待受理' : items.orderState == 3 ? '处理中' : items.orderState == 4 ? '已预约' : items.orderState == 5 ? '已出发' : items.orderState == 6 ? '已开始' : items.orderState == 7 ? '待回访' : items.orderState == 8 ? '已关单' : items.orderState == 9 ? '已到达' : items.orderState == 10 ? '故障处理中' : ''}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>{{items.createTime}}</span>
+            </div>
+          </div>
+          <div class="customerName orderContent">
+            <label for>客户名称：</label>
+            <span>{{items.customerName}}</span>
+          </div>
+          <div class="DeliveryPoint orderContent">
+            <label for>投&nbsp;放&nbsp;点：</label>
+            <span>{{items.networName}}</span>
+          </div>
+          <div class="address orderContent">
+            <label for>地&emsp;&emsp;&nbsp;址：</label>
+            <span>{{items.networAddress}}</span>
+          </div>
+          <div class="urgency">
+            <img
+              :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''"
+              alt
+            />
+            <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <!-- <van-tab v-for="(item, index) in tab" :key="index" :title="item.name">
         <ul class="list">
           <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
             <li
-              to="/bill"
               v-for="(items,index) in list"
               :key="index"
               @click="goOrderPage(items.orderState,items.orderInfoId)"
@@ -58,9 +114,9 @@
             </li>
           </van-list>
         </ul>
-      </van-tab>
-    </van-tabs>
-    <!-- <div
+    </van-tab>-->
+    <!-- </van-tabs> -->
+    <img
       class="xuanfu"
       id="moveDiv"
       @mousedown="down()"
@@ -69,27 +125,22 @@
       @touchmove="move()"
       @mouseup="end()"
       @touchend="end()"
-    >
-      <div class="yuanqiu">11</div>
-    </div> -->
-
-    <img class="xuanfu"
-      id="moveDiv"
-      @mousedown="down()"
-      @touchstart="down()"
-      @mousemove="move()"
-      @touchmove="move()"
-      @mouseup="end()"
-      @touchend="end()" @click="goCreate" src="../../assets/Images/create_in.png" alt />
+      @click="goCreate"
+      src="../../assets/Images/create_in.png"
+      alt
+    />
   </div>
 </template>
 
 <script>
+import NavBar from "@/components/NavBar";
 export default {
   name: "wordOrder",
   data() {
     return {
       active: 0,
+      cutId: 0,
+      searchVal: '',
       flags: false,
       position: { x: 0, y: 0 },
       nx: "",
@@ -121,10 +172,13 @@ export default {
       }
     };
   },
+  components: {
+    NavBar
+  },
   methods: {
     // 实现移动端拖拽
-    goCreate(){
-      this.$router.push("/create")
+    goCreate() {
+      this.$router.push("/create");
     },
     down() {
       this.flags = true;
@@ -174,6 +228,7 @@ export default {
           function() {
             // 1.2 如果碰到滑动问题，请注意是否获取到 touchmove
             // event.preventDefault(); //jq 阻止冒泡事件
+            // event.preventDefault();
             event.stopPropagation(); // 如果没有引入jq 就用 stopPropagation()
           },
           false
@@ -187,11 +242,6 @@ export default {
     chanage(active) {
       console.log(active);
       if (active == 0) {
-        this.getOrderInfoList(
-          "/api/getOrderPlanList",
-          this.currentPage,
-          this.everyCount
-        );
       }
       if (active == 1) {
         this.getOrderInfoList(
@@ -201,21 +251,25 @@ export default {
         );
       }
     },
-    onLoad() {
-      // 异步更新数据
-      setTimeout(() => {
-        // for (let i = 0; i < 10; i++) {
-        //   this.list.push(this.list.length + 1);
-        // }
-        // 加载状态结束
-        this.loading = false;
 
-        // 数据全部加载完成
-        if (this.list.length >= this.totalCount) {
-          this.finished = true;
-        }
-      }, 500);
+    cut(index) {
+      this.cutId = index;
+      if (index == 0) {
+        this.getOrderInfoList(
+          "/api/getOrderPlanList",
+          this.currentPage,
+          this.everyCount
+        );
+      }
+      if (index == 1) {
+        this.getOrderInfoList(
+          "/api/getOrderInfoList",
+          this.currentPage,
+          this.everyCount
+        );
+      }
     },
+
     goOrderPage(orderStatus, orderInfoId) {
       console.log(orderStatus, orderInfoId);
       if (orderStatus == 0) {
@@ -288,7 +342,8 @@ export default {
           this.list = res.data.body.orderInfoList;
         }
       });
-    }
+    },
+    
   },
   created() {
     sessionStorage.clear();
@@ -298,22 +353,48 @@ export default {
       this.everyCount
     );
   },
+  computed: {
+    //设置计算属性
+    NewItems() {
+      var _this = this;
 
+      var NewItems = [];
+
+      this.list.map(function(item) {
+        if (item.orderInfoId.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.orderStateName.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.createTime.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.networName.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.customerName.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }else if (item.networAddress.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }
+      });
+
+      return NewItems;
+    }
+  },
 };
 </script>
 
 <style scoped>
 .wordOrder {
   background: #f3f3f3;
-  flex: 1;
+  height: 100%;
   overflow: hidden;
   overflow-y: scroll;
-  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 .list {
   padding: 15px;
-  height: 100%;
+  /* height: 100%; */
 }
+
 .list li {
   background: #ffffff;
   border-radius: 8px;
@@ -412,7 +493,7 @@ export default {
   height: 54px; /* rem = 12px */
   width: 54px;
   /*1.3  如果碰到滑动问题，请检查 z-index。z-index需比web大一级*/
-  z-index: 999;
+  z-index: 9997;
   position: fixed;
   bottom: 60px;
   right: 0;
@@ -420,4 +501,86 @@ export default {
 }
 
 
+.OrderSearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  background: #2f6cff;
+  color: #ffffff;
+  height: 50px;
+}
+.tabs ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #2f6cff;
+}
+.tabs ul li {
+  flex: .4;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  font-size: 15px;
+  color: #FFFFFF;
+}
+
+.tabs ul .active {
+  color: #FFFFFF;
+  font-size: 19px;
+}
+.SearchEntrance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  position: absolute;
+  color: #2f6cff;
+  top: 7px;
+  left: 5px;
+  width: 50px;
+}
+.search {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+.search input {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-radius: 30px;
+  padding-left: 45px;
+  color: #333333;
+  font-size: 15px;
+}
+.search input::placeholder {
+  color: #2f6cff;
+}
+.SearchEntrance::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../../assets/Images/personnel_search.png") no-repeat;
+  background-size: 100%;
+}
+.filtrate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  width: 30px;
+  margin-left: 10px;
+}
+
+.filtrate::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 17px;
+  background: url("../../assets/Images/screening.png") no-repeat;
+  background-size: 100%;
+}
 </style>

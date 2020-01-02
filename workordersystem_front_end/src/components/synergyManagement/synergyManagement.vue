@@ -318,8 +318,7 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-    sessionStorage.removeItem("id");
-    sessionStorage.removeItem("coordinateState");
+    sessionStorage.clear()
     this.getOrderInfoNum();
   }
 };

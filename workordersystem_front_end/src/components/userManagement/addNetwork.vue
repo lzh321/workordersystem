@@ -11,18 +11,52 @@
           <select name="customerId" lay-verify="required">
             <option value>请选择一个客户</option>
             <option
+             
               v-for="(item) in customerNameList"
               :key="item.customerId"
               :value="item.customerId"
+              :selected="item.customerId == networkInfo.customerId ? true : false"
             >{{item.customerName}}</option>
           </select>
         </div>
       </div>
+      
+
+
+      <div class="layui-form-item" id="area-picker">
+        <div class="layui-form-label">所在城市</div>
+        <div class="layui-input-block" style="display:flex;justify-content: space-between;">
+          <div class="layui-input-inline" style="flex:1">
+            <select name="province" lay-verify="required" lay-filter="province">
+              <option value>请选择省</option>
+              <option
+              @click="selectCity(provinceCode)"
+                v-for="(item) in CityList"
+                :key="item.provinceCode"
+                :value="item.provinceCode"
+              >{{item.provinceName}}</option>
+            </select>
+          </div>
+          <div class="layui-input-inline" style="flex:1">
+            <select name="regionId" lay-verify="required" lay-filter="city">
+              <option value>请选择市</option>
+              <option
+                v-for="(item) in City"
+                :key="item.cityCode"
+                :value="item.cityCode"
+                :selected="item.cityName == networkInfo.regionName ? true : false"
+              >{{item.cityName}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <div class="layui-form-item">
         <label class="layui-form-label">投放点</label>
         <div class="layui-input-block">
           <input
             type="text"
+            v-model="networName"
             name="networName"
             lay-verify="required"
             placeholder="请输入网点名称"
@@ -32,48 +66,11 @@
         </div>
       </div>
 
-      <!-- <div class="layui-form-item">
-        <label class="layui-form-label">所在城市</label>
-        <div class="layui-input-block">
-          <select name="regionId" lay-verify="required">
-            <option value="">请选择一个城市</option>
-            <option
-                v-for="(item) in RegionInfoList"
-                :key="item.regionId"
-                :value="item.regionId"
-              >{{item.regionName}}</option>
-          </select>
-        </div>
-      </div>-->
-
-      <div class="layui-form-item" id="area-picker">
-        <div class="layui-form-label">所在城市</div>
-        <div class="layui-input-inline" style="width: 200px;">
-          <select name="province" lay-verify="required" lay-filter="province">
-            <option value>请选择省</option>
-            <option
-              v-for="(item) in CityList"
-              :key="item.provinceCode"
-              :value="item.provinceCode"
-            >{{item.provinceName}}</option>
-          </select>
-        </div>
-        <div class="layui-input-inline" style="width: 200px;">
-          <select name="regionId" lay-verify="required" lay-filter="city">
-            <option value>请选择市</option>
-            <option
-              v-for="(item) in City"
-              :key="item.cityCode"
-              :value="item.cityCode"
-            >{{item.cityName}}</option>
-          </select>
-        </div>
-      </div>
-
       <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">投放点详细地址</label>
         <div class="layui-input-block">
           <textarea
+            v-model="networAddress"
             lay-verify="required"
             name="networAddress"
             placeholder="请输入内容"
@@ -100,7 +97,10 @@ export default {
       customerNameList: [],
       RegionInfoList: [],
       CityList: [],
-      City:[]
+      City:[],
+      networkInfo:[],
+      networName: '',
+      networAddress: ''
     };
   },
   methods: {
@@ -120,9 +120,17 @@ export default {
         console.log(res);
         this.CityList = res.data.body.provinceList;
       });
+      var data = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : ''
+      this.networkInfo = data
+      this.networName = data.networName
+      this.networAddress = data.networAddress
+
     },
     cancel() {
       this.$router.push("/NetworkList?type=NetworkList");
+    },
+    selectCity(provinceCode){
+      console.log(provinceCode)
     }
   },
   mounted() {
@@ -131,15 +139,12 @@ export default {
     layui.use(["form"], function() {
       var form = layui.form;
       var layer = layui.layer;
-      form.render();
       
       form.on('select(province)',function(data){
-        console.log(data.value)
         for(var i = 0; i < _this.CityList.length; i++){
           if(data.value == _this.CityList[i].provinceCode){
             console.log(_this.CityList[i].cityList)
             _this.City = _this.CityList[i].cityList
-            form.render();
           }
         }
       })
@@ -205,19 +210,10 @@ export default {
   },
 
   updated() {
-    setTimeout(function() {
-      layui.config({
-        base: "./mods/",
-        version: "1.0"
-      });
-      layui.use(["form",], function() {
-        layui.form.render();
-      });
-    }, 10);
+    layui.use(["form"], function() {
+      layui.form.render("select");
+    });
   },
-  beforeDestroy() {
-    sessionStorage.removeItem("networkId");
-  }
 };
 </script>
 

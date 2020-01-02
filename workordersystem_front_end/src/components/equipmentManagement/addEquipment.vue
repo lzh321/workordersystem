@@ -8,7 +8,7 @@
       </div>
       <div class="basicInfo">
         <!-- <div class="layui-form-item">
-          <label class="layui-form-label">存货编码</label>
+          <label class="layui-form-label">设备序列号</label>
           <div class="layui-input-block">
             <input
               type="text"
@@ -18,7 +18,7 @@
               v-if="DeviceInfo.deviceNumber"
               :value="DeviceInfo.deviceNumber ?  DeviceInfo.deviceNumber : ''"
               lay-verify="required"
-              placeholder="请输入存货编码"
+              placeholder="请输入设备序列号"
               class="layui-input"
             />
             <input
@@ -29,7 +29,7 @@
               value
               autocomplete="off"
               lay-verify="required"
-              placeholder="请输入存货编码"
+              placeholder="请输入设备序列号"
               class="layui-input"
             />
           </div>
@@ -48,7 +48,7 @@
                 v-for="(item) in customerNameList"
                 :key="item.customerId"
                 :value="item.customerId"
-                :selected="item.customerId == DeviceInfo.customerId ? true : false"
+                :selected="item.customerName == DeviceInfo.customerName ? true : false"
               >{{item.customerName}}</option>
             </select>
           </div>
@@ -61,8 +61,9 @@
               <option value>请选择设备型号</option>
               <option
                 v-for="(item) in DeviceModelType"
-                :key="item.modelId"
-                :value="item.modelId"
+                :key="item.modelType"
+                :value="item.modelType"
+                :selected="item.modelType == DeviceInfo.modelType ? true : false"
               >{{item.modelType}}</option>
             </select>
           </div>
@@ -71,13 +72,15 @@
         <div class="layui-form-item">
           <label class="layui-form-label">存货名称</label>
           <div class="layui-input-block" layui-filter>
-            <input
-              type="text"
-              name="inventoryName"
-              :value="inventoryName ? inventoryName : DeviceInfo.modelName"
-              class="layui-input"
-              disabled
-            />
+            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
+              <option value>请选择存货名称</option>
+              <option
+                v-for="(item) in modelName"
+                :key="item.modelId"
+                :value="item.modelId"
+                :selected="item.modelId == DeviceInfo.modelId ? true : false"
+              >{{item.modelName}}</option>
+            </select>
           </div>
         </div>
 
@@ -107,8 +110,9 @@
               type="text"
               name="region"
               autocomplete="off"
-              :value="regionName ? regionName : DeviceInfo.region"
+              :value="DeviceInfo.region ? DeviceInfo.region : regionName"
               class="layui-input"
+              lay-verify="required"
               disabled
             />
           </div>
@@ -122,13 +126,29 @@
               name="networAddress"
               autocomplete="off"
               class="layui-input"
+              lay-verify="required"
               :value="networAddress ? networAddress : DeviceInfo.networkAddress"
               disabled
             />
           </div>
         </div>
+
         <div class="layui-form-item">
-          <label class="layui-form-label">存货编码</label>
+          <label class="layui-form-label layui">请输入序列号</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              name="deviceNumber"
+              autocomplete="off"
+              lay-verify="required"
+              class="layui-input"
+              :value="DeviceInfo.deviceNumber"
+            />
+          </div>
+        </div>
+
+        <!-- <div class="layui-form-item">
+          <label class="layui-form-label">设备序列号</label>
           <div class="layui-input-block">
             <select
               name="deviceNumber"
@@ -136,7 +156,7 @@
               id="modelType"
               lay-verify="required"
             >
-              <option value>请选择存货编码</option>
+              <option value>请选择设备序列号</option>
               <option
                 v-for="(item) in deviceNumberList"
                 :key="item.deviceId"
@@ -145,15 +165,14 @@
               >{{item.deviceNumber}}</option>
             </select>
           </div>
-        </div>
+        </div>-->
 
-        <div class="layui-form-item">
+        <div class="layui-form-item Maintenance">
           <label class="layui-form-label">维保开始时间</label>
           <div class="layui-input-block">
             <input
               type="text"
               class="layui-input"
-              lay-verify="required"
               name="seviceBegintime"
               id="Maintenance_start"
               autocomplete="off"
@@ -165,7 +184,7 @@
               v-else
               type="text"
               class="layui-input"
-              lay-verify="required"
+              lay-verify
               name="seviceBegintime"
               id="Maintenance_start"
               autocomplete="off"
@@ -174,13 +193,13 @@
             />
           </div>
         </div>
-        <div class="layui-form-item">
+        <div class="layui-form-item Maintenance">
           <label class="layui-form-label">维保结束时间</label>
           <div class="layui-input-block">
             <input
               type="text"
               class="layui-input"
-              lay-verify="required"
+              lay-verify
               name="seviceEndtime"
               autocomplete="off"
               :value="DeviceInfo.seviceEndtime"
@@ -192,7 +211,7 @@
               v-else
               type="text"
               class="layui-input"
-              lay-verify="required"
+              lay-verify
               name="seviceEndtime"
               value
               autocomplete="off"
@@ -637,6 +656,7 @@ export default {
       DeviceModelType: [],
       customerNameList: [],
       networkList: [],
+      modelName: [],
       regionName: "",
       networAddress: "",
       inventoryName: "",
@@ -648,19 +668,16 @@ export default {
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getDeviceModelList", userId).then(res => {
+      this.$axios.post("/api/getAllModelType", userId).then(res => {
         // 设备型号
         // console.log(res);
-        this.DeviceModelType = res.data.body.modelList;
+        this.DeviceModelType = res.data.body.modelTypeList;
       });
       this.$axios.post("/api/getCustomerNameList", userId).then(res => {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
       });
-      // this.$axios.post("/api/getNetworkList", userId).then(res => {
-      //   // 设备投放地点
-      //   this.networkList = res.data.body.networkList;
-      // });
+
     },
     getDeviceInfo() {
       console.log(111);
@@ -695,16 +712,16 @@ export default {
           // 存货编号
           var networkId = res.data.body.networkId;
           this.$axios
-              .post("/api/getDeviceNumberListByNetworkId", {
-                userId: this.$store.state.userId,
-                networkId: networkId
-              })
-              .then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  this.deviceNumberList = res.data.body.deviceNumberList;
-                }
-              });
+            .post("/api/getDeviceNumberListByNetworkId", {
+              userId: this.$store.state.userId,
+              networkId: networkId
+            })
+            .then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                this.deviceNumberList = res.data.body.deviceNumberList;
+              }
+            });
 
           // 客户名称
           var customerName = res.data.body.customerName;
@@ -722,17 +739,14 @@ export default {
 
           //设备型号
           var modelType = res.data.body.modelType;
-          var modelTypeLen = this.$("#modelType option").length;
-          for (var i = 0; i < modelTypeLen; i++) {
-            var networkIdText = this.$("#modelType option")
-              .eq(i)
-              .text();
-            if (modelType == networkIdText) {
-              this.$("#modelType option")
-                .eq(i)
-                .attr("selected", "selected");
-            }
-          }
+          this.$axios
+            .post("/api/getModleNameListByType", { modelType: modelType })
+            .then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                this.modelName = res.data.body.modelNamerList;
+              }
+            });
 
           //是否转运
           var deviceTransport = res.data.body.deviceTransport;
@@ -770,7 +784,7 @@ export default {
 
           var payState = res.data.body.payState;
           var payStateLen = this.$("#payState option").length;
-          for (var i = 0; i < modelTypeLen; i++) {
+          for (var i = 0; i < payStateLen; i++) {
             var payStateVal = this.$("#payState option")
               .eq(i)
               .val();
@@ -854,6 +868,7 @@ export default {
         }
         if (data.value == "") {
           _this.networAddress = "";
+          _this.regionName = "";
           _this.networkList = [];
         }
       });
@@ -862,6 +877,7 @@ export default {
           // console.log(data.value)
           if (data.value == _this.networkList[i].id) {
             _this.networAddress = _this.networkList[i].networAddress;
+            _this.regionName = _this.networkList[i].regionName;
             _this.$axios
               .post("/api/getDeviceNumberListByNetworkId", {
                 userId: _this.$store.state.userId,
@@ -877,6 +893,7 @@ export default {
         }
         if (data.value == "") {
           _this.networAddress = "";
+          _this.regionName = "";
           _this.deviceNumberList = [];
         }
       });
@@ -896,10 +913,17 @@ export default {
       //   }
       // });
       form.on("select(seleModelType)", function(data) {
+        console.log(data);
         for (var i = 0; i < _this.DeviceModelType.length; i++) {
-          // console.log(data.value, _this.DeviceModelType);
-          if (data.value == _this.DeviceModelType[i].modelId) {
-            _this.inventoryName = _this.DeviceModelType[i].modelName;
+          if (data.value == _this.DeviceModelType[i].modelType) {
+            _this.$axios
+              .post("/api/getModleNameListByType", { modelType: data.value })
+              .then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  _this.modelName = res.data.body.modelNamerList;
+                }
+              });
           }
         }
         if (data.value == "") {
@@ -1034,5 +1058,8 @@ label {
   color: red;
   line-height: 30px;
   height: 20px;
+}
+.basicInfo .Maintenance label::before {
+  content: "";
 }
 </style>

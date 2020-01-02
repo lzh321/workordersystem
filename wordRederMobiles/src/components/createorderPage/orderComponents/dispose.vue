@@ -40,13 +40,15 @@
           <label for>
             <span>问题记录</span>：
           </label>
-          <textarea name="recordContent" :value="orderInfo.recordContent" id cols="30" rows="10"></textarea>
+          <textarea name="recordContent"  @focus="getText" :value="recordContent ? recordContent : orderInfo.recordContent" cols="30" rows="10"></textarea>
+          <!-- <textarea v-else name="recordContent" value="" cols="30" rows="10"></textarea> -->
         </div>
         <div>
           <label for>
             <span>解决办法</span>：
           </label>
-          <textarea name="recordSettle" :value="orderInfo.recordSettle" id cols="30" rows="10"></textarea>
+          <textarea v-if="orderInfo.recordSettle" name="recordSettle" :value="orderInfo.recordSettle" cols="30" rows="10"></textarea>
+          <textarea v-else name="recordSettle" value="" cols="30" rows="10"></textarea>
         </div>
 
         <!-- <div v-if="orderInfo.appoinmentTime" class="affix">
@@ -54,7 +56,7 @@
             <span>附件</span>：
           </label>
           <van-uploader :after-read="afterRead" v-model="fileList" multiple />
-        </div> -->
+        </div>-->
 
         <div class="affix">
           <div>
@@ -63,14 +65,21 @@
             </label>
             <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
           </div>
-          <div class="uploadImg">
-            <div class="layui-upload">
-              <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-                预览
-                <div class="layui-upload-list" id="imgBox"></div>
-                <input type="hidden" name="recordPhoto" value />
-              </blockquote>
-            </div>
+          <div class="layui-upload">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+              预览
+              <div class="layui-upload-list" id="imgBox">
+                <img
+                  v-for="(item,index) in AfterimgArray"
+                  :key="index"
+                  class="layui-upload-img"
+                  style="width:100px;height:100px;margin-right:10px;margin-bottom: 10px;"
+                  :src="DomainName+ item "
+                  alt
+                />
+              </div>
+              <input type="hidden" name="recordPhoto" :value="Afterimg" />
+            </blockquote>
           </div>
         </div>
       </div>
@@ -79,7 +88,7 @@
         <label for>
           <span>备注</span>：
         </label>
-        <textarea class="remark" name="remark" id cols="30" rows="10"></textarea>
+        <textarea class="remark" name="remark" cols="30" rows="10"></textarea>
       </div>
       <div class="seleTime">
         <van-popup v-model="show" position="bottom" :style="{ height: '52%' }">
@@ -152,7 +161,6 @@
         </li>
       </ul>
     </div>
-    
   </div>
 </template>
 
@@ -175,7 +183,10 @@ export default {
       recordType: {},
       recordModel: {},
       orderInfoId: sessionStorage.getItem("orderInfoId"),
-      isDisabled: false
+      isDisabled: false,
+      AfterimgArray: sessionStorage.getItem("AfterimgArray") ? JSON.parse(sessionStorage.getItem("AfterimgArray")) : [],
+      Afterimg: sessionStorage.getItem("AfterimgUrl") ? JSON.parse(sessionStorage.getItem("AfterimgUrl")) : '',
+      DomainName: this.$store.state.url
     };
   },
   components: {
@@ -184,13 +195,23 @@ export default {
     appointment
   },
   methods: {
+    getText(){
+      // this.$("text[naem='recordContent']")
+    },
     getImg() {
       if (this.orderInfo.recordPhoto) {
-        this.$("#imgBox").html(
-          '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-            this.orderInfo.recordPhoto.split(",")[0] +
-            '" alt />'
-        );
+        this.Afterimg = this.orderInfo.recordPhoto;
+        for (
+          var i = 0;
+          i < this.orderInfo.recordPhoto.split(",").length;
+          i++
+        ) {
+          if (this.orderInfo.recordPhoto.split(",")[i] !== "") {
+            this.AfterimgArray.push(
+              this.orderInfo.recordPhoto.split(",")[i]
+            );
+          }
+        }
       }
     },
     send() {
@@ -257,11 +278,14 @@ export default {
       console.log(createData);
       this.axios.post("/api/finishOrderInfo", createData).then(res => {
         console.log(res);
-
+        
         if (res.data.retCode == "000000") {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
+            this.$destroy("orderDetails")
+            sessionStorage.removeItem("AfterimgArray")
+            sessionStorage.removeItem("AfterimgUrl")
             this.$router.push("/wordOrder");
           }, 3000);
         } else {
@@ -352,10 +376,13 @@ export default {
       this.show = false;
     }
   },
-  mounted(){
-    var _this = this
-    layui.use(["upload"],function(){
-      var upload = layui.upload
+  mounted() {
+    setTimeout(()=>{
+      this.getImg();
+    },500)
+    var _this = this;
+    layui.use(["upload"], function() {
+      var upload = layui.upload;
       //上传图片
       upload.render({
         elem: "#uploadImage",
@@ -365,15 +392,18 @@ export default {
         multiple: false, //是否多文件上传
         accept: "images", // 规定上传文件类型 ，images/file/video/audio
         auto: true, // 是否自动上传
+        size: 4096,
         field: "file", // 设定文件域字段
         choose: function(obj) {
           obj.preview(function(index, file, result) {
             console.log(index, file);
-            _this.$("#imgBox").html(
-              '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
-                result +
-                '" alt />'
-            );
+            // _this
+            //   .$("#imgBox")
+            //   .html(
+            //     '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
+            //       result +
+            //       '" alt />'
+            //   );
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
           this.data = { orderInfoId: _this.orderInfoId, soreId: 1 };
@@ -394,16 +424,26 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.$("input[name='recordPhoto']").val(res.body.url);
+          _this.Afterimg += res.body.url;
+          var AfterimgUrl = JSON.stringify(_this.Afterimg)
+          _this.AfterimgArray.push(res.body.url.split(",")[0]);
+          var str = JSON.stringify(_this.AfterimgArray);
+          sessionStorage.setItem("AfterimgArray",str)
+          sessionStorage.setItem("Afterimg",AfterimgUrl)
+          console.log(_this.Afterimg);
+          // _this.$("input[name='recordPhoto']").val(res.body.url);
         }
       });
-    })
+    });
   },
   created() {
     this.send();
   },
-  updated(){
-    this.getImg()
+  updated() {
+    
+    // layui.use("form", function() {
+    //   layui.form.render();
+    // });
   },
   activated() {
     // this.send();
@@ -427,12 +467,11 @@ form {
 }
 form div {
   padding: 10px 0;
-  
 }
-form>div{
+form > div {
   border-bottom: 1px solid #f0f0f0;
 }
-form>div>div{
+form > div > div {
   border-bottom: 1px solid #f0f0f0;
 }
 form div > span {
@@ -524,10 +563,10 @@ h2 {
 .remakeInfo label::before {
   content: "";
 }
-.affix div{
+.affix div {
   display: flex;
 }
-.uploadImg{
+.uploadImg {
   display: flex;
   flex-direction: column;
   align-items: baseline;
@@ -536,14 +575,18 @@ h2 {
 }
 .layui-upload {
   width: 100%;
-  padding: 0
+  padding: 0;
 }
-.layui-elem-quote{
+.layui-elem-quote {
   width: 100%;
   font-size: 15px;
 }
-.layui-btn{
+.layui-btn {
   height: 35px;
   line-height: 35px;
+}
+#imgBox{
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

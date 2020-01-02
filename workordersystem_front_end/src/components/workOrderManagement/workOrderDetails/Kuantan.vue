@@ -7,6 +7,24 @@
         <h2>客户信息</h2>
         <!-- <div class="customerInfo_content information"> -->
         <div class="layui-form-item">
+          <label class="layui-form-label">工单状态</label>
+          <div class="layui-input-block">
+            <input
+              type="text"
+              name
+              :value="workOrderInfo.orderStateName"
+              class="layui-input"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label class="layui-form-label">工单编号</label>
+          <div class="layui-input-block">
+            <input type="text" name :value="orderInfoId" class="layui-input" disabled />
+          </div>
+        </div>
+        <div class="layui-form-item">
           <label class="layui-form-label">客户名称</label>
           <div class="layui-input-block">
             <input
@@ -85,7 +103,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.orderSource == 0 ? '电话' : '其他'"
+              :value="workOrderInfo.orderSource"
               class="layui-input"
               disabled
             />
@@ -98,7 +116,7 @@
             <input
               type="text"
               name
-              :value="workOrderInfo.orderType == 0 ? '设备报障' : workOrderInfo.orderType == 1 ? '差错账' : workOrderInfo.orderType == 2 ? '钞空/存满' : workOrderInfo.orderType == 3 ? '吞卡' : workOrderInfo.orderType == 4 ? '通讯中断' : workOrderInfo.orderType == 5 ? '卡钞' : workOrderInfo.orderType == 6 ? 'PM' : workOrderInfo.orderType == 7 ? '软硬件升级' : workOrderInfo.orderType == 8 ? '咨询' : workOrderInfo.orderType == 9 ? '设备确认' : workOrderInfo.orderType == 10 ? '其他' : ''"
+              :value="workOrderInfo.orderType"
               class="layui-input"
               disabled
             />
@@ -136,12 +154,12 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block">
-            <input type="text" name :value="workOrderInfo.modelType" class="layui-input" disabled />
+            <input type="text" name :value="workOrderInfo.modelType + '（'+workOrderInfo.modelName +'）'" class="layui-input" disabled />
           </div>
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label">存货编码</label>
+          <label class="layui-form-label">设备序列号</label>
           <div class="layui-input-block">
             <input
               type="text"
@@ -159,19 +177,30 @@
             <textarea
               name
               :value="workOrderInfo.problemDescription"
-              placeholder=""
+              placeholder
               class="layui-textarea"
               disabled
             ></textarea>
           </div>
         </div>
 
-        <div class="layui-form-item">
+        <div class="affix layui-form-item">
           <label class="layui-form-label">附件</label>
-          <div id="affix">
-            <div class="uploadImg">
+        </div>
+        <div class="layui-upload">
+          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+            附件
+            <div class="layui-upload-list" id="imgBox">
+              <img
+                v-for="(item,index) in imgDataArray"
+                :key="index"
+                class="layui-upload-img"
+                style="width:100px;height:100px;margin-right:10px"
+                :src="DomainName+ item "
+                alt
+              />
             </div>
-          </div>
+          </blockquote>
         </div>
       </div>
 
@@ -218,7 +247,7 @@
             <textarea
               name
               :value="workOrderInfo.adviseContent"
-              placeholder=""
+              placeholder
               class="layui-textarea"
               disabled
             ></textarea>
@@ -233,26 +262,31 @@
 // import reservation from "./reservation";
 import synergy from "./synergy";
 import processingRecord from "./processingRecord";
-import progressBar from '../../progressBar'
-import workOrderLog from '../workOrderDetails/workOrderLog'
+import progressBar from "../../progressBar";
+import workOrderLog from "../workOrderDetails/workOrderLog";
 export default {
   name: "Kuantan",
   data() {
     return {
-      workOrderInfo: {}
-    }
+      workOrderInfo: {},
+      orderInfoId: sessionStorage.getItem("orderInfoId"),
+      imgDataArray: [],
+      DomainName: this.$store.state.url
+    };
   },
-  components:{
+  components: {
     // reservation,
     synergy,
     processingRecord,
     progressBar,
     workOrderLog
   },
-  methods:{
-    workValuation(){
-      var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : '';
-      if(orderInfoId){
+  methods: {
+    workValuation() {
+      var orderInfoId = sessionStorage.getItem("orderInfoId")
+        ? sessionStorage.getItem("orderInfoId")
+        : "";
+      if (orderInfoId) {
         var data = {
           userId: this.$store.state.userId,
           orderInfoId: orderInfoId
@@ -260,23 +294,28 @@ export default {
         this.$axios.post("/api/getOrderInfo", data).then(res => {
           console.log(res);
           this.workOrderInfo = res.data.body;
-          this.$(".uploadImg").html(res.data.body.orderPhoto ? '<img style="width:100px;height:100px" src=" http://192.168.1.245/'+ res.data.body.orderPhoto.split(',')[0] +'" alt />' : '')
+
+          for (var i = 0; i < res.data.body.orderPhoto.split(",").length; i++) {
+            if (res.data.body.orderPhoto.split(",")[i] !== "") {
+              this.imgDataArray.push(res.data.body.orderPhoto.split(",")[i]);
+            }
+          }
         });
       }
     }
   },
-  created(){
-    this.workValuation()
+  created() {
+    this.workValuation();
   },
-  mounted(){
-    layui.use("form",function(){
-      layui.form.render()
-    })
+  mounted() {
+    layui.use("form", function() {
+      layui.form.render();
+    });
   }
 };
 </script>
 <style scoped>
-.Kuantan{
+.Kuantan {
   padding: 15px 15px 0;
 }
 h2 {
@@ -284,10 +323,10 @@ h2 {
   font-weight: 600;
   margin-bottom: 20px;
 }
-.layui-form-label{
+.layui-form-label {
   width: 130px;
 }
-.layui-input-block{
+.layui-input-block {
   margin-left: 130px;
 }
 </style>

@@ -70,14 +70,17 @@ export default new Router({
             title: '工单'
           },
         },
-        
+
         {
           path: '/orderDetails',
           name: 'orderDetails',
           component: orderDetails,
           meta: {
             showTab: false,
-            title: '工单详情'
+            title: '工单详情',
+            // isBack: false,  // 这个字段的意思稍后再说      
+            // keepAlive: true
+
           },
         },
         {
@@ -96,45 +99,44 @@ export default new Router({
             showTab: false,
           },
         },
-        {
-          path: '/synergy',
-          name: 'synergy',
-          component: synergy,
-          meta: {
-            showTab: true,
-            title: '协同'
-          },
-          children: [
-            {
-              path: '/synergyManagement',
-              name: 'synergyManagement',
-              component: synergyManagement,
-              meta: {
-                showTab: true,
-              },
-            },
-            {
-              path: '/synergyDispose',
-              name: 'synergyDispose',
-              component: synergyDispose,
-              meta: {
-                showTab: true,
-              },
-            }
-          ]
-        },
-        {
-          path: '/myCenter',
-          name: 'myCenter',
-          component: myCenter,
-          meta: {
-            showTab: true,
-            title: '个人中心'
-          },
-        },
       ]
     },
-
+    {
+      path: '/synergy',
+      name: 'synergy',
+      component: synergy,
+      meta: {
+        showTab: true,
+        title: '协同'
+      },
+      children: [
+        {
+          path: '/synergyManagement',
+          name: 'synergyManagement',
+          component: synergyManagement,
+          meta: {
+            showTab: true,
+          },
+        },
+        {
+          path: '/synergyDispose',
+          name: 'synergyDispose',
+          component: synergyDispose,
+          meta: {
+            showTab: true,
+          },
+        }
+      ]
+    },
+    {
+      path: '/myCenter',
+      name: 'myCenter',
+      component: myCenter,
+      meta: {
+        showTab: true,
+        title: '个人中心'
+      },
+    },
     {
       path: '/createOrder',
       name: 'createOrder',

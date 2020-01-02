@@ -1,11 +1,11 @@
 <template>
   <div class="acceptance">
-    <form action>
+    <form action id="sendOrderData">
       <div class="remakeInfo">
         <label for>
           <span>备注</span>：
         </label>
-        <textarea name="remark" id cols="30" rows="10"></textarea>
+        <textarea name="remark" cols="30" rows="10"></textarea>
       </div>
     </form>
     <orderLog></orderLog>

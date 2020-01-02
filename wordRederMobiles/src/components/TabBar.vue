@@ -19,13 +19,13 @@ export default {
           name: "工单",
           active: require("../assets/Images/home_selected.png"),
           inactive: require("../assets/Images/home_default.png"),
-          path: "/wordOrder"
+          path: "/wordOrder?type=wordOrder"
         },
         {
           name: "协同",
           active: require("../assets/Images/synergy_in.png"),
           inactive: require("../assets/Images/synergy_grey.png"),
-          path: "/synergyManagement"
+          path: "/synergyManagement?type=synergyManagement"
         },
 
         {
@@ -42,6 +42,6 @@ export default {
 
 <style scoped>
 .tabBar{
-  height: 50px;
+  height: 50px ;
 }
 </style>

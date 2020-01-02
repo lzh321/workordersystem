@@ -210,7 +210,15 @@ export default {
             {
               recordModel: 47,
               recordModelName: "指示灯及控制板"
-            }
+            },
+            {
+              recordModel: 48,
+              recordModelName: "打印机硬件"
+            },
+            {
+              recordModel: 49,
+              recordModelName: "计算机硬件"
+            },
           ]
         },
         {
@@ -240,7 +248,31 @@ export default {
             {
               recordModel: 5,
               recordModelName: "升级程序补丁"
-            }
+            },
+            {
+              recordModel: 6,
+              recordModelName: "办公软件"
+            },
+            {
+              recordModel: 7,
+              recordModelName: "办公系统"
+            },
+            {
+              recordModel: 8,
+              recordModelName: "计算机网络"
+            },
+            {
+              recordModel: 9,
+              recordModelName: "计算机系统"
+            },
+            {
+              recordModel: 10,
+              recordModelName: "打印机软件"
+            },
+            {
+              recordModel: 11,
+              recordModelName: "扫描仪软件"
+            },
           ]
         },
         {

@@ -134,7 +134,7 @@ export default {
       legend: {
         show: true,
         x: "center",
-        bottom: 10,
+        bottom: 0,
         data: ["待发单", "待派单", "待受理", "处理中", "待回访", "已关单"],
         textStyle: {
           color: "#444",
@@ -195,7 +195,9 @@ export default {
       ]
     };
   },
-  created() {}
+  created() {
+    sessionStorage.clear()
+  }
 };
 </script>
 
@@ -219,7 +221,7 @@ export default {
 .Echarts {
   flex: 1;
   display: flex;
-  padding-top: 30px;
+  padding-top: 40px;
   justify-content: center;
 }
 .workTable_top h2 {

@@ -136,7 +136,12 @@ export default {
                 data: res.body.list //解析数据列表
               };
             },
-            // page: true, //开启分页
+            request: {
+              pageName: "currentPage", //页码的参数名称，默认：page
+              // curr: 'indexCount', //页码的参数名称，默认：page
+              limitName: "everyCount" //每页数据量的参数名，默认：limit
+            },
+            page: true, //开启分页
             // limit: 10,
             cols: [_this.CompanyList]
           });
@@ -162,7 +167,12 @@ export default {
                 data: res.body.list //解析数据列表
               };
             },
-            // page: true, //开启分页
+            request: {
+              pageName: "currentPage", //页码的参数名称，默认：page
+              // curr: 'indexCount', //页码的参数名称，默认：page
+              limitName: "everyCount" //每页数据量的参数名，默认：limit
+            },
+            page: true, //开启分页
             // limit: 10,
             cols: [_this.DeptList]
           });
@@ -188,7 +198,12 @@ export default {
                 data: res.body.list //解析数据列表
               };
             },
-            // page: true, //开启分页
+            request: {
+              pageName: "currentPage", //页码的参数名称，默认：page
+              // curr: 'indexCount', //页码的参数名称，默认：page
+              limitName: "everyCount" //每页数据量的参数名，默认：limit
+            },
+            page: true, //开启分页
             // limit: 10,
             cols: [_this.JobList]
           });
@@ -215,7 +230,12 @@ export default {
             data: res.body.list //解析数据列表
           };
         },
-        // page: true, //开启分页
+        request: {
+          pageName: "currentPage", //页码的参数名称，默认：page
+          // curr: 'indexCount', //页码的参数名称，默认：page
+          limitName: "everyCount" //每页数据量的参数名，默认：limit
+        },
+        page: true, //开启分页
         // limit: 10,
         cols: [_this.list]
       });
@@ -226,62 +246,68 @@ export default {
         var data = obj.data;
         console.log(data);
         if (obj.event === "deletion") {
-          layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
-            if (data.companyName) {
-              var companyId = data.id;
-              //向服务端发送删除指令
-              var delParam = {
-                userId: _this.$store.state.userId,
-                companyId: companyId
-              };
-              _this.$axios.post("/api/deleCompanyInfo", delParam).then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  layer.msg(res.data.retMsg, { icon: 1 });
-                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);
-                } else {
-                  layer.msg(res.data.retMsg, { icon: 2 });
-                }
-              });
+          layer.confirm(
+            "你确定要删除这条记录？",
+            { icon: 3, title: "提示" },
+            function(index) {
+              if (data.companyName) {
+                var companyId = data.id;
+                //向服务端发送删除指令
+                var delParam = {
+                  userId: _this.$store.state.userId,
+                  companyId: companyId
+                };
+                _this.$axios
+                  .post("/api/deleCompanyInfo", delParam)
+                  .then(res => {
+                    console.log(res);
+                    if (res.data.retCode == "000000") {
+                      layer.msg(res.data.retMsg, { icon: 1 });
+                      obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                      layer.close(index);
+                    } else {
+                      layer.msg(res.data.retMsg, { icon: 2 });
+                    }
+                  });
+              }
+              if (data.deptName) {
+                var deptId = data.deptId;
+                //向服务端发送删除指令
+                var delParam = {
+                  userId: _this.$store.state.userId,
+                  DeptId: deptId
+                };
+                _this.$axios.post("/api/deleDeptInfo", delParam).then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+              }
+              if (data.jobName) {
+                var jobId = data.id;
+                //向服务端发送删除指令
+                var delParam = {
+                  userId: _this.$store.state.userId,
+                  jobId: jobId
+                };
+                _this.$axios.post("/api/deleJobInfo", delParam).then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+              }
             }
-            if (data.deptName) {
-              var deptId = data.deptId;
-              //向服务端发送删除指令
-              var delParam = {
-                userId: _this.$store.state.userId,
-                DeptId: deptId
-              };
-              _this.$axios.post("/api/deleDeptInfo", delParam).then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  layer.msg(res.data.retMsg, { icon: 1 });
-                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);
-                } else {
-                  layer.msg(res.data.retMsg, { icon: 2 });
-                }
-              });
-            }
-            if (data.jobName) {
-              var jobId = data.id;
-              //向服务端发送删除指令
-              var delParam = {
-                userId: _this.$store.state.userId,
-                jobId: jobId
-              };
-              _this.$axios.post("/api/deleJobInfo", delParam).then(res => {
-                console.log(res);
-                if (res.data.retCode == "000000") {
-                  layer.msg(res.data.retMsg, { icon: 1 });
-                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                  layer.close(index);
-                } else {
-                  layer.msg(res.data.retMsg, { icon: 2 });
-                }
-              });
-            }
-          });
+          );
         } else if (obj.event === "edit") {
           if (data.companyName == "" || data.companyName) {
             var companyId = data.id;
@@ -316,6 +342,7 @@ export default {
       this.url = "/api/getJobList";
       this.list = this.JobList;
     }
+    sessionStorage.clear()
   },
   updated() {
     var _this = this;

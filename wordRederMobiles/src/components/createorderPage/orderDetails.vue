@@ -71,7 +71,6 @@ export default {
 }
 .actionBtn {
   padding: 0;
-  
   position: fixed;
   width: 100%;
   bottom: 0;

@@ -82,9 +82,7 @@ export default {
       });
     });
   },
-  beforeDestroy(){
-    sessionStorage.removeItem('roleId')
-  }
+
 };
 </script>
 

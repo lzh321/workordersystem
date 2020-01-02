@@ -79,7 +79,6 @@ export default {
           this.workType[3].num = res.data.body.acceptNum;
           this.workType[4].num = res.data.body.processingNum;
           this.workType[5].num = res.data.body.finishNum;
-          this.workType[6].num = res.data.body.closeNum;
         }
       });
     },
@@ -644,8 +643,7 @@ export default {
     // this.$axios.post("/api/getOrderInfoList", data).then(res => {
     //   console.log(res);
     // });
-    sessionStorage.removeItem("orderState");
-    sessionStorage.removeItem("orderInfoId");
+    sessionStorage.clear()
     this.getOrderInfoNum();
     
   }
@@ -654,7 +652,8 @@ export default {
 
 <style scoped>
 .workOrderManagement {
-  height: 100%;
+  /* height: 100%; */
+  padding: 15px 15px 0
 }
 /* .active {
   border-bottom: 2px solid #445eee;

@@ -6,14 +6,14 @@
           <span>指派给</span>：
         </label>
         <input type="hidden" name="acceptUserId" :value="userList.userId" />
-        <input type="text" :value="userList.userName" />
+        <input type="text" :value="userList.userName" placeholder="请选择" />
         <span class="seleUser"></span>
       </router-link>
       <div class="remakeInfo">
         <label for>
           <span>备注</span>：
         </label>
-        <textarea name="remark" id cols="30" rows="10"></textarea>
+        <textarea name="remark" placeholder="请输入备注说明" cols="30" rows="10"></textarea>
       </div>
     </form>
     <orderLog></orderLog>
@@ -133,7 +133,7 @@ form div > span {
 }
 
 label {
-  font-size: 14px;
+  font-size: 16px;
   display: flex;
   align-items: center;
 }
@@ -145,7 +145,7 @@ label::before {
 }
 label span {
   width: 60px;
-  font-size: 14px;
+  font-size: 16px;
   color: #666666;
   text-align-last: justify;
 }
@@ -154,11 +154,20 @@ input[type="text"] {
   flex: 1;
   border: 1px solid #f3f3f3;
   height: 35px;
+  font-size: 16px;
+}
+input::placeholder{
+  color: #DDDDDD;
 }
 textarea {
   width: 100%;
   margin-top: 10px;
   background: #ffffff;
+  font-size: 16px;
+  border: none;
+}
+textarea::placeholder{
+  color: #DDDDDD
 }
 .info {
   justify-content: space-between;

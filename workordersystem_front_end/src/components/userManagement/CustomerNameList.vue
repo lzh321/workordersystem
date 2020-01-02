@@ -65,11 +65,11 @@ export default {
             data: res.body.customerNameList //解析数据列表
           };
         },
-        // page: true, //开启分页
-        // request: {
-        //   pageName: 'currentPage', //页码的参数名称，默认：page
-        //   limitName: 'everyCount' //每页数据量的参数名，默认：limit
-        // },
+        page: true, //开启分页
+        request: {
+          pageName: 'currentPage', //页码的参数名称，默认：page
+          limitName: 'everyCount' //每页数据量的参数名，默认：limit
+        },
         cols: [
           [
             //表头
@@ -105,6 +105,7 @@ export default {
       table.on("tool(CustomerNameList)", function(obj) {
         var data = obj.data;
         console.log(data);
+        var customerName = data.customerName;
         var customerId = data.customerId;
         console.log(customerId);
         if (obj.event === "deletion") {
@@ -127,6 +128,7 @@ export default {
           });
         } else if (obj.event === "edit") {
           //编辑
+          sessionStorage.setItem("customerName", customerName);
           sessionStorage.setItem("customerId", customerId);
           _this.$router.push("/addCustomer");
         }
@@ -134,6 +136,7 @@ export default {
     });
   },
   created() {
+    sessionStorage.clear()
     this.type = this.$route.query.type;
     this.$axios
       .post("/api/getCustomerNameList", this.$store.state.userId)

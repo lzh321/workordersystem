@@ -181,11 +181,6 @@ export default {
     if (this.type == "JobList") {
       this.JobList = this.type;
     }
-  },
-  beforeDestroy(){
-    sessionStorage.removeItem('companyId')
-    sessionStorage.removeItem('deptId')
-    sessionStorage.removeItem('jobId')
   }
 };
 </script>

@@ -39,11 +39,31 @@
         ></textarea>
       </div>
     </div>
-    <div class="layui-form-item">
+    <!-- <div class="layui-form-item">
       <label class="layui-form-label">售后单</label>
       <div id="affix">
-        <div class="uploadImg" v-html="img"></div>
+        <div class="uploadImg">
+          
+        </div>
       </div>
+    </div>-->
+    <div class="affix layui-form-item">
+      <label class="layui-form-label">售后单</label>
+    </div>
+    <div class="layui-upload">
+      <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+        附件
+        <div class="layui-upload-list" id="imgBox">
+          <img
+            v-for="(item,index) in AfterimgArray"
+            :key="index"
+            class="layui-upload-img"
+            style="width:100px;height:100px;margin-right:10px"
+            :src="DomainName+ item "
+            alt
+          />
+        </div>
+      </blockquote>
     </div>
   </div>
 </template>
@@ -55,32 +75,45 @@ export default {
   props: ["workOrderInfo"],
   data() {
     return {
-      img: ""
+      Afterimg: "",
+      AfterimgArray: [],
+      DomainName: this.$store.state.url
     };
   },
-  methods:{
-    send(){
-      if(this.workOrderInfo.recordPhoto){
-      this.$(".uploadImg").html(
-        '<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-          this.workOrderInfo.recordPhoto.split(",")[0] +
-          '" alt />'
-      );
-    }
+  methods: {
+    getImg() {
+      if (this.workOrderInfo.recordPhoto) {
+        this.Afterimg = this.workOrderInfo.recordPhoto;
+        for (
+          var i = 0;
+          i < this.workOrderInfo.recordPhoto.split(",").length;
+          i++
+        ) {
+          if (this.workOrderInfo.recordPhoto.split(",")[i] !== "") {
+            this.AfterimgArray.push(
+              this.workOrderInfo.recordPhoto.split(",")[i]
+            );
+          }
+        }
+      }
     }
   },
   mounted() {
-    this.send()
+    setTimeout(()=>{
+      this.getImg();
+    },1000)
   },
   components: {
     reservation
   },
   created() {
-    
+    // this.getImg();
   },
   updated() {
-    this.send()
-  },
+    layui.use("form", function() {
+      layui.form.render();
+    });
+  }
 };
 </script>
 

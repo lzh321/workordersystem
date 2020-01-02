@@ -1,11 +1,20 @@
 <template>
   <div class="customerInfo">
     <form action>
-      <div class="orderId">
-        <h2>{{orderInfoId}}</h2>
-      </div>
       <div class="info">
         <h2>客户信息</h2>
+      </div>
+      <div class="">
+        <label for>
+          <span>工单状态</span>：
+        </label>
+        <span>{{orderInfo.orderStateName}}</span>
+      </div>
+      <div class="">
+        <label for>
+          <span>工单编号</span>：
+        </label>
+        <span>{{orderInfoId}}</span>
       </div>
       <div>
         <label for>
@@ -52,14 +61,14 @@
           <span>工单来源</span>：
         </label>
 
-        <span>{{orderInfo.orderSource == 0 ? '电话' : orderInfo.orderSource == 1 ? '微信' : '其他' }}</span>
+        <span>{{orderInfo.orderSource}}</span>
       </div>
       <div>
         <label for>
           <span>工单类型</span>：
         </label>
 
-        <span>{{orderInfo.orderType == 0 ? '设备报障' : orderInfo.orderType == 1 ? '差错账' : orderInfo.orderType == 2 ? '钞空/存满' : orderInfo.orderType == 3 ? '吞卡' : orderInfo.orderType == 4 ? '通讯中断' : orderInfo.orderType == 5 ? '卡钞' : orderInfo.orderType == 6 ? 'PM' : orderInfo.orderType == 7 ? '软硬件升级' : orderInfo.orderType == 8 ? '咨询' : orderInfo.orderType == 9 ? '设备确认' : orderInfo.orderType == 10 ? '其他' : ''}}</span>
+        <span>{{orderInfo.orderType}}</span>
       </div>
       <div>
         <label for>
@@ -83,22 +92,37 @@
       </div>
       <div>
         <label for>
-          <span>存货编码</span>：
+          <span>设备序列号</span>：
         </label>
         <span>{{orderInfo.deviceNumber}}</span>
       </div>
-      <div class="problem">
+      <div class="">
         <label for>
           <span>问题描述</span>：
         </label>
-        <textarea name id cols="30" :value="orderInfo.problemDescription" rows="10" disabled></textarea>
+        <span>{{orderInfo.problemDescription}}</span>
+        <!-- <textarea name id cols="30" :value="orderInfo.problemDescription" rows="10" disabled></textarea> -->
       </div>
       <div class="affix">
         <label for>
           <span>附件</span>：
         </label>
-        <div class="orderPhoto">
-
+        <div class="uploadImg">
+          <div class="layui-upload">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 4px;font-size:15px;">
+              预览
+              <div class="layui-upload-list" id="imgBox">
+                    <img
+                      v-for="(item,index) in imgDataArray"
+                      :key="index"
+                      class="layui-upload-img"
+                      style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;"
+                      :src="DomainName+ item "
+                      alt
+                    />
+                  </div>
+            </blockquote>
+          </div>
         </div>
       </div>
       <div v-if="orderStatus == 1 ? true : false">
@@ -128,26 +152,31 @@ export default {
     return {
       fileList: [],
       orderInfoId:sessionStorage.getItem("orderInfoId"),
-      img: ''
+      imgDataArray: [],
+      DomainName: this.$store.state.url
     };
   },
   methods: {
     send(){
       if(this.orderInfo.orderPhoto){
-        this.$(".orderPhoto").html('<img style="width:100px;height:100px" src=" http://192.168.1.245/' +
-          this.orderInfo.orderPhoto.split(",")[0] +
-          '" alt />')
+        for (var i = 0; i < this.orderInfo.orderPhoto.split(",").length; i++) {
+            if (this.orderInfo.orderPhoto.split(",")[i] !== "") {
+              this.imgDataArray.push(this.orderInfo.orderPhoto.split(",")[i]);
+            }
+          }
       }
     }
   },
   mounted(){
-    this.send()
+    setTimeout(()=>{
+      this.send()
+    },500)
   },
   created(){
-    this.send()
+    
   },
   updated() {
-    this.send()
+
   },
 };
 </script>
@@ -160,7 +189,7 @@ form {
 form div {
   display: flex;
   align-items: center;
-  padding: 5px 0;
+  padding: 8px 0;
 }
 .orderId{
   padding: 20px 0 10px;
@@ -237,5 +266,8 @@ textarea {
   padding: 5px;
 }
 
-
+#imgBox{
+  display: flex;
+  flex-wrap: wrap;
+}
 </style>

@@ -3,7 +3,7 @@
     <form id="formData" class="layui-form layui-form-pane" action>
       <div class="info">基础信息</div>
       <div class="layui-form-item">
-        <label class="layui-form-label">存货编码</label>
+        <label class="layui-form-label">设备序列号</label>
         <div class="layui-input-block">
           <input type="text" id="stock_code" disabled name="stock_code" :value="DeviceInfo.deviceNumber" class="layui-input" />
         </div>

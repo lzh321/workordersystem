@@ -15,7 +15,7 @@
       </div>
       <div>
         <label for=""><span>意见/建议</span>：</label>
-        <textarea name="" id="" cols="30" :value="orderInfo.satisfiedState" rows="10" disabled></textarea>
+        <textarea cols="30" :value="orderInfo.adviseContent" rows="10" disabled></textarea>
       </div>
       
     </form>
@@ -61,7 +61,7 @@ form div > span {
   display: flex;
   align-items: center;
   margin-left: 8px;
-  font-size: 13px;
+  font-size: 16px;
   color: #999999;
 }
 
@@ -77,11 +77,11 @@ label {
   margin-right: 3px;
 } */
 label .problem{
-  width: 100px;
+  width: 115px;
 }
 form  label span {
-  width: 100px;
-  font-size: 14px;
+  width: 115px;
+  font-size: 16px;
   color: #666666;
   text-align-last: justify;
 }
@@ -89,12 +89,14 @@ input[type="text"] {
   flex: 1;
   border: 1px solid #f3f3f3;
   height: 35px;
+  
 }
 textarea {
   width: 100%;
   margin-top: 10px;
   background: #FFFFFF;
   color: #666666;
+  font-size: 15px;
 }
 .info {
   justify-content: space-between;

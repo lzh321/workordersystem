@@ -53,7 +53,7 @@
           <span>工单来源</span>：
         </label>
         <input type="text" :value="orderSource.name" placeholder="请选择工单来源" />
-        <input name="orderSource" :value="orderSource.id" type="hidden" />
+        <input name="orderSource" :value="orderSource.name" type="hidden" />
         <span>可选</span>
       </router-link>
       <router-link tag="div" to="/orderType">
@@ -61,7 +61,7 @@
           <span>工单类型</span>：
         </label>
         <input type="text" :value="orderType.name" placeholder="请选择工单类型" />
-        <input name="orderType" :value="orderType.id" type="hidden" />
+        <input name="orderType" :value="orderType.name" type="hidden" />
         <span>可选</span>
       </router-link>
       <div class="orderUrgency">
@@ -69,29 +69,30 @@
           <span>紧急程度</span>：
         </label>
         <input type="radio" name="orderUrgency" value="1" />紧急
-        <input type="radio" name="orderUrgency" value="0" />一般
+        <input type="radio" name="orderUrgency" value="0" checked />一般
         <input type="radio" class="Urgency" name="orderUrgency" />
       </div>
       <div>
         <label for="reportTime">
           <span>报障时间</span>：
         </label>
-        <input type="text" id="reportTime" placeholder="请选择保障时间" name="reportTime" />
+        <input type="text" id="reportTime" placeholder="请选择报障时间" name="reportTime" />
       </div>
-      <router-link to="/modelType" tag="div">
+      <div @click="selectmodelType(networkList.id)" tag="div">
         <label for>
           <span>设备型号</span>：
         </label>
         <input type="text" :value="modelType.modelType" placeholder="请选择设备型号" />
         <input name="modelId" :value="modelType.modelId" type="hidden" />
         <span>可选</span>
-      </router-link>
-      <div @click="selectDeviceNumber(networkList.id)">
+      </div>
+      <div class="deviceNumber" @click="selectDeviceNumber(modelType.modelType)">
         <label for>
-          <span>存货编码</span>：
+          <span>设备序列号</span>：
         </label>
-        <input type="text" :value="DeviceNumber.deviceNumber" placeholder="请选择存货编码" />
+        <input type="text" :value="DeviceNumber.deviceNumber" placeholder="请选择设备序列号" />
         <input name="deviceNumber" :value="DeviceNumber.deviceNumber" type="hidden" />
+        <span>可选</span>
       </div>
       <div class="problem">
         <label for>
@@ -101,17 +102,26 @@
       </div>
       <div class="affix">
         <div>
-        <label for>
-          <span>附件</span>：
-        </label>
-            <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
+          <label for>
+            <span>附件</span>：
+          </label>
+          <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
         </div>
         <div class="uploadImg">
           <div class="layui-upload">
-            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 6px;">
               预览
-              <div class="layui-upload-list" id="imgBox"></div>
-              <input type="hidden" name="orderImg" value />
+              <div class="layui-upload-list" id="imgBox">
+                    <img
+                      v-for="(item,index) in imgDataArray"
+                      :key="index"
+                      class="layui-upload-img"
+                      style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;"
+                      :src="DomainName+ item "
+                      alt
+                    />
+                  </div>
+                  <input type="hidden" name="orderImg" :value="imgData" />
             </blockquote>
           </div>
         </div>
@@ -153,7 +163,7 @@
         </li>
       </ul>
     </div>
-    <div class="perch"></div>
+    <!-- <div class="perch"></div> -->
   </div>
 </template>
 
@@ -170,13 +180,16 @@ export default {
       orderType: {},
       modelType: {},
       userList: {},
+      imgData: "",
+      imgDataArray: [],
       DeviceNumber: {},
       isFirstEnter: false,
-      isDisabled: false
+      isDisabled: false,
+      DomainName: this.$store.state.url
     };
   },
   mounted() {
-    var _this = this
+    var _this = this;
     layui.use(["laydate", "upload"], function() {
       var laydate = layui.laydate;
       var upload = layui.upload;
@@ -197,15 +210,18 @@ export default {
         multiple: false, //是否多文件上传
         accept: "images", // 规定上传文件类型 ，images/file/video/audio
         auto: true, // 是否自动上传
+        size: 4096,
         field: "file", // 设定文件域字段
         choose: function(obj) {
           obj.preview(function(index, file, result) {
             console.log(index, file);
-            _this.$("#imgBox").html(
-              '<img class="layui-upload-img" style="width:100px;height:100px" src="' +
-                result +
-                '" alt />'
-            );
+            // _this
+            //   .$("#imgBox")
+            //   .html(
+            //     '<img class="addImg" style="width:100px;height:100px" src="' +
+            //       result +
+            //       '" alt />'
+            //   );
             // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
           });
           this.data = { orderInfoId: _this.orderInfoId, soreId: 1 };
@@ -226,7 +242,10 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.$("input[name='orderImg']").val(res.body.url);
+          _this.imgData += res.body.url;
+          _this.imgDataArray.push(res.body.url.split(",")[0]);
+          console.log(_this.imgData);
+          // _this.$("input[name='orderImg']").val(res.body.url);
         }
       });
     });
@@ -241,29 +260,40 @@ export default {
     selectCustomer() {
       this.$router.push("/selectBank");
       sessionStorage.removeItem("networkdata");
+      sessionStorage.removeItem("modelType");
       sessionStorage.removeItem("DeviceNumber");
     },
+
     selectNetwork(customerId) {
       this.$router.push("/network?customerId=" + customerId);
+      sessionStorage.removeItem("modelType");
+      sessionStorage.removeItem("DeviceNumber");
     },
-    selectDeviceNumber(networkId) {
-      this.$router.push("/DeviceNumber?networkId=" + networkId);
+    selectmodelType(networkId) {
+      this.$router.push("/modelType?networkId=" + networkId);
+      sessionStorage.removeItem("DeviceNumber");
+    },
+    selectDeviceNumber(modelType) {
+      this.$router.push("/DeviceNumber?modelType=" + modelType);
     },
     getOrderInfoId() {
       var date = new Date();
-      var m = date.getMonth();
+      var m = date.getMonth() + 1;
       var d = date.getDate();
       var h = date.getHours();
       var sec = date.getMinutes();
       var s = date.getSeconds();
-      var num = parseInt(Math.random() * 1000);
+      var num = Math.floor(Math.random() * (100 - 999) + 999);
       console.log(num);
-      if (m < 10) m = "0" + m;
+      if (m < 10){
+        m = "0" + m;
+      } 
       if (d < 10) d = "0" + d;
       if (h < 10) h = "0" + h;
       if (sec < 10) sec = "0" + sec;
+      if (s < 10) s = "0" + s;
       this.orderInfoId =
-        "PL" + date.getFullYear() + (m + 1) + d + h + sec + s + num;
+        "PL" + date.getFullYear() + m + d + h + sec + s + num;
     },
     send() {
       var bankList = sessionStorage.getItem("bankList");
@@ -305,12 +335,12 @@ export default {
     },
     bill() {
       // 发单
-      // this.getOrderInfoId();
+      this.getOrderInfoId();
       this.isDisabled = true;
       var createData = this.$("#createData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
-      createData.isClose = 0;
+      // createData.isClose = '0';
       console.log(createData);
 
       this.axios.post("/api/addOrderInfo", createData).then(res => {
@@ -321,6 +351,12 @@ export default {
           setTimeout(() => {
             this.$router.push("/wordOrder");
             this.$("input[type='text']").val("");
+            this.$(".Urgency").attr("checked", true);
+            this.$("textarea").val("");
+            this.$("input[name='orderImg']").val("");
+            this.$("#imgBox")
+              .children()
+              .remove();
             // this.$destroy("create");
           }, 3000);
         } else {
@@ -337,35 +373,52 @@ export default {
       this.$("input[type='text']").val("");
       this.$(".Urgency").attr("checked", true);
       this.$("textarea").val("");
+      this.$("input[name='orderImg']").val("");
+      this.$("#imgBox")
+        .children()
+        .remove();
       // this.$destroy("create");
       sessionStorage.clear();
     },
     kuantan() {
       // 关单
-      // this.getOrderInfoId();
-      this.isDisabled = true;
+      this.getOrderInfoId();
+      // this.isDisabled = true;
       var createData = this.$("#createData").serializeObject();
       createData.userId = this.$store.state.userId;
       createData.orderInfoId = this.orderInfoId;
-      createData.isClose = 1;
+      createData.isClose = "1";
       console.log(createData);
-      this.axios.post("/api/addOrderInfo", createData).then(res => {
-        console.log(res);
-        if (res.data.retCode == "000000") {
-          layer.msg(res.data.retMsg, { icon: 1 });
-          sessionStorage.clear();
-          setTimeout(() => {
-            this.$router.push("/wordOrder");
-            this.$("input[type='text']").val("");
-            this.$destroy("create");
-          }, 3000);
-        } else {
-          setTimeout(() => {
-            this.isDisabled = false;
-          }, 2000);
-          layer.msg(res.data.retMsg, { icon: 2 });
-        }
-      });
+      var _this = this
+      // layer.confirm(
+      //   "是否确认关闭当前工单？",
+      //   { icon: 3, title: "提示" },
+      //   function(index) {
+          //向服务端发送关单指令
+          _this.axios.post("/api/addOrderInfo", createData).then(res => {
+            console.log(res);
+            if (res.data.retCode == "000000") {
+              layer.msg(res.data.retMsg, { icon: 1 });
+              sessionStorage.clear();
+              setTimeout(() => {
+                _this.$router.push("/wordOrder");
+                _this.$("input[type='text']").val("");
+                _this.$(".Urgency").attr("checked", true);
+                _this.$("textarea").val("");
+                _this.$("input[name='orderImg']").val("");
+                _this.$("#imgBox")
+                  .children()
+                  .remove();
+              }, 3000);
+            } else {
+              setTimeout(() => {
+                _this.isDisabled = false;
+              }, 2000);
+              layer.msg(res.data.retMsg, { icon: 2 });
+            }
+          });
+        // }
+      // );
     }
   },
   created() {
@@ -373,12 +426,13 @@ export default {
     this.isFirstEnter = true;
     this.getOrderInfoId();
     this.$("input[type='text']").val("");
+    this.$("input[name='orderImg']").val("");
     this.$(".Urgency").attr("checked", true);
     this.$("textarea").val("");
     sessionStorage.clear();
   },
   beforeRouteEnter(to, from, next) {
-    if (to.path == "/create") {
+    if (from.name == "/create") {
       console.log("00000");
       // 这个name是下一级页面的路由name
       to.meta.isBack = true;
@@ -398,13 +452,14 @@ export default {
       this.modelType = {};
       this.userList = {};
       this.DeviceNumber = {};
-      this.send();
     }
     // 恢复成默认的false，避免isBack一直是true，导致下次无法获取数据
     this.$route.meta.isBack = false;
     // 恢复成默认的false，避免isBack一直是true，导致每次都获取新数据
     this.isFirstEnter = false;
+    this.isDisabled = false;
     this.send();
+    // this.getOrderInfoId();
   }
 };
 </script>
@@ -423,6 +478,7 @@ form {
   flex: 1;
   overflow: hidden;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 form div {
   display: flex;
@@ -549,16 +605,16 @@ textarea {
 .actionBtn {
   padding: 0;
   /* height: 50px; */
-  position: fixed;
+  /* position: fixed; */
   width: 100%;
   bottom: 0;
   z-index: 9999;
 }
-.perch{
+/* .perch{
   padding: 10px 0;
   margin-top: 20px;
   height: 50px;
-}
+} */
 .actionBtn ul {
   width: 100%;
   padding: 10px 0;
@@ -602,7 +658,7 @@ textarea {
 .Urgency {
   display: none;
 }
-.uploadImg{
+.uploadImg {
   display: flex;
   flex-direction: column;
   align-items: baseline;
@@ -611,13 +667,19 @@ textarea {
 }
 .layui-upload {
   width: 100%;
-  padding: 0
+  padding: 0;
 }
-.layui-elem-quote{
+.layui-elem-quote {
   width: 100%;
 }
-.layui-btn{
+.layui-btn {
   height: 35px;
   line-height: 35px;
 }
+#imgBox{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+}
+
 </style>

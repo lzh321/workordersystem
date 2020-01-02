@@ -145,6 +145,7 @@ export default {
         } else if (obj.event === "edit") {
           //编辑
           sessionStorage.setItem("alterId", alterId);
+          sessionStorage.setItem("data",JSON.stringify(data));
           _this.$router.push("/addUser");
         } else if (obj.event === "privilege") {
           // 权限
@@ -172,6 +173,7 @@ export default {
       .catch(err => {
         console.log(err);
       });
+    sessionStorage.clear()
   }
 };
 </script>

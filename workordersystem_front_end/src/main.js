@@ -46,7 +46,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     next();
   } else {
-    let userId = sessionStorage.getItem('userId');
+    let userId = localStorage.getItem('userId');
     if (userId === null || userId === '' || userId === undefined) {
       next('/login');
     } else {

@@ -45,4 +45,8 @@ h2 {
 .layui-input-block{
   margin-left: 130px;
 }
+label::before{
+  content: "*";
+  color: red;
+}
 </style>

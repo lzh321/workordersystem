@@ -58,7 +58,7 @@ export default {
           table.reload('serachData',{
             url: "/api/getDeviceInfoList",
             where:data.field,
-            // page:{curr: 1}
+            page:{curr: 1}
           })
         })
         //第一个实例
@@ -84,7 +84,7 @@ export default {
             field: 'deviceId',
             type: 'asc'   //升序
           },
-          page: false, //开启分页
+          page: true, //开启分页
           request: {
             pageName: 'currentPage', //页码的参数名称，默认：page
             curr: 'indexCount', //页码的参数名称，默认：page
@@ -95,7 +95,7 @@ export default {
             [
               //表头
               {field: "deviceId", fixed: 'left', hide:true},
-              { field: "deviceNumber", title: "存货编码", sort: false,align: "center"},
+              { field: "deviceNumber", title: "设备序列号", sort: false,align: "center"},
               { field: "modelName", title: "存货名称",  sort: false,align: "center"},
               { field: "modelType", title: "设备型号",  sort: false,align: "center" },
               { field: "seviceBegintime", title: "维保开始时间",  align: "center" },
@@ -188,8 +188,7 @@ export default {
     // }).catch(err=>{
     //   console.log(err)
     // })
-    sessionStorage.removeItem("deviceId");
-    sessionStorage.removeItem("data");
+    sessionStorage.clear()
   }
 }
 </script>
