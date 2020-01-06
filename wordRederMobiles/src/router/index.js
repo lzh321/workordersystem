@@ -53,6 +53,14 @@ export default new Router({
       }
     },
     {
+      path: '/bill',
+      name: 'bill',
+      component: bill,
+      meta: {
+        showTab: false,
+      },
+    },
+    {
       path: '/Home',
       name: 'Home',
       component: Home,
@@ -70,36 +78,27 @@ export default new Router({
             title: '工单'
           },
         },
-
-        {
-          path: '/orderDetails',
-          name: 'orderDetails',
-          component: orderDetails,
-          meta: {
-            showTab: false,
-            title: '工单详情',
-            // isBack: false,  // 这个字段的意思稍后再说      
-            // keepAlive: true
-
-          },
-        },
-        {
-          path: '/customerInfo',
-          name: 'customerInfo',
-          component: customerInfo,
-          meta: {
-            showTab: false,
-          },
-        },
-        {
-          path: '/bill',
-          name: 'bill',
-          component: bill,
-          meta: {
-            showTab: false,
-          },
-        },
       ]
+    },
+    {
+      path: '/orderDetails',
+      name: 'orderDetails',
+      component: orderDetails,
+      meta: {
+        showTab: false,
+        title: '工单详情',
+        // isBack: false,  // 这个字段的意思稍后再说      
+        // keepAlive: true
+
+      },
+    },
+    {
+      path: '/customerInfo',
+      name: 'customerInfo',
+      component: customerInfo,
+      meta: {
+        showTab: false,
+      },
     },
     {
       path: '/synergy',

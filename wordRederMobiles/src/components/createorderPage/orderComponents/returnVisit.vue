@@ -80,10 +80,10 @@ export default {
       // this.isDisabled = true;
 
       var _this = this;
-      // layer.confirm(
-      //   "是否确认关闭当前工单？",
-      //   { icon: 3, title: "提示" },
-      //   function(index) {
+      layer.confirm(
+        "是否确认关闭当前工单？",
+        { icon: 3, title: "提示" },
+        function(index) {
           //向服务端发送关单指令
           _this.axios.post("/api/closeOrderInfo", _this.orderInfo).then(res => {
             console.log(res);
@@ -91,7 +91,7 @@ export default {
               layer.msg(res.data.retMsg, { icon: 1 });
               sessionStorage.clear();
               setTimeout(() => {
-                _this.$router.push("/wordOrder");
+                _this.$router.push("/wordOrder?type=wordOrder");
               }, 3000);
             } else {
               setTimeout(() => {
@@ -100,8 +100,8 @@ export default {
               layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
-      //   }
-      // );
+        }
+      );
     },
     rejeck() {
       this.$router.push("/kuantanState?handleState=13");

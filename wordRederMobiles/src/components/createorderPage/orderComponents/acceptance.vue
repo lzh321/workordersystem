@@ -63,7 +63,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(() => {

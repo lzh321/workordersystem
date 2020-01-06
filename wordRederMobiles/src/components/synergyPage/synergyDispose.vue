@@ -94,7 +94,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/synergyManagement");
+            this.$router.push("/synergyManagement?type=synergyManagement");
           }, 3000);
         } else {
           layer.msg(res.data.retMsg, { icon: 2 });

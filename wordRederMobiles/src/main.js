@@ -7,13 +7,14 @@ import axios from 'axios'
 import qs from 'qs'
 import store from './store'
 import jquery from 'jquery'
-import { Tabbar, TabbarItem, NavBar, Tab, Tabs, List, Button, Field, Icon, Uploader, Dialog, Toast, DatetimePicker, Popup,Search } from 'vant'
+import { Tabbar, TabbarItem, NavBar, Tab, Tabs, List, Button, Field, Icon, Uploader, Dialog, Toast, DatetimePicker, Popup,Search,Loading } from 'vant'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'
 
-Vue.use(Search);
 // 全局注册
+Vue.use(Loading)
+Vue.use(Search);
 Vue.use(Popup);
 Vue.use(DatetimePicker);
 Vue.use(Toast);

@@ -35,7 +35,7 @@
       </div>
 
       <div class="layui-form-item">
-        <label class="layui-form-label">银行名称</label>
+        <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
           <input type="text" name="bank_name" :value="DeviceInfo.customerName" disabled class="layui-input" />
         </div>
@@ -227,5 +227,11 @@ export default {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 30px;
+}
+label{
+  width: 120px;
+}
+.layui-input-block{
+  margin-left: 120px;
 }
 </style>

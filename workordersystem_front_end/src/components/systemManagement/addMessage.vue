@@ -30,7 +30,7 @@
       </div>
       
       <div class="layui-form-item">
-        <label class="layui-form-label">推上渠道</label>
+        <label class="layui-form-label">推送渠道</label>
         <div class="layui-input-block">
           <select name="city" lay-verify="required">
             <option value>请选择一个职务</option>

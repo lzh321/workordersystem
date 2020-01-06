@@ -4,7 +4,7 @@
       <ul class="layui-tab-title">
         <li
           v-for="(item,index) in workType"
-          @click="active(index)"
+          @click="active(index,item.num)"
           :class="index == num ? 'layui-this ' : ''"
           :key="index"
         >
@@ -65,12 +65,19 @@ export default {
       this.num = index;
     },
 
-    derived: function() {
-      table.exportFile();
+    derived: function() { // 导出
+      // table.exportFile();
+      var data = {}
+      data.seleOrderInfoId = this.$("input[name='seleOrderInfoId']").val()
+      data.seleorderState = this.$("#seleorderState option:selected").val()
+      data.seleBeginTime = this.$("input[name='seleBeginTime']").val()
+      data.seleEngTime = this.$("input[name='seleEngTime']").val()
+      console.log(data)
+      window.open('/api/exportOrderInfo?userId='+ this.$store.state.userId + '&orderInfoId='+ data.seleOrderInfoId + '&orderState=' + data.seleorderState +'&seleBeginTime='+ data.seleBeginTime + '&seleEndTime='+ data.seleEngTime)
     },
     getOrderInfoNum() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getOrderInfoNum", {userId}).then(res => {
+      this.$axios.post("/api/getOrderInfoNum", { userId }).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
           // this.workType[0].num = res.data.body.allNum
@@ -118,7 +125,7 @@ export default {
           seleorderState = "";
         }
         if (data.index == 4) {
-          var seleorderState = 99
+          var seleorderState = 99;
         }
         if (data.index == 5) {
           var seleorderState = 7;
@@ -194,11 +201,11 @@ export default {
             },
             {
               field: "customerName",
-              title: "银行名称",
+              title: "客户名称",
               sort: false,
               align: "center"
             },
-            { field: "networName", title: "支行名称", align: "center" },
+            { field: "networName", title: "投放点名称", align: "center" },
             {
               field: "orderUrgency",
               title: "紧急程度",
@@ -292,7 +299,7 @@ export default {
         console.log(data);
         var orderState = data.orderState;
         var orderInfoId = data.orderInfoId;
-        var appoinmentTime = data.appoinmentTime
+        var appoinmentTime = data.appoinmentTime;
         console.log(orderState);
         if (obj.event === "edit") {
           //编辑
@@ -462,19 +469,22 @@ export default {
             success: function() {
               form.render();
               _this.$axios
-                .post("/api/getUserList", {userId: _this.$store.state.userId})
+                .post("/api/getUserList", { userId: _this.$store.state.userId })
                 .then(res => {
                   console.log(res);
                   var userList = res.data.body.userList;
                   for (var i = 0; i < userList.length; i++) {
                     console.log(userList[i].userName);
-                    $("#acceptUserId").append(
+                    if(userList[i].userId !== 'admin'){
+                      $("#acceptUserId").append(
                       '<option value="' +
                         userList[i].userId +
                         '">' +
                         userList[i].userName +
                         "</option>"
                     );
+                    }
+                    
                   }
                   console.log($("#acceptUserId"));
                   form.render();
@@ -544,10 +554,7 @@ export default {
               var content = $("#reject").val();
               if (orderState == 7) {
                 var handleState = 13;
-                if (
-                  appoinmentTime == "" ||
-                  appoinmentTime == null
-                ) {
+                if (appoinmentTime == "" || appoinmentTime == null) {
                   var isAppoint = 0;
                 } else {
                   var isAppoint = 1;
@@ -643,9 +650,8 @@ export default {
     // this.$axios.post("/api/getOrderInfoList", data).then(res => {
     //   console.log(res);
     // });
-    sessionStorage.clear()
+    sessionStorage.clear();
     this.getOrderInfoNum();
-    
   }
 };
 </script>
@@ -653,7 +659,7 @@ export default {
 <style scoped>
 .workOrderManagement {
   /* height: 100%; */
-  padding: 15px 15px 0
+  padding: 15px 15px 0;
 }
 /* .active {
   border-bottom: 2px solid #445eee;

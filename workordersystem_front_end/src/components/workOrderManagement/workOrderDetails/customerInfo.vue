@@ -100,7 +100,8 @@
       <div class="layui-form-item">
         <label class="layui-form-label">设备投放点</label>
         <div class="layui-input-block">
-          <select v-if="selectBank"
+          <select
+            v-if="selectBank"
             name="networkId"
             lay-filter="billSeleNetworkName"
             id="networkId"
@@ -199,7 +200,7 @@
         <div class="layui-input-block">
           <select name="orderType" id="orderType" lay-verify="required">
             <option value>请选择工单类型</option>
-            <option :selected="orderInfo.orderType == '设备保障' ? true : false" value="设备保障">设备报障</option>
+            <option :selected="orderInfo.orderType == '设备报障' ? true : false" value="设备报障">设备报障</option>
             <option :selected="orderInfo.orderType == '差错账' ? true : false" value="差错账">差错账</option>
             <option :selected="orderInfo.orderType == '钞空/存满' ? true : false" value="钞空/存满">钞空/存满</option>
             <option :selected="orderInfo.orderType == '吞卡' ? true : false" value="吞卡">吞卡</option>
@@ -255,7 +256,7 @@
             <option value>请选择设备型号</option>
             <option
               v-for="(item) in deviceInfoList"
-              :key="item.deviceId"
+              :key="item.modelId"
               :value="item.modelId"
             >{{item.modelType}}（{{item.modelName}}）</option>
           </select>
@@ -269,7 +270,7 @@
             <option value>请选择设备型号</option>
             <option
               v-for="(item) in deviceInfoList"
-              :key="item.deviceId"
+              :key="item.modelId"
               :value="item.modelId"
               :selected="item.modelId == orderInfo.modelId ? true :false"
             >{{item.modelType}}（{{item.modelName}}）</option>
@@ -322,14 +323,21 @@
           <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
             预览
             <div class="layui-upload-list" id="imgBox">
-              <img
+              <div
+                style="width:100px;height:100px;margin-right:10px;display:inline-block;"
                 v-for="(item,index) in imgDataArray"
                 :key="index"
-                class="layui-upload-img"
-                style="width:100px;height:100px;margin-right:10px"
-                :src="DomainName+ item "
-                alt
-              />
+              >
+                <img
+                  @click="previewImg()"
+                  :layer-src="DomainName+ item"
+                  class="layui-upload-img"
+                  style="width:100%;height:100%;"
+                  :src="DomainName+ item "
+                  alt
+                />
+                <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+              </div>
             </div>
             <input type="hidden" name="orderImg" :value="imgData" />
           </blockquote>
@@ -344,6 +352,7 @@
               v-for="(item) in userList"
               :key="item.userId"
               :value="item.userId"
+              :selected="item.userId == orderInfo.singlePersonId ? true :false"
             >{{item.userName}}</option>
           </select>
         </div>
@@ -372,10 +381,24 @@ export default {
         ? sessionStorage.getItem("orderState")
         : null,
       DomainName: this.$store.state.url,
-      selectBank: false,
+      selectBank: false
     };
   },
   methods: {
+    delImg(item,index) {
+      // 删除附件图片
+      this.imgDataArray.splice(index, 1);
+      this.imgData = this.imgDataArray.join(",");
+      this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
+        console.log(res)
+      })
+    },
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#imgBox"
+        ,anim: 0 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
     send() {
       var userId = this.$store.state.userId;
       this.$axios
@@ -387,7 +410,11 @@ export default {
       this.$axios.post("/api/getUserList", { userId: userId }).then(res => {
         // 员工列表
         // console.log(res);
-        this.userList = res.data.body.userList;
+        for (var i = 0; i < res.data.body.userList.length; i++) {
+        if (res.data.body.userList[i].userId !== "admin") {
+          this.userList.push(res.data.body.userList[i])
+        }
+      }
       });
     },
     workValuation() {
@@ -416,32 +443,31 @@ export default {
             .then(res => {
               console.log(res);
               this.networkList = res.data.body.networkList;
-              for(var i = 0; i < res.data.body.networkList.length; i++){
-                if(networkId == res.data.body.networkList[i].id){
-                  this.networAddress = res.data.body.networkList[i].networAddress
+              for (var i = 0; i < res.data.body.networkList.length; i++) {
+                if (networkId == res.data.body.networkList[i].id) {
+                  this.networAddress =
+                    res.data.body.networkList[i].networAddress;
                 }
               }
             });
-
-          
 
           // 获取设备型号
           var networkId = res.data.body.networkId;
           this.$axios
-            .post("/api/getDeviceNumberListByNetworkId", { networkId: networkId })
+            .post("/api/getDeviceNumberListByNetworkId", {
+              networkId: networkId
+            })
             .then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
                 this.deviceInfoList = res.data.body.modelList;
-                for(var i = 0; i < res.data.body.modelList.length; i++){
-                  this.deviceNumberList = res.data.body.modelList[i].deviceNumberList
+                for (var i = 0; i < res.data.body.modelList.length; i++) {
+                  this.deviceNumberList =
+                    res.data.body.modelList[i].deviceNumberList;
                 }
               }
             });
-          
 
-
-          
           //工单来源
           var orderSource = res.data.body.orderSource;
           var orderSourceLen = this.$("#orderSource  option").length;
@@ -470,7 +496,7 @@ export default {
           //       .attr("selected", "selected");
           //   }
           // }
-          
+
           //紧急程度
           var orderUrgency = res.data.body.orderUrgency;
           var orderUrgencyLen = this.$("#orderUrgency option").length;
@@ -515,7 +541,6 @@ export default {
       element.render();
       // select监听
       form.on("select(billCustomerName)", function(data) {
-        
         for (var i = 0; i < _this.customerNameList.length; i++) {
           // console.log(data.value)
           if (data.value == _this.customerNameList[i].customerId) {
@@ -526,12 +551,11 @@ export default {
               .then(res => {
                 console.log(res);
                 if (res.data.retCode == "000000") {
-                  _this.selectBank = true
+                  _this.selectBank = true;
                   _this.networkList = res.data.body.networkList;
                   _this.networAddress = "";
                   _this.deviceInfoList = [];
                   _this.deviceNumberList = [];
-                  
                 }
               });
           }
@@ -542,7 +566,6 @@ export default {
         }
       });
       form.on("select(billSeleNetworkName)", function(data) {
-
         for (var i = 0; i < _this.networkList.length; i++) {
           // console.log(data.value)
           if (data.value == _this.networkList[i].id) {
@@ -554,7 +577,7 @@ export default {
               .then(res => {
                 console.log(res);
                 if (res.data.retCode == "000000") {
-                  _this.selectBank = true
+                  _this.selectBank = true;
                   _this.deviceInfoList = res.data.body.modelList;
                 }
               });
@@ -570,7 +593,7 @@ export default {
         for (var i = 0; i < _this.deviceInfoList.length; i++) {
           // console.log(data.value)
           if (data.value == _this.deviceInfoList[i].modelId) {
-            _this.selectBank = true
+            _this.selectBank = true;
             _this.deviceNumberList = _this.deviceInfoList[i].deviceNumberList;
           }
         }
@@ -618,8 +641,8 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.imgData += res.body.url;
           _this.imgDataArray.push(res.body.url.split(",")[0]);
+          _this.imgData = _this.imgDataArray.join(",");
           console.log(_this.imgData);
           // $("input[name='recordPhoto']").val(res.body.url);
         }
@@ -645,5 +668,15 @@ h2 {
 }
 .customerInfo .CDkey label::before {
   content: "";
+}
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: -5px;
+  top: -5px;
 }
 </style>

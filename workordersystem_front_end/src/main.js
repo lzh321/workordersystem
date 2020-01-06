@@ -9,6 +9,7 @@ import store from './store'
 import qs from 'qs'
 import VueResource from 'vue-resource'
 import jquery from 'jquery'
+import 'babel-polyfill'
 
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)

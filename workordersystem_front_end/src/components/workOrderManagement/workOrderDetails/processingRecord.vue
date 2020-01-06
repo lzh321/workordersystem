@@ -53,13 +53,15 @@
     <div class="layui-upload">
       <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
         附件
-        <div class="layui-upload-list" id="imgBox">
+        <div class="layui-upload-list" id="imgBoxs">
           <img
             v-for="(item,index) in AfterimgArray"
             :key="index"
             class="layui-upload-img"
             style="width:100px;height:100px;margin-right:10px"
             :src="DomainName+ item "
+            @click="previewImgs()"
+            :layer-src="DomainName+ item"
             alt
           />
         </div>
@@ -81,6 +83,12 @@ export default {
     };
   },
   methods: {
+    previewImgs(){  // 图片预览
+      layer.photos({
+        photos: "#imgBoxs"
+        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
     getImg() {
       if (this.workOrderInfo.recordPhoto) {
         this.Afterimg = this.workOrderInfo.recordPhoto;

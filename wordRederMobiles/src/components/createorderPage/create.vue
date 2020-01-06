@@ -111,15 +111,22 @@
           <div class="layui-upload">
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 6px;">
               预览
-              <div class="layui-upload-list" id="imgBox">
-                    <img
+              <div class="layui-upload-list" id="createImgBox">
+                    <div
+                      style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;padding:0;display:inline-block;"
                       v-for="(item,index) in imgDataArray"
                       :key="index"
-                      class="layui-upload-img"
-                      style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;"
-                      :src="DomainName+ item "
-                      alt
-                    />
+                    >
+                      <img
+                        class="layui-upload-img"
+                        style="width:100%;height:100%"
+                        :src="DomainName+ item "
+                        @click="previewImg()"
+                        :layer-src="DomainName+ item"
+                        alt
+                      />
+                      <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+                    </div>
                   </div>
                   <input type="hidden" name="orderImg" :value="imgData" />
             </blockquote>
@@ -163,7 +170,7 @@
         </li>
       </ul>
     </div>
-    <!-- <div class="perch"></div> -->
+    <div class="perchs"></div>
   </div>
 </template>
 
@@ -242,8 +249,8 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.imgData += res.body.url;
           _this.imgDataArray.push(res.body.url.split(",")[0]);
+          _this.imgData += _this.imgDataArray.join(",");
           console.log(_this.imgData);
           // _this.$("input[name='orderImg']").val(res.body.url);
         }
@@ -251,6 +258,20 @@ export default {
     });
   },
   methods: {
+    delImg(item,index){  // 删除附件图片
+      this.imgDataArray.splice(index,1)
+      this.imgData = this.imgDataArray.join(',')
+      this.axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
+        console.log(res)
+      })
+    },
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#createImgBox"
+        ,anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        closeBtn: 1
+      });
+    },
     showPopup() {
       this.show = true;
     },
@@ -349,7 +370,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
             this.$("input[type='text']").val("");
             this.$(".Urgency").attr("checked", true);
             this.$("textarea").val("");
@@ -369,7 +390,7 @@ export default {
     },
     cancel() {
       //取消
-      this.$router.push("/wordOrder");
+      this.$router.push("/wordOrder?type=wordOrder");
       this.$("input[type='text']").val("");
       this.$(".Urgency").attr("checked", true);
       this.$("textarea").val("");
@@ -390,10 +411,10 @@ export default {
       createData.isClose = "1";
       console.log(createData);
       var _this = this
-      // layer.confirm(
-      //   "是否确认关闭当前工单？",
-      //   { icon: 3, title: "提示" },
-      //   function(index) {
+      layer.confirm(
+        "是否确认关闭当前工单？",
+        { icon: 3, title: "提示" },
+        function(index) {
           //向服务端发送关单指令
           _this.axios.post("/api/addOrderInfo", createData).then(res => {
             console.log(res);
@@ -401,7 +422,7 @@ export default {
               layer.msg(res.data.retMsg, { icon: 1 });
               sessionStorage.clear();
               setTimeout(() => {
-                _this.$router.push("/wordOrder");
+                _this.$router.push("/wordOrder?type=wordOrder");
                 _this.$("input[type='text']").val("");
                 _this.$(".Urgency").attr("checked", true);
                 _this.$("textarea").val("");
@@ -417,8 +438,8 @@ export default {
               layer.msg(res.data.retMsg, { icon: 2 });
             }
           });
-        // }
-      // );
+        },
+      );
     }
   },
   created() {
@@ -604,17 +625,17 @@ textarea {
 }
 .actionBtn {
   padding: 0;
-  /* height: 50px; */
-  /* position: fixed; */
+  height: 50px;
+  position: fixed;
   width: 100%;
   bottom: 0;
   z-index: 9999;
 }
-/* .perch{
+.perchs{
   padding: 10px 0;
-  margin-top: 20px;
+  border: none;
   height: 50px;
-} */
+}
 .actionBtn ul {
   width: 100%;
   padding: 10px 0;
@@ -676,10 +697,19 @@ textarea {
   height: 35px;
   line-height: 35px;
 }
-#imgBox{
+#createImgBox{
   display: flex;
   flex-wrap: wrap;
   padding: 0;
 }
-
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: -5px;
+  top: -5px;
+}
 </style>

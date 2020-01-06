@@ -197,6 +197,8 @@
                 class="layui-upload-img"
                 style="width:100px;height:100px;margin-right:10px"
                 :src="DomainName+ item "
+                @click="previewImg()"
+                :layer-src="DomainName+ item"
                 alt
               />
             </div>
@@ -282,6 +284,12 @@ export default {
     workOrderLog
   },
   methods: {
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#imgBox"
+        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
     workValuation() {
       var orderInfoId = sessionStorage.getItem("orderInfoId")
         ? sessionStorage.getItem("orderInfoId")

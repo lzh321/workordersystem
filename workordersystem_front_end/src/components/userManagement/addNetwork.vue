@@ -34,6 +34,7 @@
                 v-for="(item) in CityList"
                 :key="item.provinceCode"
                 :value="item.provinceCode"
+                :selected="item.provinceCode == networkInfo.proCode ? true : false"
               >{{item.provinceName}}</option>
             </select>
           </div>
@@ -119,6 +120,11 @@ export default {
       this.$axios.post("/api/getCityList", { userId }).then(res => {
         console.log(res);
         this.CityList = res.data.body.provinceList;
+        for(var i = 0; i < res.data.body.provinceList.length; i++){
+          if(this.networkInfo.proCode == res.data.body.provinceList[i].provinceCode){
+            this.City = res.data.body.provinceList[i].cityList
+          }
+        }
       });
       var data = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : ''
       this.networkInfo = data

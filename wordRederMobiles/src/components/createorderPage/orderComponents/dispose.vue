@@ -40,15 +40,43 @@
           <label for>
             <span>问题记录</span>：
           </label>
-          <textarea name="recordContent"  @focus="getText" :value="recordContent ? recordContent : orderInfo.recordContent" cols="30" rows="10"></textarea>
-          <!-- <textarea v-else name="recordContent" value="" cols="30" rows="10"></textarea> -->
+          <textarea
+            v-if="orderInfo.recordContent"
+            name="recordContent"
+            :value="orderInfo.recordContent"
+            cols="30"
+            rows="10"
+          ></textarea>
+          <textarea
+            v-else
+            name="recordContent"
+            v-model="recordContent"
+            @keyup="getRecordContent"
+            value
+            cols="30"
+            rows="10"
+          ></textarea>
         </div>
         <div>
           <label for>
             <span>解决办法</span>：
           </label>
-          <textarea v-if="orderInfo.recordSettle" name="recordSettle" :value="orderInfo.recordSettle" cols="30" rows="10"></textarea>
-          <textarea v-else name="recordSettle" value="" cols="30" rows="10"></textarea>
+          <textarea
+            v-if="orderInfo.recordSettle"
+            name="recordSettle"
+            :value="orderInfo.recordSettle"
+            cols="30"
+            rows="10"
+          ></textarea>
+          <textarea
+            v-else
+            name="recordSettle"
+            v-model="recordSettle"
+            @keyup="getRecordSettle"
+            value
+            cols="30"
+            rows="10"
+          ></textarea>
         </div>
 
         <!-- <div v-if="orderInfo.appoinmentTime" class="affix">
@@ -66,17 +94,27 @@
             <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
           </div>
           <div class="layui-upload">
-            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+            <blockquote
+              class="layui-elem-quote layui-quote-nm"
+              style="margin-top: 10px;padding:4px;"
+            >
               预览
-              <div class="layui-upload-list" id="imgBox">
-                <img
+              <div class="layui-upload-list" id="displseImgBox">
+                <div
+                  style="width:100px;height:100px;margin-right:10px;margin-bottom: 10px;padding:0;display:inline-block;"
                   v-for="(item,index) in AfterimgArray"
                   :key="index"
-                  class="layui-upload-img"
-                  style="width:100px;height:100px;margin-right:10px;margin-bottom: 10px;"
-                  :src="DomainName+ item "
-                  alt
-                />
+                >
+                  <img
+                    class="layui-upload-img"
+                    style="width:100%;height:100%"
+                    :src="DomainName+ item "
+                    @click="previewImg()"
+                    :layer-src="DomainName+ item"
+                    alt
+                  />
+                  <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+                </div>
               </div>
               <input type="hidden" name="recordPhoto" :value="Afterimg" />
             </blockquote>
@@ -177,6 +215,12 @@ export default {
       show: false,
       minHour: 10,
       maxHour: 20,
+      recordContent: sessionStorage.getItem("recordContent")
+        ? sessionStorage.getItem("recordContent")
+        : "",
+      recordSettle: sessionStorage.getItem("recordSettle")
+        ? sessionStorage.getItem("recordSettle")
+        : "",
       minDate: new Date(2016, 1, 1),
       maxDate: new Date(2030, 12, 31),
       currentDate: new Date(),
@@ -184,8 +228,12 @@ export default {
       recordModel: {},
       orderInfoId: sessionStorage.getItem("orderInfoId"),
       isDisabled: false,
-      AfterimgArray: sessionStorage.getItem("AfterimgArray") ? JSON.parse(sessionStorage.getItem("AfterimgArray")) : [],
-      Afterimg: sessionStorage.getItem("AfterimgUrl") ? JSON.parse(sessionStorage.getItem("AfterimgUrl")) : '',
+      AfterimgArray: sessionStorage.getItem("AfterimgArray")
+        ? JSON.parse(sessionStorage.getItem("AfterimgArray"))
+        : [],
+      Afterimg: sessionStorage.getItem("AfterimgUrl")
+        ? JSON.parse(sessionStorage.getItem("AfterimgUrl"))
+        : "",
       DomainName: this.$store.state.url
     };
   },
@@ -195,21 +243,41 @@ export default {
     appointment
   },
   methods: {
-    getText(){
-      // this.$("text[naem='recordContent']")
+    delImg(item, index) {
+      // 删除附件图片
+      this.AfterimgArray.splice(index, 1);
+      this.Afterimg = this.AfterimgArray.join(",");
+      this.axios
+        .post("/api/deleImagesInfo", {
+          userId: this.$store.state.userId,
+          url: item
+        })
+        .then(res => {
+          console.log(res);
+        });
+    },
+    previewImg() {
+      // 图片预览
+      layer.photos({
+        photos: "#displseImgBox",
+        anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        closeBtn: 1
+      });
+    },
+    getRecordContent() {
+      console.log(this.recordContent);
+      sessionStorage.setItem("recordContent", this.recordContent);
+    },
+    getRecordSettle() {
+      console.log(this.recordSettle);
+      sessionStorage.setItem("recordSettle", this.recordSettle);
     },
     getImg() {
       if (this.orderInfo.recordPhoto) {
         this.Afterimg = this.orderInfo.recordPhoto;
-        for (
-          var i = 0;
-          i < this.orderInfo.recordPhoto.split(",").length;
-          i++
-        ) {
+        for (var i = 0; i < this.orderInfo.recordPhoto.split(",").length; i++) {
           if (this.orderInfo.recordPhoto.split(",")[i] !== "") {
-            this.AfterimgArray.push(
-              this.orderInfo.recordPhoto.split(",")[i]
-            );
+            this.AfterimgArray.push(this.orderInfo.recordPhoto.split(",")[i]);
           }
         }
       }
@@ -245,7 +313,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(() => {
@@ -278,15 +346,15 @@ export default {
       console.log(createData);
       this.axios.post("/api/finishOrderInfo", createData).then(res => {
         console.log(res);
-        
+
         if (res.data.retCode == "000000") {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$destroy("orderDetails")
-            sessionStorage.removeItem("AfterimgArray")
-            sessionStorage.removeItem("AfterimgUrl")
-            this.$router.push("/wordOrder");
+            this.$destroy("orderDetails");
+            sessionStorage.removeItem("AfterimgArray");
+            sessionStorage.removeItem("AfterimgUrl");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(() => {
@@ -362,7 +430,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(() => {
@@ -377,9 +445,6 @@ export default {
     }
   },
   mounted() {
-    setTimeout(()=>{
-      this.getImg();
-    },500)
     var _this = this;
     layui.use(["upload"], function() {
       var upload = layui.upload;
@@ -424,12 +489,12 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.Afterimg += res.body.url;
-          var AfterimgUrl = JSON.stringify(_this.Afterimg)
           _this.AfterimgArray.push(res.body.url.split(",")[0]);
           var str = JSON.stringify(_this.AfterimgArray);
-          sessionStorage.setItem("AfterimgArray",str)
-          sessionStorage.setItem("Afterimg",AfterimgUrl)
+          _this.Afterimg = _this.AfterimgArray.join(",");
+          var AfterimgUrl = JSON.stringify(_this.Afterimg);
+          sessionStorage.setItem("AfterimgArray", str);
+          sessionStorage.setItem("AfterimgUrl", AfterimgUrl);
           console.log(_this.Afterimg);
           // _this.$("input[name='recordPhoto']").val(res.body.url);
         }
@@ -437,10 +502,12 @@ export default {
     });
   },
   created() {
-    this.send();
+    setTimeout(() => {
+      this.send();
+      this.getImg();
+    }, 500);
   },
   updated() {
-    
     // layui.use("form", function() {
     //   layui.form.render();
     // });
@@ -585,8 +652,18 @@ h2 {
   height: 35px;
   line-height: 35px;
 }
-#imgBox{
+#displseImgBox {
   display: flex;
   flex-wrap: wrap;
+}
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: -5px;
+  top: -5px;
 }
 </style>

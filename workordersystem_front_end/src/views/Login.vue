@@ -76,7 +76,7 @@ export default {
             this.userId = res.data.body.userId;
             // 将用户token保存到vuex中
             this.changeLogin({ userId: this.userId });
-            this.$router.push("/Home");
+            this.$router.replace("/workTable?type=workTable");
           } else {
             layer.open({
               title: "登录失败",

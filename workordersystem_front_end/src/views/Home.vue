@@ -11,27 +11,28 @@
           </ul>
         </li>
         <li class="header_nav_item">消息中心</li>
-        <li @click="Logout" class="header_nav_item"><a >退出</a></li>
+        <li @click="Logout" class="header_nav_item">
+          <a>退出</a>
+        </li>
       </ul>
     </header>
     <div class="content">
       <Side @titleFn="titleFn"></Side>
       <Main :title="titleText"></Main>
     </div>
-    
   </div>
 </template>
 
 <script>
-import Main from '@/components/main'
-import Side from '@/components/side'
+import Main from "@/components/main";
+import Side from "@/components/side";
 
 export default {
   name: "Home",
   data() {
     return {
       isLogin: true,
-      userId: sessionStorage.getItem('userId') ? sessionStorage.getItem('userId') : '',
+      userId: this.$store.state.userId,
       titleText: "工作台"
     };
   },
@@ -41,18 +42,22 @@ export default {
   },
   methods: {
     titleFn: function(data) {
-      this.titleText = data
+      this.titleText = data;
     },
-    Logout: function(){
-      this.$router.push('/login')
-      sessionStorage.clear()
+    Logout: function() {
+      var _this = this
+      layer.confirm("是否确认退出?", function(index) {
+        _this.$router.push("/login");
+        sessionStorage.clear();
+        localStorage.clear();
+        layer.close(index);
+      });
     }
   },
-  created(){
-    if(!sessionStorage.getItem('isLogin')){
-      this.isLogin = false
+  created() {
+    if (!sessionStorage.getItem("isLogin")) {
+      this.isLogin = false;
     }
-    
   }
 };
 </script>
@@ -99,7 +104,7 @@ header {
   font-size: 12px;
   overflow: hidden;
 }
-.header_nav_item p{
+.header_nav_item p {
   width: 100%;
   height: 100%;
   line-height: 60px;
@@ -122,7 +127,7 @@ header {
   height: 40px;
   line-height: 40px;
 }
-.header_nav_item:hover{
+.header_nav_item:hover {
   overflow: initial;
 }
 .header_nav_item:hover .userOperate {
@@ -130,14 +135,13 @@ header {
   width: 100%;
   text-align: center;
   bottom: -80px;
-  transition: .5s;
+  transition: 0.5s;
   /* opacity: 1; */
 }
 
-.content{
+.content {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
-
 </style>

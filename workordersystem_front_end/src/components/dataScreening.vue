@@ -12,7 +12,7 @@
           </p>
           <p>
             <span for>工单状态</span>
-            <select name="seleorderState" class="">
+            <select name="seleorderState" id="seleorderState" class="">
               <option value>全部</option>
               <option value="0">待发单</option>
               <option value="1">待派单</option>

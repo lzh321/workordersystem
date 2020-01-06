@@ -1,14 +1,19 @@
 <template>
   <!-- 处理中 故障处理记录 -->
   <div>
-    <h2 v-if="orderState == 3">故障处理记录</h2>
+    <h2>故障处理记录</h2>
+    <reservation :workOrderInfo="workOrderInfo"></reservation>
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
       <div class="layui-input-block">
         <select name="recordType" lay-filter="recordType">
           <option value>请选择故障类型</option>
-          <option v-for="(item,index) in record" :key="index" :value="item.recordName ? item.recordName : workOrderInfo.recordType" :selected="workOrderInfo.recordType == item.recordName ? true : false">{{item.recordName}}</option>
-
+          <option
+            v-for="(item,index) in record"
+            :key="index"
+            :value="item.recordName ? item.recordName : workOrderInfo.recordType"
+            :selected="workOrderInfo.recordType == item.recordName ? true : false"
+          >{{item.recordName}}</option>
         </select>
       </div>
     </div>
@@ -17,7 +22,12 @@
       <div class="layui-input-block">
         <select name="recordModel">
           <option value>请选择故障模块</option>
-          <option v-for="(items,index) in recordList" :key="index" :value="items.recordModelName ? items.recordModelName : workOrderInfo.recordModel" :selected="workOrderInfo.recordModel == items.recordModelName ? true : false">{{items.recordModelName}}</option>
+          <option
+            v-for="(items,index) in recordList"
+            :key="index"
+            :value="items.recordModelName ? items.recordModelName : workOrderInfo.recordModel"
+            :selected="workOrderInfo.recordModel == items.recordModelName ? true : false"
+          >{{items.recordModelName}}</option>
         </select>
       </div>
     </div>
@@ -25,17 +35,19 @@
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">问题记录</label>
       <div class="layui-input-block">
-        <textarea v-if="workOrderInfo.recordContent"
+        <!-- <textarea
+          
           name="recordContent"
           placeholder="请输入内容"
-          :value="workOrderInfo.recordContent"
+          :value="recordContent ? recordContent : workOrderInfo.recordContent"
           autocomplete="off"
           class="layui-textarea"
-        ></textarea>
-        <textarea v-else
+        ></textarea> -->
+        <textarea
+          v-model="recordContent"
           name="recordContent"
           placeholder="请输入内容"
-          value=""
+          value
           autocomplete="off"
           class="layui-textarea"
         ></textarea>
@@ -44,17 +56,19 @@
     <div class="layui-form-item layui-form-text">
       <label class="layui-form-label">解决办法</label>
       <div class="layui-input-block">
-        <textarea v-if="workOrderInfo.recordSettle"
+        <!-- <textarea
+          
           name="recordSettle"
           placeholder="请输入内容"
-          :value="workOrderInfo.recordSettle"
+          :value="recordSettle ? recordSettle : workOrderInfo.recordSettle"
           autocomplete="off"
           class="layui-textarea"
-        ></textarea>
-        <textarea v-else
+        ></textarea> -->
+        <textarea
+          v-model="recordSettle"
           name="recordSettle"
           placeholder="请输入内容"
-          value=""
+          value
           autocomplete="off"
           class="layui-textarea"
         ></textarea>
@@ -71,36 +85,46 @@
           <input type="hidden" name="recordPhoto" />
         </blockquote>
       </div>
-    </div> -->
+    </div>-->
 
     <div class="affix layui-form-item">
-        <label class="layui-form-label">售后单</label>
-        <!-- <button type="button" class="layui-btn" id="selectImage">选择图片</button> -->
-        <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
-        <div class="layui-upload">
-          <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-            预览
-            <div class="layui-upload-list" id="imgBox">
+      <label class="layui-form-label">售后单</label>
+      <!-- <button type="button" class="layui-btn" id="selectImage">选择图片</button> -->
+      <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
+      <div class="layui-upload">
+        <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
+          预览
+          <div class="layui-upload-list" id="imgBoxs">
+            <div
+              style="width:100px;height:100px;margin-right:10px;display:inline-block;"
+              v-for="(item,index) in AfterimgArray"
+              :key="index"
+            >
               <img
-                v-for="(item,index) in AfterimgArray"
-                :key="index"
+                @click="previewImgs()"
+                :layer-src="DomainName+ item"
                 class="layui-upload-img"
-                style="width:100px;height:100px;margin-right:10px"
+                style="width:100%;height:100%"
                 :src="DomainName+ item "
                 alt
               />
+              <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
             </div>
-            <input type="hidden" name="recordPhoto" :value="Afterimg" />
-          </blockquote>
-        </div>
+          </div>
+          <input type="hidden" name="recordPhoto" :value="Afterimg" />
+        </blockquote>
       </div>
+    </div>
   </div>
 </template>
 <script>
-import { send } from 'q';
+import reservation from "./reservation";
 export default {
   name: "inProcess",
   props: ["orderState", "workOrderInfo"],
+  components: {
+    reservation
+  },
   data() {
     return {
       orderInfoId: sessionStorage.getItem("orderInfoId")
@@ -110,6 +134,8 @@ export default {
       AfterimgArray: [],
       Afterimg: "",
       DomainName: this.$store.state.url,
+      recordContent: '',
+      recordSettle: '',
       record: [
         {
           recordType: 0,
@@ -314,8 +340,8 @@ export default {
             {
               recordModel: 49,
               recordModelName: "计算机硬件"
-            },
-         ]
+            }
+          ]
         },
         {
           recordType: 1,
@@ -368,7 +394,7 @@ export default {
             {
               recordModel: 11,
               recordModelName: "扫描仪软件"
-            },
+            }
           ]
         },
         {
@@ -390,7 +416,7 @@ export default {
             {
               recordModel: 3,
               recordModelName: "电话解释"
-            },
+            }
           ]
         },
         {
@@ -416,7 +442,7 @@ export default {
             {
               recordModel: 4,
               recordModelName: "银行要求"
-            },
+            }
           ]
         }
       ]
@@ -424,25 +450,22 @@ export default {
   },
   mounted() {
     // this.getImg();
-    setTimeout(()=>{
-      this.send()
-    },1000)
     var _this = this;
-    layui.use(["form","element", "upload", "jquery"], function() {
-      var form = layui.form
+    layui.use(["form", "element", "upload", "jquery"], function() {
+      var form = layui.form;
       var element = layui.element;
       var $ = layui.jquery;
       var upload = layui.upload;
-      form.on('select(recordType)',function(data){
-        console.log(data)
-        for(var i = 0; i < _this.record.length; i++){
-          if(data.value == _this.record[i].recordName){
-            console.log(_this.record[i].recordList)
-            _this.recordList = _this.record[i].recordList
+      form.on("select(recordType)", function(data) {
+        console.log(data);
+        for (var i = 0; i < _this.record.length; i++) {
+          if (data.value == _this.record[i].recordName) {
+            console.log(_this.record[i].recordList);
+            _this.recordList = _this.record[i].recordList;
             form.render();
           }
         }
-      })
+      });
       element.render();
       //上传图片
       upload.render({
@@ -483,37 +506,63 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.Afterimg += res.body.url;
           _this.AfterimgArray.push(res.body.url.split(",")[0]);
+          _this.Afterimg = _this.AfterimgArray.join(",");
           console.log(_this.Afterimg);
         }
       });
     });
   },
   methods: {
+    delImg(item,index) {
+      // 删除附件图片
+      this.AfterimgArray.splice(index, 1);
+      this.Afterimg = this.AfterimgArray.join(",");
+      this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
+        console.log(res)
+      })
+    },
+    previewImgs(){  // 图片预览
+      layer.photos({
+        photos: "#imgBoxs"
+        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
     getImg() {
       if (this.workOrderInfo.recordPhoto) {
-        this.Afterimg = this.workOrderInfo.recordPhoto
-        for(var i = 0; i < this.workOrderInfo.recordPhoto.split(",").length; i++){
-          if(this.workOrderInfo.recordPhoto.split(",")[i] !== ""){
-            this.AfterimgArray.push(this.workOrderInfo.recordPhoto.split(",")[i]) 
+        this.Afterimg = this.workOrderInfo.recordPhoto;
+        console.log(this.workOrderInfo.recordPhoto)
+        for (
+          var i = 0;
+          i < this.workOrderInfo.recordPhoto.split(",").length;
+          i++
+        ) {
+          if (this.workOrderInfo.recordPhoto.split(",")[i] !== "") {
+            this.AfterimgArray.push(
+              this.workOrderInfo.recordPhoto.split(",")[i]
+            );
           }
         }
       }
     },
-    send(){
-      if(this.workOrderInfo.recordType){
-        for(var i = 0; i < this.record.length; i++){
-          if(this.workOrderInfo.recordType == this.record[i].recordName){
-            console.log(this.record[i].recordList)
-            this.recordList = this.record[i].recordList
+    send() {
+      if (this.workOrderInfo.recordType) {
+        for (var i = 0; i < this.record.length; i++) {
+          if (this.workOrderInfo.recordType == this.record[i].recordName) {
+            console.log(this.record[i].recordList);
+            this.recordList = this.record[i].recordList;
           }
         }
       }
+      this.recordContent = this.workOrderInfo.recordContent
+      this.recordSettle = this.workOrderInfo.recordSettle
     }
   },
   created() {
-    this.getImg();
+    setTimeout(()=>{
+      this.getImg();
+      this.send();
+    },500)
   },
   updated() {
     // this.getImg();
@@ -533,8 +582,18 @@ h2 {
   display: flex;
   align-items: center;
 } */
-label::before{
-  content: '*';
+label::before {
+  content: "*";
   color: red;
+}
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: -5px;
+  top: -5px;
 }
 </style>

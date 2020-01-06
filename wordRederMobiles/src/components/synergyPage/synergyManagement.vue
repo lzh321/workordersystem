@@ -1,14 +1,14 @@
 <template>
   <div class="synergyManage">
     <div class="synergySearch">
-    <div class="search">
-      <div class="SearchEntrance">
-        <i></i>
+      <div class="search">
+        <div class="SearchEntrance">
+          <i></i>
+        </div>
+        <input placeholder="搜索" v-model="searchVal" />
       </div>
-      <input placeholder="搜索" v-model="searchVal" />
+      <NavBar :synergyTypeId="cutId" @getList="getList"></NavBar>
     </div>
-    <NavBar></NavBar>
-  </div>
     <div class="tabs">
       <ul>
         <li
@@ -23,39 +23,45 @@
     <div class="tabs_content">
       <ul class="list">
         <li
-              to="/bill"
-              v-for="(items,index) in NewItems"
-              :key="index"
-              @click="goOrderPage(items.coordinateState,items.id)"
-            >
-              <div class="orderId">
-                <i>协同</i>
-                <span>单号：{{items.id}}</span>
-              </div>
-              <div class="orderStatus">
-                <div>
-                  <img :src="items.coordinateState == 0 ? orderStatusImg.bill : items.coordinateState == 1 ? orderStatusImg.sendOrders : items.coordinateState == 2 ? orderStatusImg.acceptance: items.coordinateState == 3 ? orderStatusImg.dispose : ''" alt />
-                  
-                  <span>{{items.coordinateState == 0 ? '待受理' : items.coordinateState == 1 ? '处理中' : items.coordinateState == 2 ? '已完成' : items.coordinateState == 3 ? '已驳回' : ''}}</span>
-                </div>
-                <div>
-                  <i></i>
-                  <span>{{items.createTime}}</span>
-                </div>
-              </div>
-              <div class="customerName orderContent">
-                <label for>创建人：</label>
-                <span>{{items.createrUserName}}</span>
-              </div>
-              <div class="DeliveryPoint orderContent">
-                <label for>工单编号：</label>
-                <span>{{items.orderId}}</span>
-              </div>
-              <div class="urgency">
-                <img :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''" alt />
-                <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
-              </div>
-            </li>
+          to="/bill"
+          v-for="(items,index) in NewItems"
+          :key="index"
+          @click="goOrderPage(items.coordinateState,items.id)"
+        >
+          <div class="orderId">
+            <i>协同</i>
+            <span>单号：{{items.id}}</span>
+          </div>
+          <div class="orderStatus">
+            <div>
+              <img
+                :src="items.coordinateState == 0 ? orderStatusImg.bill : items.coordinateState == 1 ? orderStatusImg.sendOrders : items.coordinateState == 2 ? orderStatusImg.acceptance: items.coordinateState == 3 ? orderStatusImg.dispose : ''"
+                alt
+              />
+
+              <span>{{items.coordinateState == 0 ? '待受理' : items.coordinateState == 1 ? '处理中' : items.coordinateState == 2 ? '已完成' : items.coordinateState == 3 ? '已驳回' : ''}}</span>
+            </div>
+            <div>
+              <i></i>
+              <span>{{items.createTime}}</span>
+            </div>
+          </div>
+          <div class="customerName orderContent">
+            <label for>创建人：</label>
+            <span>{{items.createrUserName}}</span>
+          </div>
+          <div class="DeliveryPoint orderContent">
+            <label for>工单编号：</label>
+            <span>{{items.orderId}}</span>
+          </div>
+          <div class="urgency">
+            <img
+              :src="items.orderUrgency == 1 ? urgency.Urgent : items.orderUrgency == 0 ? urgency.ordinary : ''"
+              alt
+            />
+            <span>{{items.orderUrgency == 1 ? '紧急' : items.orderUrgency == 0 ? '一般' : ''}}</span>
+          </div>
+        </li>
       </ul>
     </div>
   </div>
@@ -69,7 +75,7 @@ export default {
     return {
       active: 0,
       cutId: 0,
-      searchVal: '',
+      searchVal: "",
       list: [],
       listData: [],
       currentPage: 1,
@@ -98,46 +104,52 @@ export default {
     NavBar
   },
   methods: {
-    // chanage(active){
-    //   console.log(active)
-    //   if(active == 0){
-    //     this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
-    //   }
-    //   if(active == 1){
-    //     this.getOrderInfoList("/api/getCoordinateInfoList",this.currentPage, this.everyCount);
-    //   }
-    // },
+    getList(data) {
+      console.log(data);
+      this.list = data;
+    },
     cut(index) {
       this.cutId = index;
-      if(index == 0){
-        this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
+      if (index == 0) {
+        this.getOrderInfoList(
+          "/api/getCoordinatePlanList",
+          this.currentPage,
+          this.everyCount
+        );
       }
-      if(index == 1){
-        this.getOrderInfoList("/api/getCoordinateInfoList",this.currentPage, this.everyCount);
+      if (index == 1) {
+        this.getOrderInfoList(
+          "/api/getCoordinateInfoList",
+          this.currentPage,
+          this.everyCount
+        );
       }
     },
 
-    goOrderPage(coordinateState,id) {
-      console.log(coordinateState,id);
-      if (coordinateState == 0) {   //发单
+    goOrderPage(coordinateState, id) {
+      console.log(coordinateState, id);
+      if (coordinateState == 0) {
+        //发单
         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
-        sessionStorage.setItem("id",id)
+        sessionStorage.setItem("id", id);
       }
-      if (coordinateState == 1) {   //派单
-         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
-         sessionStorage.setItem("id",id)
+      if (coordinateState == 1) {
+        //派单
+        this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+        sessionStorage.setItem("id", id);
       }
-      if (coordinateState == 2) {   //待受理
-         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
-         sessionStorage.setItem("id",id)
+      if (coordinateState == 2) {
+        //待受理
+        this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+        sessionStorage.setItem("id", id);
       }
-      if (coordinateState == 3) {   //处理中
-         this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
-         sessionStorage.setItem("id",id)
+      if (coordinateState == 3) {
+        //处理中
+        this.$router.push("/synergyDispose?coordinateState=" + coordinateState);
+        sessionStorage.setItem("id", id);
       }
-
     },
-    getOrderInfoList(url,currentPage, everyCount) {
+    getOrderInfoList(url, currentPage, everyCount) {
       var data = {
         userId: this.$store.state.userId,
         currentPage: currentPage,
@@ -153,7 +165,12 @@ export default {
     }
   },
   created() {
-    this.getOrderInfoList("/api/getCoordinatePlanList",this.currentPage, this.everyCount);
+    this.getOrderInfoList(
+      "/api/getCoordinatePlanList",
+      this.currentPage,
+      this.everyCount
+    );
+    sessionStorage.clear();
   },
   computed: {
     //设置计算属性
@@ -165,20 +182,20 @@ export default {
       this.list.map(function(item) {
         if (item.id.search(_this.searchVal) != -1) {
           NewItems.push(item);
-        }else if (item.createTime.search(_this.searchVal) != -1) {
+        } else if (item.createTime.search(_this.searchVal) != -1) {
           NewItems.push(item);
-        }else if (item.orderId.search(_this.searchVal) != -1) {
+        } else if (item.orderId.search(_this.searchVal) != -1) {
           NewItems.push(item);
-        }else if (item.createrUserName.search(_this.searchVal) != -1) {
+        } else if (item.createrUserName.search(_this.searchVal) != -1) {
           NewItems.push(item);
-        }else if (item.orderState.search(_this.searchVal) != -1) {
+        } else if (item.orderState.search(_this.searchVal) != -1) {
           NewItems.push(item);
         }
       });
 
       return NewItems;
     }
-  },
+  }
 };
 </script>
 
@@ -200,9 +217,10 @@ export default {
 .list li {
   background: #ffffff;
   border-radius: 8px;
-  padding: 15px 15px 5px;
+  padding: 20px 15px 15px;
   position: relative;
   margin-bottom: 10px;
+  font-size: 16px;
 }
 .list li > div {
   display: flex;
@@ -218,10 +236,10 @@ export default {
   line-height: 21px;
   color: #fff;
   margin-right: 10px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .orderId span {
-  font-size: 14px;
+  font-size: 16px;
   color: #2f6cff;
 }
 
@@ -239,7 +257,7 @@ export default {
 }
 .orderStatus > div:nth-child(1) span {
   color: #ff4c42;
-  font-size: 11px;
+  font-size: 13px;
 }
 .orderStatus > div:nth-child(2) i {
   width: 16px;
@@ -250,16 +268,16 @@ export default {
 }
 .orderStatus > div:nth-child(2) span {
   color: #2f6cff;
-  font-size: 11px;
+  font-size: 13px;
 }
 .orderContent label {
-  font-size: 11px;
+  font-size: 14px;
   color: #999999;
   text-align-last: justify;
-  width: 70px;
+  width: 75px;
 }
 .orderContent span {
-  font-size: 11px;
+  font-size: 14px;
   color: #333333;
 }
 .orderContent span {
@@ -290,8 +308,6 @@ export default {
   font-size: 10px;
 }
 
-
-
 .synergySearch {
   display: flex;
   align-items: center;
@@ -300,6 +316,12 @@ export default {
   background: #2f6cff;
   color: #ffffff;
   height: 50px;
+  border: none;
+}
+.tabs {
+  border: none;
+  background: #2f6cff;
+  height: 45px;
 }
 .tabs ul {
   display: flex;
@@ -308,16 +330,16 @@ export default {
   background: #2f6cff;
 }
 .tabs ul li {
-  flex: .4;
+  flex: 0.4;
   height: 40px;
   text-align: center;
-  line-height: 40px;
+  line-height: 45px;
   font-size: 15px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .tabs ul .active {
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 19px;
 }
 .SearchEntrance {

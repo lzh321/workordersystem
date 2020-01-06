@@ -132,7 +132,7 @@
               <div class="layui-input-block">
                 <select name="orderType" id="orderType" lay-verify="required">
                   <option value>请选择工单类型</option>
-                  <option value="设备保障">设备报障</option>
+                  <option value="设备报障">设备报障</option>
                   <option value="差错账">差错账</option>
                   <option value="钞空/存满">钞空/存满</option>
                   <option value="吞卡">吞卡</option>
@@ -230,15 +230,22 @@
               <div class="layui-upload">
                 <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
                   预览
-                  <div class="layui-upload-list" id="imgBox">
-                    <img
+                  <div class="layui-upload-list"  id="imgBox">
+                    <div
+                      style="width:100px;height:100px;margin-right:10px;display:inline-block;"
                       v-for="(item,index) in imgDataArray"
                       :key="index"
-                      class="layui-upload-img"
-                      style="width:100px;height:100px;margin-right:10px"
-                      :src="DomainName+ item "
-                      alt
-                    />
+                    >
+                      <img
+                        @click="previewImg()"
+                        class="layui-upload-img"
+                        style="width:100%;height:100%"
+                        :src="DomainName+ item "
+                        :layer-src="DomainName+ item"
+                        alt
+                      />
+                      <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+                    </div>
                   </div>
                   <input type="hidden" name="orderImg" :value="imgData" />
                 </blockquote>
@@ -254,7 +261,6 @@
                   v-for="(item) in userList"
                   :key="item.userId"
                   :value="item.userId"
-                  v-show="item.userId == 'admin' ? false : true"
                 >{{item.userName}}</option>
               </select>
             </div>
@@ -348,7 +354,12 @@ export default {
       this.$axios.post("/api/getUserList", userId).then(res => {
         // 员工列表
         // console.log(res);
-        this.userList = res.data.body.userList;
+        // this.userList = res.data.body.userList;
+        for (var i = 0; i < res.data.body.userList.length; i++) {
+        if (res.data.body.userList[i].userId !== "admin") {
+          this.userList.push(res.data.body.userList[i])
+        }
+      }
       });
 
       var date = new Date();
@@ -364,12 +375,24 @@ export default {
       if (h < 10) h = "0" + h;
       if (sec < 10) sec = "0" + sec;
       if (s < 10) s = "0" + s;
-      this.orderInfoId =
-        "PL" + date.getFullYear() + m + d + h + sec + s + num;
-    }
+      this.orderInfoId = "PL" + date.getFullYear() + m + d + h + sec + s + num;
+    },
     // echoImg() {
     //   this.imgDataArray = this.imgData.split(",");
     // }
+    delImg(item,index){  // 删除附件图片
+      this.imgDataArray.splice(index,1)
+      this.imgData = this.imgDataArray.join(',')
+      this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
+        console.log(res)
+      })
+    },
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#imgBox"
+        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
   },
   mounted() {
     var _this = this;
@@ -592,14 +615,15 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.imgData += res.body.url;
           _this.imgDataArray.push(res.body.url.split(",")[0]);
+          _this.imgData = _this.imgDataArray.join(",");
           console.log(_this.imgData);
           // _this.echoImg();
         }
       });
     });
   },
+
   created() {
     this.send();
   },
@@ -675,5 +699,15 @@ h2 {
 }
 .basicInfo .CDkey label::before {
   content: "";
+}
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: -5px;
+  top: -5px;
 }
 </style>

@@ -1,40 +1,85 @@
 <template>
   <div class="navBar" v-if="type">
-    <div class="filtrate" @click="Expand">
+    <div class="filtrate" @click.stop="Expand">
       <i></i>
       <span>筛选</span>
     </div>
-    <div v-show="showOrhide" class="filtrateBox" @click="packUp">
+    <div v-show="showOrhide" class="filtrateBox" @click.stop="packUp">
       <div class="filtrateContent" @click.stop="bubbleStop">
         <div class="head">
-          <i></i>
+          <i @click="exit"></i>
           <span>筛选</span>
         </div>
         <div class="content">
           <dl>
-            <dt>类型</dt>
-            <div></div>
-            <dd>
-              <span v-for="(item,index) in searchType" :class="index == typeId ? 'active' : ''" :key="index" @click="seleType(item.state,index)">{{item.typeName}}<i v-if="index == typeId ? true : false"></i></span>
-            </dd>
-          </dl>
-          <dl>
             <dt>紧急程度</dt>
             <dd>
-              <span v-for="(item,index) in orderUrgency" :class="index == Urgency ? 'active' : ''" :key="index" @click="seleUrgency(item.state,index)">{{item.UrgencyName}}<i v-if="index == Urgency ? true : false"></i></span>
+              <span
+                v-for="(item,index) in orderUrgency"
+                :class="index == Urgency ? 'active' : ''"
+                :key="index"
+                @click="seleUrgency(item.state,index)"
+              >
+                {{item.UrgencyName}}
+                <i
+                  @click.stop="callOffUrgency"
+                  v-if="index == Urgency ? true : false"
+                ></i>
+              </span>
             </dd>
           </dl>
           <dl>
-            <dt>工单状态</dt>
-            <dd>
-              <span v-for="(item,index) in orderState" :class="index == cutId ? 'active' : ''" :key="item.state" @click="seleorderState(item.state,index)">{{item.stateName}}<i v-if="index == cutId ? true : false"></i></span>
+            <dt>{{titleMsg}}</dt>
+            <dd v-if="isShow">
+              <span
+                v-for="(item,index) in orderState"
+                :class="index == cutId ? 'active' : ''"
+                :key="item.state"
+                @click="seleorderState(item.state,index)"
+              >
+                {{item.stateName}}
+                <i
+                  @click.stop="callOffState"
+                  v-if="index == cutId ? true : false"
+                ></i>
+              </span>
+            </dd>
+            <dd v-else>
+              <span
+                v-for="(item,index) in synergyState"
+                :class="index == cutId ? 'active' : ''"
+                :key="item.state"
+                @click.stop="seleorderState(item.state,index)"
+              >
+                {{item.stateName}}
+                <i
+                  @click.stop="callOffState"
+                  v-if="index == cutId ? true : false"
+                ></i>
+              </span>
             </dd>
           </dl>
           <dl>
             <dt>创建时间</dt>
             <dd>
-              <span><input type="text" ref="termStart" @click="showPopup('termStart')" name="seleBeginTime" placeholder="开始时间"></span>
-              <span><input type="text" ref="termEnd" @click="showPopup('termEnd')" name="seleEndTime" placeholder="结束时间"></span>
+              <span @click="showPopup('termStart')">
+                <input
+                  type="text"
+                  ref="termStart"
+                  name="seleBeginTime"
+                  placeholder="开始时间"
+                  disabled
+                />
+              </span>
+              <span @click="showPopup('termEnd')">
+                <input
+                  type="text"
+                  ref="termEnd"
+                  name="seleEndTime"
+                  placeholder="结束时间"
+                  disabled
+                />
+              </span>
             </dd>
           </dl>
           <div class="seleTime">
@@ -58,100 +103,105 @@
                 @cancel="cancel"
               />
             </van-popup>
+            
           </div>
         </div>
         <div class="btn">
-          <button class="reset"  type="button" @click="reset">重置</button>
+          <button class="reset" type="button" @click="reset">重置</button>
           <button class="confirm" type="button" @click="ascertain">确定</button>
         </div>
       </div>
+    <van-loading type="spinner" v-if="loading" color="#1989fa" :style="{position:'fixed',top: '45%',left:'45%',zIndex:'9999'}" />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  props: ["titleNaem","list"],
+  props: ["orderTypeId", "synergyTypeId"],
   data() {
     return {
       type: "",
+      titleMsg: "工单状态",
       cutId: null,
       typeId: null,
       Urgency: null,
       show: false,
       showOrhide: false,
       isSele: false,
-      orderState:[
-        {stateName: '待发单' , state: 0},
-        {stateName: '待派单' , state: 1},
-        {stateName: '待受理' , state: 2},
-        {stateName: '处理中' , state: 3},
-        {stateName: '待回访' , state: 7},
-        {stateName: '已关单' , state: 8},
+      isShow: true,
+      loading: false,
+      orderState: [
+        { stateName: "待发单", state: 0 },
+        { stateName: "待派单", state: 1 },
+        { stateName: "待受理", state: 2 },
+        { stateName: "处理中", state: 3 },
+        { stateName: "待回访", state: 7 },
+        { stateName: "已关单", state: 8 }
       ],
-      searchType:[
-        {typeName: '工单',state: 0},
-        {typeName: '协同',state: 1}
+      synergyState: [
+        { stateName: "待受理", state: 0 },
+        { stateName: "处理中", state: 1 },
+        { stateName: "已完成", state: 2 },
+        { stateName: "已驳回", state: 3 }
       ],
-      orderUrgency:[
-        {UrgencyName: '紧急',state: 0},
-        {UrgencyName: '一般',state: 1},
+      orderUrgency: [
+        { UrgencyName: "一般", state: 0 },
+        { UrgencyName: "紧急", state: 1 },
       ],
-      screenData: {
-        type: '',
-        orderUrgency: '',
-        seleorderState: '',
-        seleBeginTime: '',
-        seleEndTime: ''
-      },
+      screenData: {},
       minHour: 10,
       maxHour: 20,
       minDate: new Date(2016, 1, 1),
       maxDate: new Date(2030, 12, 31),
       currentDate: new Date(),
-      datePicker: '', // 用于判断哪个选择器的显示与隐藏
+      datePicker: "" // 用于判断哪个选择器的显示与隐藏
     };
   },
   methods: {
     packUp() {
       this.showOrhide = false;
+      this.$(".wordOrder").css("overflow-y",  "scroll")
     },
     Expand() {
       this.showOrhide = true;
+      this.$(".wordOrder").css("overflow-y",  "hidden")
     },
     bubbleStop() {},
-    seleorderState(state,index){ //选择工单状态
-      console.log(state)
-      this.cutId = index
-      this.screenData.seleorderState = state
+    seleorderState(state, index) {
+      //选择工单状态
+      console.log(state);
+      this.cutId = index;
+      if (this.orderTypeId == 0 || this.orderTypeId == 1) {
+        this.screenData.seleorderState = state;
+      } else if (this.synergyTypeId == 0 || this.synergyTypeId == 1) {
+        this.screenData.seleCoordinateState = state;
+      }
       // if(state.stateName == ele.target.innerText){
       //   console.log(state)
       //   this.$refs.current[i].style.background = '#d5e2ff'
       //   this.$refs.current[i].style.color = '#2F6CFF'
       // }
     },
-    seleType(state,index){ //选择类型
-      console.log(state)
-      this.typeId = index
-      this.screenData.type = state
-      // if(state.stateName == ele.target.innerText){
-      //   console.log(state)
-      //   this.$refs.current[i].style.background = '#d5e2ff'
-      //   this.$refs.current[i].style.color = '#2F6CFF'
-      // }
+    seleType() {
+      //选择类型
+      if (this.orderTypeId == 0 || this.orderTypeId == 1) {
+        this.titleMsg = "工单状态";
+        this.isShow = true;
+      }
+      if (this.synergyTypeId == 0 || this.synergyTypeId == 1) {
+        this.titleMsg = "协同状态";
+        this.isShow = false;
+      }
     },
-    seleUrgency(state,index){ //选择紧急程度
-      console.log(state)
-      this.Urgency = index
-      this.screenData.orderUrgency = state
-      // if(state.stateName == ele.target.innerText){
-      //   console.log(state)
-      //   this.$refs.current[i].style.background = '#d5e2ff'
-      //   this.$refs.current[i].style.color = '#2F6CFF'
-      // }
+    seleUrgency(state, index) {
+      //选择紧急程度
+      console.log(state);
+      this.Urgency = index;
+      this.screenData.orderUrgency = state;
     },
 
-    showPopup(picker){
+    showPopup(picker) {
       this.show = true;
       this.datePicker = picker;
     },
@@ -185,27 +235,115 @@ export default {
       console.log(timer);
       // this.$('input[name="seleBeginTime"]').val(timer);
       this.$refs[this.datePicker].value = timer;
-// seleEndTime
+      // seleEndTime
       this.show = false;
-
-     
     },
+
     cancel() {
       this.show = false;
-      this.datePicker = '';
+      this.datePicker = "";
     },
-    reset() {},
     ascertain() {
-      this.screenData.seleBeginTime = this.$('input[name="seleBeginTime"]').val()
-      this.screenData.seleEndTime = this.$('input[name="seleEndTime"]').val()
-      console.log(this.screenData)
+      this.screenData.seleBeginTime = this.$(
+        'input[name="seleBeginTime"]'
+      ).val();
+      this.screenData.seleEndTime = this.$('input[name="seleEndTime"]').val();
+      this.screenData.userId = this.$store.state.userId;
+      this.screenData.currentPage = 1;
+      this.screenData.everyCount = 100;
+      console.log(this.screenData);
+      if (this.orderTypeId == 0) {
+        this.loading = true
+        this.axios.post("/api/getOrderPlanList", this.screenData).then(res => {
+          console.log(res);
+          if(res.data.retCode == '000000'){
+            setTimeout(()=>{
+              this.$emit("getList", res.data.body.orderInfoList);
+              this.loading = false;
+              this.showOrhide = false;
+              this.$(".wordOrder").css("overflow-y",  "scroll")
+              this.reset()
+            },1000)
+          }
+        });
+      }
+      if (this.orderTypeId == 1) {
+        this.loading = true
+        this.axios.post("/api/getOrderInfoList", this.screenData).then(res => {
+          console.log(res);
+          if(res.data.retCode == '000000'){
+            setTimeout(()=>{
+              this.$emit("getList", res.data.body.orderInfoList);
+              this.loading = false;
+              this.showOrhide = false;
+              this.$(".wordOrder").css("overflow-y",  "scroll")
+              this.reset()
+            },1000)
+          }
+        });
+      }
+      if (this.synergyTypeId == 0) {
+        this.loading = true
+        this.axios.post("/api/getCoordinatePlanList", this.screenData).then(res => {
+          console.log(res);
+          if(res.data.retCode == '000000'){
+            setTimeout(()=>{
+              this.$emit("getList", res.data.body.coordinateList);
+              this.loading = false;
+              this.showOrhide = false;
+              this.$(".wordOrder").css("overflow-y",  "scroll")
+              this.reset()
+            },1000)
+          }
+        });
+      }
+      if (this.synergyTypeId == 1) {
+        this.loading = true
+        this.axios.post("/api/getCoordinateInfoList", this.screenData).then(res => {
+          console.log(res);
+          if(res.data.retCode == '000000'){
+            setTimeout(()=>{
+              this.$emit("getList", res.data.body.coordinateList);
+              this.loading = false;
+              this.showOrhide = false;
+              this.$(".wordOrder").css("overflow-y",  "scroll")
+              this.reset()
+            },1000)
+          }
+        });
+      }
+    },
+    reset() {
+      this.screenData = {};
+      this.cutId = null;
+      this.Urgency = null;
+      this.$('input[name="seleBeginTime"]').val("");
+      this.$('input[name="seleEndTime"]').val("");
+    },
+    exit() {
+      this.showOrhide = false;
+      this.$(".wordOrder").css("overflow-y",  "scroll")
+    },
+
+    callOffType() {},
+    callOffUrgency() {
+      this.Urgency = null;
+      this.screenData.orderUrgency = null;
+    },
+    callOffState() {
+      this.cutId = null;
+      this.screenData.seleorderState = null;
+      this.screenData.seleCoordinateState = null;
     }
   },
 
   mounted() {
     this.type = this.$route.query.type;
+    this.seleType();
   },
-  created() {},
+  created() {
+    
+  },
   watch: {
     $route: {
       handler: function() {
@@ -219,7 +357,6 @@ export default {
 </script>
 
 <style scoped>
-
 .filtrate {
   display: flex;
   flex-direction: column;
@@ -229,9 +366,9 @@ export default {
   width: 30px;
   margin-left: 10px;
 }
-.active{
+.active {
   background: #d5e2ff;
-  color: #2F6CFF
+  color: #2f6cff;
 }
 
 .filtrate::before {
@@ -249,17 +386,18 @@ export default {
   top: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 9998;
+  z-index: 9999999;
+  display: flex;
+  flex-direction: row-reverse;
 }
 .filtrateContent {
   width: 80%;
   height: 100%;
   background: #ffffff;
-  position: absolute;
+  /* position: absolute; */
   right: 0;
   top: 0;
   z-index: 9999;
-  display: flex;
   flex-direction: column;
 }
 .head {
@@ -296,16 +434,18 @@ export default {
 }
 .content {
   flex: 1;
-  padding: 0 10px; 
+  padding: 0 10px;
 }
 .btn {
   display: flex;
+  justify-content: space-around;
 }
 .btn button {
-  flex: 1;
-  height: 50px;
+  flex: .4;
+  height: 45px;
   border: none;
   font-size: 16px;
+  border-radius: 50px;
 }
 .reset {
   background: #f8a32c;
@@ -314,7 +454,7 @@ export default {
   background: #2f6cff;
 }
 dl {
-  margin: 15px 0;
+  margin: 10px 0;
 }
 dt {
   color: #666666;
@@ -328,26 +468,26 @@ dd {
   align-items: center;
   flex-wrap: wrap;
 }
-dd span{
+dd span {
   width: 29%;
   height: 40px;
   line-height: 40px;
   text-align: center;
-  background: #F7F7F7;
-  margin: 5px ;
+  background: #f7f7f7;
+  margin: 5px;
   border-radius: 3px;
 }
-dl:nth-child(4) dd{
+dl:nth-child(3) dd {
   justify-content: center;
 }
-dl:nth-child(4) dd span{
+dl:nth-child(3) dd span {
   width: 60%;
   height: 40px;
   line-height: 40px;
   border-radius: 45px;
   position: relative;
 }
-dl dd span i{
+dl dd span i {
   display: inline-block;
   position: absolute;
   bottom: 0;
@@ -357,16 +497,20 @@ dl dd span i{
   background: url("../assets/Images/remove.png") no-repeat;
   background-size: 100%;
 }
-dl:nth-child(4) dd span input{
-  width: 100%;
+dl:nth-child(3) dd span input {
+  width: 80%;
   border: none;
-  background: #F7F7F7;
+  background: #f7f7f7;
   border-radius: 45px;
   padding: 0 5px;
   text-align: center;
-} 
-dl:nth-child(4) dd span input::placeholder{
+  color: #000000;
+}
+dl:nth-child(3) dd span input::placeholder {
   text-align: center;
-  color: #DDDDDD
+  color: #dddddd;
+}
+.perch{
+  height: 50px;
 }
 </style>

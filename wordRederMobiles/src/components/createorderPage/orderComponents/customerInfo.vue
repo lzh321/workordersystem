@@ -109,15 +109,17 @@
         </label>
         <div class="uploadImg">
           <div class="layui-upload">
-            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 4px;font-size:15px;">
+            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 4px;font-size:15px;width:100%">
               预览
-              <div class="layui-upload-list" id="imgBox">
+              <div class="layui-upload-list" id="customerImgBox">
                     <img
                       v-for="(item,index) in imgDataArray"
                       :key="index"
                       class="layui-upload-img"
                       style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;"
                       :src="DomainName+ item "
+                      @click="previewImg()"
+                      :layer-src="DomainName+ item"
                       alt
                     />
                   </div>
@@ -157,6 +159,13 @@ export default {
     };
   },
   methods: {
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#customerImgBox"
+        ,anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        closeBtn: 1
+      });
+    },
     send(){
       if(this.orderInfo.orderPhoto){
         for (var i = 0; i < this.orderInfo.orderPhoto.split(",").length; i++) {
@@ -266,8 +275,14 @@ textarea {
   padding: 5px;
 }
 
-#imgBox{
+#customerImgBox{
   display: flex;
   flex-wrap: wrap;
+}
+.uploadImg{
+  width: 100%;
+}
+.layui-upload{
+  width: 100%;
 }
 </style>

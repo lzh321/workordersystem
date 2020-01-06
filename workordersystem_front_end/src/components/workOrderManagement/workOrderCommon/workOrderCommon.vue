@@ -219,13 +219,15 @@
           <div class="layui-upload">
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
               附件
-              <div class="layui-upload-list" id="imgBox">
+              <div class="layui-upload-list" id="imgBox1">
                 <img
                   v-for="(item,index) in imgDataArray"
                   :key="index"
                   class="layui-upload-img"
                   style="width:100px;height:100px;margin-right:10px"
                   :src="DomainName+ item "
+                  @click="previewImg()"
+                  :layer-src="DomainName+ item"
                   alt
                 />
               </div>
@@ -258,10 +260,10 @@
       <!-- 待派单组件 -->
       <waitSendOrders v-if="orderState == 1 ? true : false"></waitSendOrders>
       <!-- 预约 -->
-      <reservation
+      <!-- <reservation
         :workOrderInfo="workOrderInfo"
         v-if="orderState == 4 || orderState == 5 || orderState == 7 || orderState == 9 || orderState == 10 ? true : false"
-      ></reservation>
+      ></reservation> -->
       <!-- 故障处理中 -->
       <inProcess
         :orderState="orderState"
@@ -406,6 +408,12 @@ export default {
     processingRecord
   },
   methods: {
+    previewImg(){  // 图片预览
+      layer.photos({
+        photos: "#imgBox1"
+        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+      });
+    },
     cancel() {
       this.$router.push("/workOrderManagement?type=workOrderManagement");
     },
@@ -720,13 +728,16 @@ export default {
                 var userList = res.data.body.userList;
                 for (var i = 0; i < userList.length; i++) {
                   console.log(userList[i].userName);
-                  $("#acceptUserId").append(
-                    '<option value="' +
-                      userList[i].userId +
-                      '">' +
-                      userList[i].userName +
-                      "</option>"
-                  );
+                  if(userList[i].userId !== 'admin'){
+                    $("#acceptUserId").append(
+                      '<option value="' +
+                        userList[i].userId +
+                        '">' +
+                        userList[i].userName +
+                        "</option>"
+                    );
+                  }
+                  
                 }
                 console.log($("#acceptUserId"));
                 form.render();

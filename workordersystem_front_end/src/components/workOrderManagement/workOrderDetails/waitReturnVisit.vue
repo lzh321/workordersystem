@@ -40,10 +40,10 @@ h2 {
   margin-bottom: 20px;
 }
 .layui-form-label{
-  width: 130px;
+  width: 140px;
 }
 .layui-input-block{
-  margin-left: 130px;
+  margin-left: 140px;
 }
 label::before{
   content: "*";

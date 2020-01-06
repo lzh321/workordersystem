@@ -68,6 +68,8 @@ export default {
 <style>
 .orderDetails{
   background: #FFFFFF;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 .actionBtn {
   padding: 0;

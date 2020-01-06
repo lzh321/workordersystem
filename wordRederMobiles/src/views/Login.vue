@@ -52,7 +52,8 @@ export default {
             this.userId = res.data.body.userId;
             // 将用户token保存到vuex中
             this.changeLogin({ userId: this.userId });
-            this.$router.push("/wordOrder?type=wordOrder");
+            this.$router.replace("/wordOrder?type=wordOrder");
+            localStorage.setItem('isSelect',"工单")
           } else {
             this.$dialog.alert({
               title: "登录失败",
@@ -62,6 +63,9 @@ export default {
         });
       }
     }
+  },
+  created(){
+    localStorage.clear()
   }
 };
 </script>

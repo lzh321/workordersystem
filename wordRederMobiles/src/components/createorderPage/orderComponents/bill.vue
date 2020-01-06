@@ -21,23 +21,43 @@
         <label for>
           <span>客户名称</span>：
         </label>
-        <input name="customerName" :value="bankList.customerId ? bankList.customerId : orderInfo.customerId" type="hidden" />
-        <input type="text" :value="bankList.customerName ? bankList.customerName : orderInfo.customerName" placeholder="请选择客户名称" />
+        <input
+          name="customerName"
+          :value="bankList.customerId ? bankList.customerId : orderInfo.customerId"
+          type="hidden"
+        />
+        <input
+          type="text"
+          :value="bankList.customerName ? bankList.customerName : orderInfo.customerName"
+          placeholder="请选择客户名称"
+        />
         <span>可选</span>
       </div>
       <div @click="selectNetwork(bankList.customerId)">
         <label for>
           <span>设备投放点</span>：
         </label>
-        <input name="networkId" :value="networkList.id ? networkList.id : orderInfo.networkId" type="hidden" />
-        <input type="text" :value="networkList.networName ? networkList.networName : orderInfo.networName" placeholder="请选择设备投放点" />
+        <input
+          name="networkId"
+          :value="networkList.id ? networkList.id : orderInfo.networkId"
+          type="hidden"
+        />
+        <input
+          type="text"
+          :value="networkList.networName ? networkList.networName : orderInfo.networName"
+          placeholder="请选择设备投放点"
+        />
         <span>可选</span>
       </div>
       <div>
         <label for>
           <span>投放点地址</span>：
         </label>
-        <input type="text" :value="networkList.networAddress ? networkList.networAddress : orderInfo.networAddress" disabled />
+        <input
+          type="text"
+          :value="networkList.networAddress ? networkList.networAddress : orderInfo.networAddress"
+          disabled
+        />
       </div>
       <div>
         <label for>
@@ -104,16 +124,32 @@
         <label for>
           <span>设备型号</span>：
         </label>
-        <input type="text" :value="modelType.modelType ? modelType.modelType : orderInfo.modelType" placeholder="请选择设备型号" />
-        <input name="modelId" :value="modelType.modelId ? modelType.modelId : orderInfo.modelId " type="hidden" />
+        <input
+          type="text"
+          :value="modelType.modelType ? modelType.modelType : orderInfo.modelType"
+          placeholder="请选择设备型号"
+        />
+        <input
+          name="modelId"
+          :value="modelType.modelId ? modelType.modelId : orderInfo.modelId "
+          type="hidden"
+        />
         <span>可选</span>
       </div>
       <div @click="selectDeviceNumber(modelType.modelType)">
         <label for>
           <span>设备序列号</span>：
         </label>
-        <input type="text" :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber" placeholder="请选择设备序列号" />
-        <input name="deviceNumber" :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber" type="hidden" />
+        <input
+          type="text"
+          :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber"
+          placeholder="请选择设备序列号"
+        />
+        <input
+          name="deviceNumber"
+          :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber"
+          type="hidden"
+        />
         <span>可选</span>
       </div>
       <div class="problem">
@@ -154,7 +190,7 @@
             </blockquote>
           </div>
         </div>
-      </div> -->
+      </div>-->
 
       <div class="affix layui-form-item">
         <div>
@@ -166,15 +202,22 @@
         <div class="layui-upload">
           <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 4px">
             预览
-            <div class="layui-upload-list" id="imgBox">
-              <img
+            <div class="layui-upload-list" id="billImgBox">
+              <div
+                style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;"
                 v-for="(item,index) in imgDataArray"
                 :key="index"
-                class="layui-upload-img"
-                style="width:100px;height:100px;margin-right:10px"
-                :src="DomainName+ item "
-                alt
-              />
+              >
+                <img
+                  class="layui-upload-img"
+                  style="width:100%;height:100%"
+                  :src="DomainName+ item "
+                  @click="previewImg()"
+                  :layer-src="DomainName+ item"
+                  alt
+                />
+                <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+              </div>
             </div>
             <input type="hidden" name="orderImg" :value="imgData" />
           </blockquote>
@@ -213,7 +256,7 @@
         <orderLog></orderLog>
       </div>
     </form>
-    <div class="perch"></div>
+    <div class="perchs"></div>
     <div class="actionBtn">
       <ul>
         <li>
@@ -312,8 +355,8 @@ export default {
           } else {
             layer.msg(res.retMsg, { icon: 2 });
           }
-          _this.imgData += res.body.url;
           _this.imgDataArray.push(res.body.url.split(",")[0]);
+          _this.imgData = _this.imgDataArray.join(",");
           console.log(_this.imgData);
           // _this.$("input[name='orderImg']").val(res.body.url);
         }
@@ -321,6 +364,27 @@ export default {
     });
   },
   methods: {
+    delImg(item, index) {
+      // 删除附件图片
+      this.imgDataArray.splice(index, 1);
+      this.imgData = this.imgDataArray.join(",");
+      this.axios
+        .post("/api/deleImagesInfo", {
+          userId: this.$store.state.userId,
+          url: item
+        })
+        .then(res => {
+          console.log(res);
+        });
+    },
+    previewImg() {
+      // 图片预览
+      layer.photos({
+        photos: "#billImgBox",
+        anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
+        closeBtn: 1
+      });
+    },
     selectCustomer() {
       this.$router.push("/selectBank");
       sessionStorage.removeItem("networkdata");
@@ -376,7 +440,6 @@ export default {
     },
     getImg() {
       if (this.orderInfo.recordPhoto) {
-        
       }
     },
     getOrderInfo() {
@@ -395,9 +458,6 @@ export default {
             }
           }
         }
-
-
-
       });
     },
     bill() {
@@ -414,7 +474,7 @@ export default {
           layer.msg(res.data.retMsg, { icon: 1 });
           sessionStorage.clear();
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(() => {
@@ -426,7 +486,7 @@ export default {
     },
     cancel() {
       //取消
-      this.$router.push("/wordOrder");
+      this.$router.push("/wordOrder?type=wordOrder");
       sessionStorage.clear();
     },
     kuantan() {
@@ -437,29 +497,29 @@ export default {
       createData.isClose = 1;
       console.log(createData);
       // this.isDisabled = true;
-      var _this = this
-      // layer.confirm(
-      //   "是否确认关闭当前工单？",
-      //   { icon: 3, title: "提示" },
-      //   function(index) {
-          //向服务端发送关单指令
-          _this.axios.post("/api/alterOrderInfo", createData).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              sessionStorage.clear();
-              setTimeout(() => {
-                _this.$router.push("/wordOrder");
-              }, 3000);
-            } else {
-              setTimeout(() => {
-                _this.isDisabled = false;
-              }, 2000);
-              layer.msg(res.data.retMsg, { icon: 2 });
-            }
-          });
-      //   }
-      // );
+      var _this = this;
+      layer.confirm(
+        "是否确认关闭当前工单？",
+        { icon: 3, title: "提示" },
+        function(index) {
+      //向服务端发送关单指令
+      _this.axios.post("/api/alterOrderInfo", createData).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
+          sessionStorage.clear();
+          setTimeout(() => {
+            _this.$router.push("/wordOrder?type=wordOrder");
+          }, 3000);
+        } else {
+          setTimeout(() => {
+            _this.isDisabled = false;
+          }, 2000);
+          layer.msg(res.data.retMsg, { icon: 2 });
+        }
+      });
+        }
+      );
     }
   },
   created() {
@@ -479,9 +539,17 @@ export default {
 <style scoped>
 .bill {
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 form {
   padding: 0px;
+  flex: 1;
+  overflow: hidden;
+  overflow-y:scroll;
+  -webkit-overflow-scrolling: touch;
+  
 }
 form > div {
   display: flex;
@@ -586,10 +654,9 @@ textarea {
   width: 100%;
   bottom: 0;
 }
-.perch {
+.perchs {
   padding: 10px 0;
-  margin-top: 20px;
-  height: 50px;
+  height: 60px;
 }
 .actionBtn ul {
   width: 100%;
@@ -659,9 +726,19 @@ textarea {
   height: 35px;
   line-height: 35px;
 }
-#imgBox{
+#billImgBox {
   padding: 0;
   display: flex;
   flex-wrap: wrap;
+}
+.delImg {
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  background: #c2c2c2;
+  position: absolute;
+  text-align: center;
+  right: 2px;
+  top: 0px;
 }
 </style>

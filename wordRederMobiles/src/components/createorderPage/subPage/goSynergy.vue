@@ -63,7 +63,7 @@ export default {
           sessionStorage.clear();
           this.$destroy("goSynergy")
           setTimeout(() => {
-            this.$router.push("/wordOrder");
+            this.$router.push("/wordOrder?type=wordOrder");
           }, 3000);
         } else {
           setTimeout(()=>{
