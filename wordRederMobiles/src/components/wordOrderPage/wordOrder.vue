@@ -283,12 +283,6 @@ export default {
           NewItems.push(item);
         }else if (item.createTime.search(_this.searchVal) != -1) {
           NewItems.push(item);
-        }else if (item.networName.search(_this.searchVal) != -1) {
-          NewItems.push(item);
-        }else if (item.customerName.search(_this.searchVal) != -1) {
-          NewItems.push(item);
-        }else if (item.networAddress.search(_this.searchVal) != -1) {
-          NewItems.push(item);
         }
       });
 

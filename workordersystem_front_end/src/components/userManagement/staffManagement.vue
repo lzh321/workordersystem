@@ -12,10 +12,9 @@
       <div class="dataList_table">
         <table id="staffManagement" lay-filter="staffManagement" lay-data="{id:'serachData'}"></table>
         <script type="text/html" id="barDemo">
-  <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-  <!-- <a class="layui-btn layui-btn-xs" lay-event="privilege" >权限</a>
-  <a class="layui-btn layui-btn-xs" lay-event="freeze">冻结</a> -->
-  <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
+          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
+          <a class="layui-btn layui-btn-xs" lay-event="rolesAllocation" >角色分配</a>
+          <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
         </script>
       </div>
     </div>
@@ -28,7 +27,7 @@ export default {
   name: "staffManagement",
   data() {
     return {
-      type: ""
+      type: "",
     };
   },
   components: {
@@ -109,11 +108,17 @@ export default {
             },
             { field: "userPhone", title: "手机", sort: false, align: "center" },
             {
-              field: "operation",
+              field: "userId",
               title: "操作",
-              width: 210,
+              width: 260,
               align: "center",
-              toolbar: "#barDemo"
+              templet: function(d) {
+                if(d.userId == 'admin'){
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs layui-btn-disabled">角色分配</a><a class="layui-btn layui-btn-xs layui-btn-disabled">删除</a>';
+                }else{
+                  return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="rolesAllocation" >角色分配</a><a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>'
+                }
+              }
             }
           ]
         ]
@@ -125,35 +130,115 @@ export default {
         var alterId = data.userId;
         console.log(alterId);
         if (obj.event === "deletion") {
-          layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
-            //向服务端发送删除指令
-            var delParam = {
-              userId: _this.$store.state.userId,
-              deleId: alterId
-            };
-            _this.$axios.post("/api/deleUserInfo", delParam).then(res => {
-              console.log(res);
-              if (res.data.retCode == "000000") {
-                layer.msg(res.data.retMsg, { icon: 1 });
-                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                layer.close(index);
-              } else {
-                layer.msg(res.data.retMsg, { icon: 2 });
-              }
-            });
-          });
+          layer.confirm(
+            "你确定要删除这条记录？",
+            { icon: 3, title: "提示" },
+            function(index) {
+              //向服务端发送删除指令
+              var delParam = {
+                userId: _this.$store.state.userId,
+                deleId: alterId
+              };
+              _this.$axios.post("/api/deleUserInfo", delParam).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+            }
+          );
         } else if (obj.event === "edit") {
           //编辑
           sessionStorage.setItem("alterId", alterId);
-          sessionStorage.setItem("data",JSON.stringify(data));
+          sessionStorage.setItem("data", JSON.stringify(data));
           _this.$router.push("/addUser");
-        } else if (obj.event === "privilege") {
-          // 权限
-          // sessionStorage.setItem('deviceId',deviceId)
-          // _this.$router.push("/checkEquipmentInfo")
-        } else if (obj.event === "freeze") {
-          //冻结
-        }
+        } else if (obj.event === "rolesAllocation") {
+          // 角色分配
+          layer.open({
+            type: 1,
+            title: "角色分配",
+            area: ["600px", "400px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `<form id="rolesAllocation" style="display:flex;flex-direction: column;padding: 10px;" class="layui-form layui-form-pane">
+                        
+                      </form>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              form.on("checkbox",function(data){
+                console.log(data)
+              })
+              var userRoleList = []
+              var roleList = []
+              _this.$axios
+                .post("/api/getRoleByUserId", {userId: data.userId})
+                .then(res => {
+                  console.log(res);
+                  userRoleList = res.data.body.list;
+                });
+              _this.$axios
+                .post("/api/getRoleInfoList", {userId: _this.$store.state.userId, currentPage: 1,everyCount:100})
+                .then(res => {
+                  console.log(res);
+                   roleList = res.data.body.roleList;
+                  for (var i = 0; i < roleList.length; i++) {
+                      _this.$("#rolesAllocation").append(
+                        '<span id="rolesList" style="display:flex;justify-content: space-between"><span>'+ roleList[i].roleName +'</span><input type="checkbox" class="box" name="roles'+roleList[i].roleId +'" title="" value="'+ roleList[i].roleId +'" lay-skin="primary"></span>'
+                      );
+                  }
+                  
+                  for(var z = 0; z < userRoleList.length; z++){
+                    for(var j = 0; j < _this.$(".box").length; j++){
+                      if(userRoleList[z].roleId == _this.$(".box")[j].value){
+                        _this.$(".box")[j].checked = true
+                        
+                      }
+                    }
+                  }
+                  console.log(_this.$(".box"))
+                  setTimeout(()=>{
+                    form.render();
+                  },200)
+                });
+                
+                
+            },
+            yes: function(index, layero) {
+              var rolesAllocation = _this.$("#rolesAllocation").serializeObject()
+              var arr = []
+              Object.keys(rolesAllocation).forEach(function(key){
+                  arr.push(rolesAllocation[key])
+              });
+              console.log(data);
+              console.log(arr,rolesAllocation);
+              
+              _this.$axios
+                .post("/api/allotRoleInfo",  {userId: data.userId,roleIds: arr.toString()})
+                .then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    setTimeout(() => {
+                      _this.$router.push(
+                        "/staffManagement?type=staffManagement"
+                      );
+                    }, 3000);
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+              layer.close(index);
+              return false;
+            },
+            btnAlign: "c"
+          });
+          return false;
+        } 
       });
     });
   },
@@ -173,7 +258,7 @@ export default {
       .catch(err => {
         console.log(err);
       });
-    sessionStorage.clear()
+    sessionStorage.clear();
   }
 };
 </script>
@@ -201,6 +286,7 @@ export default {
   color: #fff;
   font-size: 13px;
   margin: 0 10px;
+  
 }
 /* .dataList .dataList_top p button:nth-child(1) {
   background: #fff;
@@ -216,5 +302,9 @@ export default {
 .dataList .dataList_table td .btn {
   font-size: 13px !important;
   color: blue !important;
+}
+.rolesAllocation{
+  display: flex;
+  flex-direction: column;
 }
 </style>

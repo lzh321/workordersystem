@@ -23,7 +23,6 @@
     <div class="tabs_content">
       <ul class="list">
         <li
-          to="/bill"
           v-for="(items,index) in NewItems"
           :key="index"
           @click="goOrderPage(items.coordinateState,items.id)"

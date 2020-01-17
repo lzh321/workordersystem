@@ -59,7 +59,7 @@
 import synergyInfo from "./synergyInfo";
 import appointment from "./appointment";
 export default {
-  name: "dispose",
+  name: "disposeInfo",
   props: ["orderInfo"],
   data() {
     return {

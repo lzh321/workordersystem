@@ -107,7 +107,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">是否转运</label>
         <div class="layui-input-block">
-          <input type="text" name="transfer" disabled class="layui-input" :value="DeviceInfo.deviceTransport = 0 ? '是' : (DeviceInfo.deviceTransport == 1 ? '否' : '')" />
+          <input type="text" name="transfer" disabled class="layui-input" :value="DeviceInfo.deviceTransport" />
         </div>
       </div>
 
@@ -154,7 +154,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">是否入库</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" disabled name="storage" :value="DeviceInfo.stockInState = 0 ? '是' : (DeviceInfo.stockInState == 1 ? '否' : '')" />
+          <input type="text" class="layui-input" disabled name="storage" :value="DeviceInfo.stockInState" />
         </div>
       </div>
 
@@ -168,7 +168,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">是否回款</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" disabled name="returned_money" :value="DeviceInfo.payState = 0 ? '已回款' : (DeviceInfo.payState == 1 ? '未回款' : '')" />
+          <input type="text" class="layui-input" disabled name="returned_money" :value="DeviceInfo.payState" />
         </div>
       </div>
 

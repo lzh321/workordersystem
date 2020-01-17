@@ -18,12 +18,12 @@
       </div>
       <div class="dataList_table">
         <table id="roleManagement" lay-filter="roleManagement" lay-data="{id: 'serachData'}"></table>
-        <div id="barDemo" style="display:none">
+        <!-- <div id="barDemo" style="display:none">
           <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-          <a class="layui-btn layui-btn-xs" style="display:none" lay-event="privilegeAssign">权限分配</a>
+          <a class="layui-btn layui-btn-xs" lay-event="menuAssignment">菜单分配</a>
           <a class="layui-btn layui-btn-xs" style="display:none" lay-event="buttonAssign">按钮分配</a>
           <a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -53,7 +53,7 @@ export default {
         table.reload("serachData", {
           url: "/api/getRoleInfoList",
           where: data.field,
-          page: { curr: 1 }
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例
@@ -96,7 +96,8 @@ export default {
               title: "角色编号",
               width: 200,
               sort: false,
-              align: "center"
+              align: "center",
+              hide: true
             },
             {
               field: "roleName",
@@ -105,10 +106,16 @@ export default {
               align: "center"
             },
             {
-              field: "operation",
+              field: "roleName",
               title: "操作",
               align: "center",
-              toolbar: "#barDemo"
+              // toolbar: "#barDemo",
+              templet: function(d) {
+                console.log(d.roleName)
+                
+                  return '<div id="barDemo" ><a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a><a class="layui-btn layui-btn-xs" lay-event="menuAssignment">菜单分配</a><a class="layui-btn layui-btn-xs" style="display:none" lay-event="buttonAssign">按钮分配</a><a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a></div>'
+                
+              }
             }
           ]
         ]
@@ -120,31 +127,178 @@ export default {
         console.log(data);
         var roleId = data.roleId;
         if (obj.event === "deletion") {
-          layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
-            //向服务端发送删除指令
-            var delParam = {
-              userId: _this.$store.state.userId,
-              roleId: roleId
-            };
-            _this.$axios.post("/api/deleRoleInfo", delParam).then(res => {
-              console.log(res);
-              if (res.data.retCode == "000000") {
-                layer.msg(res.data.retMsg, { icon: 1 });
-                obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-                layer.close(index);
-              } else {
-                layer.msg(res.data.retMsg, { icon: 2 });
-              }
-            });
-          });
+          layer.confirm(
+            "你确定要删除这条记录？",
+            { icon: 3, title: "提示" },
+            function(index) {
+              //向服务端发送删除指令
+              var delParam = {
+                userId: _this.$store.state.userId,
+                roleId: roleId
+              };
+              _this.$axios.post("/api/deleRoleInfo", delParam).then(res => {
+                console.log(res);
+                if (res.data.retCode == "000000") {
+                  layer.msg(res.data.retMsg, { icon: 1 });
+                  obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                  layer.close(index);
+                } else {
+                  layer.msg(res.data.retMsg, { icon: 2 });
+                }
+              });
+            }
+          );
         } else if (obj.event === "edit") {
           //编辑
           sessionStorage.setItem("roleId", roleId);
+          sessionStorage.setItem("data", JSON.stringify(data));
           _this.$router.push("/addRole");
-        } else if (obj.event === "privilegeAssign") {
-          // 权限分配
-          // sessionStorage.setItem('deviceId',deviceId)
-          // _this.$router.push("/checkEquipmentInfo")
+        } else if (obj.event === "menuAssignment") {
+          // 菜单分配
+          layer.open({
+            type: 1,
+            title: "菜单分配",
+            area: ["800px", "500px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `<form style="padding: 15px 15px 0;" id="menuAssignment" class="layui-form layui-form-pane">
+                        <div style="display: flex;justify-content: space-between"><span>父级菜单</span><div style="display: flex;justify-content: space-between;width:55%"><span>子级菜单</span><span style="margin-right: 5px;">操作</span></div></div>
+                      </form>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              form.on("checkbox(check)", function(data) {
+                
+                if (_this.$(data.elem).is(":checked")) {
+                  _this.$(data.elem).parents("#menuList").find(".boxmenu .box")[0].checked = true;
+                }
+                var box = _this.$(data.elem).parents(".childrenMenu").find(".box")
+                  box.each(function(i) {
+                  // 判断input=checkbox被选中
+                   if(_this.$(this).is(':checked')){
+                       _this.$(data.elem).parents("#menuList").find(".boxmenu .box")[0].checked = true;
+                      return false
+                   }else{
+                       _this.$(data.elem).parents("#menuList").find(".boxmenu .box")[0].checked = false;
+                   }
+                  });
+                form.render();
+              });
+              form.on("checkbox(checks)",function(data){
+                var box = _this.$(data.elem).parents("#menuList").find(".childrenMenu").find(".box")
+                console.log(box)
+                if (_this.$(data.elem).is(":checked")) {
+                  for(var i = 0; i < box.length; i++){
+                    box[i].checked = true
+                  }
+                }else{
+                  for(var i = 0; i < box.length; i++){
+                    box[i].checked = false
+                  }
+                }
+                form.render();
+              })
+              var userMenuList = [];
+              var menuList = [];
+
+              _this.$axios
+                .post("/api/getMenuListByRoleId", {
+                  userId: _this.$store.state.userId,
+                  seleRoleId: data.roleId
+                })
+                .then(res => {
+                  console.log(res);
+                  userMenuList = res.data.body.menuList;
+                });
+
+              _this.$axios
+                .post("/api/getAllMenuList", {
+                  userId: _this.$store.state.userId
+                })
+                .then(res => {
+                  console.log(res);
+                  menuList = res.data.body;
+                  var str = "";
+                  for (var i = 0; i < menuList.length; i++) {
+                    str +=
+                      '<div id="menuList" style="display: flex;justify-content: space-between;border: 1px solid #ccc;" ><span style="display: flex;justify-content: center;align-items: center;border-right:1px solid #ccc" class="boxmenu"><input type="checkbox" class="box" name="menu' +
+                      menuList[i].menuId +
+                      '" title="' +
+                      menuList[i].menuName +
+                      '" value="' +
+                      menuList[i].menuId +
+                      '" lay-skin="primary" lay-filter="checks"></span><div class="childrenMenu" style="display: flex;justify-content: space-between; flex-direction: column;width:57%">';
+
+                    for (var j = 0; j < menuList[i].sonList.length; j++) {
+                      str +=
+                        '<div style="display: flex;justify-content: space-between"><span style="width:90px;text-align:center">' +
+                        menuList[i].sonList[j].menuName +
+                        '</span><input type="checkbox" class="box" name="menu' +
+                        menuList[i].sonList[j].menuId +
+                        '" title="" value="' +
+                        menuList[i].sonList[j].menuId +
+                        '" lay-skin="primary" lay-filter="check"></div>';
+                    }
+
+                    // if(menuList[i].menuPno !== 1){
+
+                    //    str += '<span>'+ menuList[i].menuName +'</span><span><input type="checkbox" class="box" name="menu'+menuList[i].menuId +'" title="" value="'+ menuList[i].menuId +'" lay-skin="primary"></span>'
+
+                    // }
+                    str += "</div></div>";
+                  }
+                  _this.$("#menuAssignment").append(str);
+
+                  for (var z = 0; z < userMenuList.length; z++) {
+                    for (var j = 0; j < _this.$(".box").length; j++) {
+                      if (userMenuList[z].menuId == _this.$(".box")[j].value) {
+                        _this.$(".box")[j].checked = true;
+                        
+                      }
+                      if (_this.$(".box")[j].checked == true) {
+                        _this.$(_this.$(".box")[j]).parents("#menuList").find(".boxmenu .box")[0].checked = true;
+                      }
+                    }
+                  }
+                  console.log(_this.$(".box"));
+                  setTimeout(() => {
+                    form.render();
+                  }, 200);
+                });
+            },
+            yes: function(index, layero) {
+              // 获取当前用户的角色
+              var menuAssignment = _this.$("#menuAssignment").serializeObject();
+              var arr = [];
+              Object.keys(menuAssignment).forEach(function(key) {
+                arr.push(menuAssignment[key]);
+              });
+              console.log(data);
+              console.log(arr);
+
+              _this.$axios
+                .post("/api/allotMenuInfo", {
+                  userId: _this.$store.state.userId,
+                  roleId: data.roleId,
+                  menuIds: arr.toString()
+                })
+                .then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    setTimeout(() => {
+                      _this.$router.push("/roleManagement?type=roleManagement");
+                    }, 3000);
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+              layer.close(index);
+              return false;
+            },
+            btnAlign: "c"
+          });
+          return false;
         } else if (obj.event === "buttonAssign") {
           //按钮分配
         }
@@ -152,7 +306,7 @@ export default {
     });
   },
   created() {
-    sessionStorage.clear()
+    sessionStorage.clear();
     this.type = this.$route.query.type;
     var data = {
       userId: this.$store.state.userId,

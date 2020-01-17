@@ -30,7 +30,13 @@ export default {
   },
 
   created() {
-    this.getNetworkList();
+    var networkId = this.$route.query.networkId
+    this.axios.post("/api/getDeviceNumberListByNetworkId",{networkId: networkId}).then(res=>{
+      console.log(res)
+      if(res.data.retCode == '000000'){
+        this.DeviceNumber = res.data.body.modelList[0].deviceNumberList
+      }
+    })
   },
   // activated() {
   //   this.getNetworkList();

@@ -44,6 +44,7 @@ export default {
   },
   methods: {
     ...mapMutations(["changeLogin"]),
+
     login: function() {
       if (this.userId == "") {
         layui.use("layer", function() {
@@ -90,6 +91,14 @@ export default {
   },
   created() {
     sessionStorage.clear();
+    let _this = this;
+    document.onkeypress = function(e) {
+      var keycode = document.all ? event.keyCode : e.which;
+      if (keycode == 13) {
+        _this.login();// 登录方法名
+         return false;
+      }
+    };
   }
 };
 </script>
@@ -174,10 +183,7 @@ export default {
 input:focus::-webkit-input-placeholder {
   color: transparent;
 }
-.userId {
-}
-.password {
-}
+
 .btn {
   padding: 40px 0px 0 40px;
   width: 65%;

@@ -109,7 +109,7 @@ export default {
           table.reload("serachData", {
             url: "/api/getCoordinateInfoList",
             where: data.field,
-            page: { curr: 1 }
+            page: { curr: 1, limit: 10 }
           });
         });
         //第一个实例
@@ -364,5 +364,9 @@ export default {
 }
 .layui-btn {
   margin-bottom: 0;
+}
+.layui-table-tips-c{
+  display: flex;
+  padding: 0 !important;
 }
 </style>

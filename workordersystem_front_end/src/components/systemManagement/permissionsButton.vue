@@ -7,7 +7,7 @@
         <h2>数据列表</h2>
         <p class="layui-btn-container">
           <router-link
-            to="/addMenu"
+            to="/addPermissionsButton"
             class="layui-btn layui-btn-normal layui-btn-sm"
             tag="button"
             type="button"
@@ -51,7 +51,7 @@ export default {
         table.reload("serachData", {
           url: "/api/getBtnList",
           where: data.field,
-          page: { curr: 1 }
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例
@@ -66,7 +66,7 @@ export default {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
             count: res.body.totalCount, //解析数据长度
-            data: res.body.btnList //解析数据列表
+            data: res.body.roleList //解析数据列表
           };
         },
         request: {
@@ -90,28 +90,25 @@ export default {
               type: "numbers"
             },
             {
-              field: "menuId",
+              field: "btnId",
               width: 200,
               sort: false,
               align: "center",
               hide: true
             },
             {
-              field: "menuNo",
+              field: "btnCode",
               title: "按钮编码",
               width: 200,
               sort: false,
               align: "center"
             },
             {
-              field: "menuPno",
+              field: "btnName",
               title: "按钮名称",
               width: 260,
               sort: false,
               align: "center",
-              templet: function(d) {
-                return d.menuPno == 1 ? "父级菜单" : "子级菜单";
-              }
             },
             {
               field: "menuName",
@@ -133,15 +130,15 @@ export default {
       table.on("tool(permissionsButton)", function(obj) {
         var data = obj.data;
         console.log(data);
-        var menuId = data.menuId;
+        var btnId = data.btnId;
         if (obj.event === "deletion") {
           layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
             //向服务端发送删除指令
             var delParam = {
               userId: _this.$store.state.userId,
-              menuId: menuId
+              btnId: btnId
             };
-            _this.$axios.post("/api/deleMenuInfo", delParam).then(res => {
+            _this.$axios.post("/api/deleBtnInfo", delParam).then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
@@ -154,8 +151,9 @@ export default {
           });
         } else if (obj.event === "edit") {
           //编辑
-          // sessionStorage.setItem('listId',listId)
-          // _this.$router.push('/addInstitution')
+          sessionStorage.setItem('btnId',btnId)
+          sessionStorage.setItem('data',JSON.stringify(data))
+          _this.$router.push('/addPermissionsButton')
         }
       });
     });

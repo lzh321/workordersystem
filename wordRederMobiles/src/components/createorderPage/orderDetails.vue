@@ -1,6 +1,6 @@
 <template>
   <div class="orderDetails">
-    <customerInfo :orderInfo="orderInfo" :orderStatus="orderStatus" ></customerInfo>
+    <customerInfo v-if="orderStatus == 7 ? false : true" :orderInfo="orderInfo" :orderStatus="orderStatus" ></customerInfo>
     <!-- 待派单 -->
     <sendOrders :orderStatus="orderStatus" v-if="orderStatus == 1"></sendOrders> 
     <!-- 待受理 -->

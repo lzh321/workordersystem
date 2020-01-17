@@ -33,49 +33,60 @@
         />
         <span>可选</span>
       </div>
-      <div @click="selectNetwork(bankList.customerId)">
+      <div @click="selectNetwork(bankList.customerId ? bankList.customerId : orderInfo.customerId)">
         <label for>
           <span>设备投放点</span>：
         </label>
-        <input
-          name="networkId"
-          :value="networkList.id ? networkList.id : orderInfo.networkId"
-          type="hidden"
-        />
-        <input
-          type="text"
-          :value="networkList.networName ? networkList.networName : orderInfo.networName"
-          placeholder="请选择设备投放点"
-        />
+        <div v-if="networkList">
+          <input name="networkId" :value="networkList.id" type="hidden" />
+          <input type="text" :value="networkList.networName" placeholder="请选择设备投放点" />
+        </div>
+        <div v-else>
+          <input name="networkId" :value="orderInfo.networkId" type="hidden" />
+          <input type="text" :value="orderInfo.networName" placeholder="请选择设备投放点" />
+        </div>
+
         <span>可选</span>
       </div>
       <div>
         <label for>
           <span>投放点地址</span>：
         </label>
-        <input
-          type="text"
-          :value="networkList.networAddress ? networkList.networAddress : orderInfo.networAddress"
-          disabled
-        />
+        <input v-if="networkList" type="text" :value="networkList.networAddress" disabled />
+        <input v-else type="text" :value="orderInfo.networAddress" disabled />
       </div>
       <div>
         <label for>
           <span>联系人</span>：
         </label>
-        <input type="text" :value="orderInfo.contactName" name="contactName" />
+        <input
+          v-model="contactName"
+          @keyup="setContactName"
+          type="text"
+          name="contactName"
+        />
       </div>
       <div>
         <label for>
           <span>联系电话</span>：
         </label>
-        <input type="text" :value="orderInfo.contactPhone" name="contactPhone" />
+        <input
+          v-model="contactPhone"
+          @keyup="setContactPhone"
+          type="text"
+          name="contactPhone"
+        />
       </div>
-      <div>
+      <div class="agreenmentId">
         <label for>
           <span>合同</span>：
         </label>
-        <input type="text" :value="orderInfo.agreenmentId" name="agreenmentId" />
+        <input
+          v-model="agreenmentId"
+          @keyup="setAgreenmentId"
+          type="text"
+          name="agreenmentId"
+        />
       </div>
       <div>
         <h2>故障信息</h2>
@@ -84,72 +95,123 @@
         <label for>
           <span>工单来源</span>：
         </label>
-        <input type="text" :value="orderInfo.orderSource" />
-        <input name="orderSource" :value="orderInfo.orderSource" type="hidden" />
+        <div v-if="orderSource">
+          <input type="text" :value="orderSource.name" />
+          <input name="orderSource" :value="orderSource.name" type="hidden" />
+        </div>
+        <div v-else>
+          <input type="text" :value="orderInfo.orderSource" />
+          <input name="orderSource" :value="orderInfo.orderSource" type="hidden" />
+        </div>
+
+        
         <span>可选</span>
       </router-link>
       <router-link tag="div" to="/orderType">
         <label for>
           <span>工单类型</span>：
         </label>
-        <input type="text" :value="orderInfo.orderType" />
-        <input name="orderType" :value="orderInfo.orderType" type="hidden" />
+        <div v-if="orderType">
+          <input type="text" :value="orderType.name" />
+          <input name="orderType" :value="orderType.name" type="hidden" />
+        </div>
+        <div v-else>
+          <input type="text" :value="orderInfo.orderType" />
+          <input name="orderType" :value="orderInfo.orderType" type="hidden" />
+        </div>
+        
         <span>可选</span>
       </router-link>
       <div>
         <label for>
           <span>紧急程度</span>：
         </label>
+        
         <input
           type="radio"
           name="orderUrgency"
           value="1"
-          :checked="orderInfo.orderUrgency == 1 ? true : false"
+          :checked="orderUrgency == 1 ? true : false"
+          v-model="orderUrgency"
+          @change="setVal(orderUrgency)"
         />紧急
         <input
           type="radio"
           name="orderUrgency"
           value="0"
-          :checked="orderInfo.orderUrgency == 0 ? true : false"
+          v-model="orderUrgency"
+          @change="setVal(orderUrgency)"
+          :checked="orderUrgency == 0 ? true : false"
         />一般
       </div>
       <div>
         <label for>
           <span>报障时间</span>：
         </label>
-        <input type="text" :value="orderInfo.reportTime" id="reportTime" name="reportTime" />
+        <input v-if="reportTime" type="text" v-model="reportTime" id="reportTime" name="reportTime" />
+        <input v-else type="text" :value="orderInfo.reportTime" id="reportTime" name="reportTime" />
         <span>可选</span>
       </div>
-      <div @click="selectmodelType(networkList.id)" tag="div">
+      <div @click="selectmodelType(networkList ? networkList.id : orderInfo.networkId)" tag="div">
         <label for>
           <span>设备型号</span>：
         </label>
-        <input
+        <div v-if="modelType">
+          <input
           type="text"
-          :value="modelType.modelType ? modelType.modelType : orderInfo.modelType"
+          :value="modelType.modelType "
           placeholder="请选择设备型号"
-        />
-        <input
-          name="modelId"
-          :value="modelType.modelId ? modelType.modelId : orderInfo.modelId "
-          type="hidden"
-        />
+          />
+          <input
+            name="modelId"
+            :value="modelType.modelId"
+            type="hidden"
+          />
+        </div>
+        <div v-else>
+          <input
+          type="text"
+          :value=" orderInfo.modelType"
+          placeholder="请选择设备型号"
+          />
+          <input
+            name="modelId"
+            :value="orderInfo.modelId "
+            type="hidden"
+          />
+        </div>
+        
         <span>可选</span>
       </div>
-      <div @click="selectDeviceNumber(modelType.modelType)">
+      <div @click="selectDeviceNumber(networkList ? networkList.id : orderInfo.networkId)">
         <label for>
           <span>设备序列号</span>：
         </label>
-        <input
-          type="text"
-          :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber"
-          placeholder="请选择设备序列号"
-        />
-        <input
-          name="deviceNumber"
-          :value="DeviceNumber.deviceNumber ? DeviceNumber.deviceNumber : orderInfo.deviceNumber"
-          type="hidden"
-        />
+        <div v-if="DeviceNumber">
+          <input
+            type="text"
+            :value="DeviceNumber.deviceNumber"
+            placeholder="请选择设备序列号"
+          />
+          <input
+            name="deviceNumber"
+            :value="DeviceNumber.deviceNumber"
+            type="hidden"
+          />
+        </div>
+        <div v-else>
+          <input
+            type="text"
+            :value="orderInfo.deviceNumber"
+            placeholder="请选择设备序列号"
+          />
+          <input
+            name="deviceNumber"
+            :value="orderInfo.deviceNumber"
+            type="hidden"
+          />
+        </div>
+        
         <span>可选</span>
       </div>
       <div class="problem">
@@ -157,9 +219,9 @@
           <span>问题描述</span>：
         </label>
         <textarea
+          v-model="problemDescription"
+          @keyup="setProblemDescription"
           name="problemDescription"
-          :value="orderInfo.problemDescription"
-          id
           cols="30"
           rows="10"
         ></textarea>
@@ -192,7 +254,7 @@
         </div>
       </div>-->
 
-      <div class="affix layui-form-item">
+      <div v-if="orderStatus == 7 ? false : true" class="affix layui-form-item">
         <div>
           <label for>
             <span>附件</span>：
@@ -224,7 +286,7 @@
         </div>
       </div>
 
-      <router-link to="/userList" tag="div">
+      <router-link v-if="orderStatus == 7 ? false : true" to="/userList" tag="div">
         <label for>
           <span>指派给</span>：
         </label>
@@ -246,18 +308,18 @@
 
         <span>可选</span>
       </router-link>
-      <div class="remakeInfo">
+      <div v-if="orderStatus == 7 ? false : true" class="remakeInfo">
         <label for>
           <span>备注</span>：
         </label>
         <textarea name="remark" cols="30" rows="10"></textarea>
       </div>
-      <div class="Log">
+      <div v-if="orderStatus == 7 ? false : true" class="Log">
         <orderLog></orderLog>
       </div>
     </form>
     <div class="perchs"></div>
-    <div class="actionBtn">
+    <div v-if="orderStatus == 7 ? false : true" class="actionBtn">
       <ul>
         <li>
           <button :disabled="isDisabled" @click="bill">
@@ -286,22 +348,29 @@
 import orderLog from "../orderComponents/orderLog";
 export default {
   name: "bill",
+  props: ["orderStatus"],
   data() {
     return {
       fileList: [],
       orderInfoId: sessionStorage.getItem("orderInfoId"),
       orderInfo: {},
       bankList: {},
-      networkList: {},
-      orderSource: {},
-      orderType: {},
-      modelType: {},
+      networkList: null,
+      orderSource: null,
+      orderType: null,
+      modelType: null,
       userList: {},
       imgData: "",
       imgDataArray: [],
-      DeviceNumber: {},
+      DeviceNumber: null,
       isDisabled: false,
-      DomainName: this.$store.state.url
+      DomainName: this.$store.state.url,
+      contactName: "",
+      contactPhone: "",
+      agreenmentId: "",
+      reportTime: sessionStorage.getItem("reportTime") ? sessionStorage.getItem("reportTime") : "",
+      problemDescription: "",
+      orderUrgency: ""
     };
   },
   components: {
@@ -318,7 +387,11 @@ export default {
         elem: "#reportTime", //指定元素
         type: "datetime",
         closeStop: "#reportTime",
-        trigger: "click"
+        trigger: "click",
+        done: function(value){
+          console.log(value)
+          sessionStorage.setItem("reportTime",value)
+        }
       });
 
       //上传图片
@@ -387,18 +460,43 @@ export default {
     },
     selectCustomer() {
       this.$router.push("/selectBank");
-      sessionStorage.removeItem("networkdata");
-      sessionStorage.removeItem("DeviceNumber");
+      sessionStorage.setItem("networkdata",JSON.stringify({}));
+      sessionStorage.setItem("modelType",JSON.stringify({}));
+      sessionStorage.setItem("DeviceNumber",JSON.stringify({}));
     },
 
     selectNetwork(customerId) {
       this.$router.push("/network?customerId=" + customerId);
+      sessionStorage.setItem("modelType",JSON.stringify({}));
+      sessionStorage.setItem("DeviceNumber",JSON.stringify({}));
     },
     selectmodelType(networkId) {
       this.$router.push("/modelType?networkId=" + networkId);
     },
-    selectDeviceNumber(modelType) {
-      this.$router.push("/DeviceNumber?modelType=" + modelType);
+    selectDeviceNumber(networkId) {
+      this.$router.push("/DeviceNumber?networkId=" + networkId);
+    },
+    
+    setContactName() {
+      console.log(this.contactName);
+      sessionStorage.setItem("contactName", this.contactName);
+    },
+    setContactPhone() {
+      console.log(this.contactPhone);
+      sessionStorage.setItem("contactPhone", this.contactPhone);
+    },
+    setAgreenmentId() {
+      console.log(this.agreenmentId);
+      sessionStorage.setItem("agreenmentId", this.agreenmentId);
+    },
+    setProblemDescription() {
+      console.log(this.problemDescription);
+      sessionStorage.setItem("problemDescription", this.problemDescription);
+      this.reportTime = sessionStorage.getItem("reportTime") ? sessionStorage.getItem("reportTime") : ""
+    },
+    setVal(orderUrgency){
+      console.log(orderUrgency)
+      sessionStorage.setItem("orderUrgency",orderUrgency)
     },
     send() {
       var bankList = sessionStorage.getItem("bankList");
@@ -412,6 +510,7 @@ export default {
       if (bankList) {
         //客户名称
         this.bankList = JSON.parse(bankList);
+        this.orderInfo.networName = ""
       }
       if (networkList) {
         //投放点
@@ -457,6 +556,11 @@ export default {
               this.imgDataArray.push(res.data.body.orderPhoto.split(",")[i]);
             }
           }
+          this.contactName = sessionStorage.getItem("contactName") ? sessionStorage.getItem("contactName") : res.data.body.contactName
+          this.contactPhone = sessionStorage.getItem("contactPhone") ? sessionStorage.getItem("contactPhone") : res.data.body.contactPhone
+          this.agreenmentId = sessionStorage.getItem("agreenmentId") ? sessionStorage.getItem("agreenmentId") : res.data.body.agreenmentId
+          this.problemDescription = sessionStorage.getItem("problemDescription") ? sessionStorage.getItem("problemDescription") : res.data.body.problemDescription
+          this.orderUrgency = sessionStorage.getItem("orderUrgency") ? sessionStorage.getItem("orderUrgency") : res.data.body.orderUrgency
         }
       });
     },
@@ -502,22 +606,22 @@ export default {
         "是否确认关闭当前工单？",
         { icon: 3, title: "提示" },
         function(index) {
-      //向服务端发送关单指令
-      _this.axios.post("/api/alterOrderInfo", createData).then(res => {
-        console.log(res);
-        if (res.data.retCode == "000000") {
-          layer.msg(res.data.retMsg, { icon: 1 });
-          sessionStorage.clear();
-          setTimeout(() => {
-            _this.$router.push("/wordOrder?type=wordOrder");
-          }, 3000);
-        } else {
-          setTimeout(() => {
-            _this.isDisabled = false;
-          }, 2000);
-          layer.msg(res.data.retMsg, { icon: 2 });
-        }
-      });
+          //向服务端发送关单指令
+          _this.axios.post("/api/alterOrderInfo", createData).then(res => {
+            console.log(res);
+            if (res.data.retCode == "000000") {
+              layer.msg(res.data.retMsg, { icon: 1 });
+              sessionStorage.clear();
+              setTimeout(() => {
+                _this.$router.push("/wordOrder?type=wordOrder");
+              }, 3000);
+            } else {
+              setTimeout(() => {
+                _this.isDisabled = false;
+              }, 2000);
+              layer.msg(res.data.retMsg, { icon: 2 });
+            }
+          });
         }
       );
     }
@@ -526,12 +630,10 @@ export default {
     this.getOrderInfo();
     this.send();
   },
-  updated() {
-    this.getImg();
-  },
-  activated() {
-    this.getOrderInfo();
-    this.send();
+  updated(){
+    layui.use(["laydate"],function(){
+      layui.laydate.render()
+    })
   }
 };
 </script>
@@ -541,15 +643,14 @@ export default {
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* height: 100%; */
 }
 form {
   padding: 0px;
   flex: 1;
   overflow: hidden;
-  overflow-y:scroll;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  
 }
 form > div {
   display: flex;
@@ -557,6 +658,9 @@ form > div {
   padding: 10px 15px;
   border-bottom: 1px solid #f0f0f0;
   font-size: 15px;
+}
+form > div div{
+  flex: 1;
 }
 h2 {
   font-size: 16px;
@@ -741,4 +845,8 @@ textarea {
   right: 2px;
   top: 0px;
 }
+.agreenmentId label::before {
+  content: "";
+}
+
 </style>

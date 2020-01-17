@@ -1,25 +1,29 @@
 <template>
   <div class="side">
-    <ul class="side_nav layui-nav layui-nav-tree layui-nav-side">
+    <ul id="nav" class="side_nav layui-nav layui-nav-tree layui-nav-side" lay-filter="side">
       <li
-        v-for="(nav_item, index) in nav"
-        :key="index"
-        ref="nav"
-        tag="li"
-        class="layui-nav-item"
-        @click="active(nav_item.nav_title)"
+        v-for="(items,index) in menuList"
+        :key="items.menuId"
+        :class="index == curId ? 'layui-nav-item layui-this' : 'layui-nav-item'"
+        @click="active(items.menuName,index)"
       >
-        <router-link :to="nav_item.path ? nav_item.path : ''" tag="a">{{nav_item.nav_title}}</router-link>
-        <dl
-          v-if="nav_item.children ? true : false"
-          class="layui-nav-child"
-        >
+        <router-link :to="items.menuUrl ? items.menuUrl : ''" tag="a">{{items.menuName}}</router-link>
+      </li>
+      <li
+        v-for="nav_item in parentMenus"
+        :key="nav_item.menuId"
+        class="layui-nav-item"
+        @click="active(nav_item.menuName)"
+      >
+        <router-link :to="nav_item.menuUrl ? nav_item.menuUrl : ''" tag="a">{{nav_item.menuName}}</router-link>
+        <dl v-if="nav_item.menuPno == 1" class="layui-nav-child">
           <dd
-            v-for="(item,index)  in nav_item.children"
-            :key="index"        
-            @click="actives(item.title)"
+            v-for="item in childrens"
+            :key="item.menuId"
+            @click="actives(item.menuName)"
+            v-show="nav_item.menuNo == item.menuPno ? true : false"
           >
-            <router-link :to="item.path ? item.path : ''" tag="a">{{item.title}}</router-link>
+            <router-link :to="item.menuUrl ? item.menuUrl : ''" tag="a">{{item.menuName}}</router-link>
           </dd>
         </dl>
       </li>
@@ -29,104 +33,114 @@
 <script>
 export default {
   name: "Side",
+  inject: ["reload"],
   data() {
     return {
-      nav: [
-        { nav_title: "工作台", path: "/workTable?type=workTable" },
+      childrens: [],
+      parentMenus: [],
+      curId: 0,
+      menuList: [
+        { menuName: "工作台", menuUrl: "/workTable?type=workTable" },
         {
-          nav_title: "工单管理",
-          path: "/workOrderManagement?type=workOrderManagement"
+          menuName: "工单管理",
+          menuUrl: "/workOrderManagement?type=workOrderManagement"
         },
         {
-          nav_title: "协同管理",
-          path: "/synergyManagement?type=synergyManagement"
-        },
-        {
-          nav_title: "用户管理",
-          children: [
-            {
-              title: "员工管理",
-              path: "/staffManagement?type=staffManagement"
-            },
-            {
-              title: "投放点管理",
-              path: "/NetworkList?type=NetworkList"
-            },
-            {
-              title: "客户列表",
-              path: "/CustomerNameList?type=CustomerNameList"
-            },
-            
-          ]
-        },
-        {
-          nav_title: "系统管理",
-          children: [
-            {
-              title: "企业机构管理",
-              path: "/businessEnterprise?type=businessEnterprise"
-            },
-            {
-              title: "菜单管理",
-              path: "/menuManagement?type=menuManagement"
-            },
-            {
-              title: "角色管理",
-              path: "/roleManagement?type=roleManagement"
-            },
-            {
-              title: "权限按钮",
-              path: "/permissionsButton?type=permissionsButton"
-            },
-            {
-              title: "消息模块管理",
-              path: "/messageModule?type=messageModule"
-            },
-            {
-              title: "消息推送列表",
-              path: "/messagePushList?type=messagePushList"
-            }
-          ]
-        },
-        {
-          nav_title: "设备管理",
-          children: [
-            { title: "设备列表", path: "/equipmentList?type=equipmentList" },
-            { title: "设备类型管理", path: "/equipmentType?type=equipmentType" }
-          ]
+          menuName: "协同管理",
+          menuUrl: "/synergyManagement?type=synergyManagement"
         }
+        // {
+        //   menuName: "菜单管理",
+        //   menuUrl: "/menuManagement?type=menuManagement"
+        // },
       ],
       queryType: ""
     };
   },
   methods: {
-    active: function(title) {
+    active: function(title, index) {
+      this.curId = index;
       this.$emit("titleFn", title);
-      // console.log(title)
+      layui.use("element", function() {
+        layui.element.render();
+      });
     },
     actives: function(title) {
       // console.log(title);
       this.$emit("titleFn", title);
+    },
+    getData: function() {
+      var data = {
+        userId: this.$store.state.userId,
+        seleUserId: this.$store.state.userId,
+      };
+      // this.$axios.post("/api/getMenuList", data).then(res => {
+      //   console.log(res);
+      //   for (var i = 0; i < res.data.body.menuList.length; i++) {
+      //     if (res.data.body.menuList[i].menuPno == 1) {
+      //       this.parentMenus.push(res.data.body.menuList[i]);
+      //     } else {
+      //       this.childrens.push(res.data.body.menuList[i]);
+      //     }
+      //   }
+      // });
+      this.$axios.post("/api/getMenuListByUserId", data).then(res => {
+        console.log(res);
+        //去重
+        // var arr = res.data.body.menuList;
+        // var obj = {}
+        // let menuList = arr.reduce((cur, next) => {
+        //   obj[next.menuPno] ? "" : (obj[next.menuPno] = true && cur.push(next));
+        //   return cur;
+        // }, []);
+        // console.log(menuList);
+
+        for (var i = 0; i < res.data.body.menuList.length; i++) {
+          for (var i = 0; i < res.data.body.menuList.length; i++) {
+            if (res.data.body.menuList[i].menuPno == 1) {
+              this.parentMenus.push(res.data.body.menuList[i]);
+            } else {
+              this.childrens.push(res.data.body.menuList[i]);
+            }
+          }
+        }
+      });
     }
   },
-  mounted(){
-    layui.use('element', function(){
+  mounted() {
+    var _this = this;
+    layui.use("element", function() {
+      _this
+        .$("#nav")
+        .find("span.layui-nav-bar")
+        .remove();
       var element = layui.element;
-      element.render()
-      //…
+      element.render();
     });
   },
   created() {
+    this.getData();
     if (this.$route.query.type !== "workTable") {
       this.$router.push("/workTable?type=workTable");
     }
-    var data = {
-      userId: this.$store.state.userId,
-
-    }
-    this.$axios.post('/api/getFatherMenuList',data).then(res=>{
-      console.log(res)
-    })
+  },
+  computed: {
+    // parentMenu() {
+    //   return this.parentMenus.reverse();
+    // },
+    // children() {
+    //   return this.childrens.reverse();
+    // }
+  },
+  updated() {
+    var _this = this;
+    layui.use("element", function() {
+      _this
+        .$("#nav")
+        .find("span.layui-nav-bar")
+        .remove();
+      layui.element.render();
+    });
   }
 };
 </script>
@@ -135,14 +149,14 @@ export default {
 <style scoped>
 .side {
   width: 180px;
-  background: #393D49;
+  background: #393d49;
   height: 100%;
   color: aliceblue;
   overflow: hidden;
   /* overflow: hidden;
   overflow-y: scroll; */
 }
-.side_nav{
+.side_nav {
   position: initial;
   width: 197px;
   height: 100%;
@@ -151,7 +165,6 @@ export default {
 }
 .side_nav li {
   width: 180px;
-
 }
 /* .side_nav li {
   min-height: 70px;

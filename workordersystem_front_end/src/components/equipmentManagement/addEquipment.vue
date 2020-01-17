@@ -393,8 +393,8 @@
         <div class="layui-input-block">
           <select name="deviceTransport" id="deviceTransport" lay-verify>
             <option value>请选择是否转运</option>
-            <option value="1">是</option>
-            <option value="2">否</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
           </select>
         </div>
       </div>
@@ -568,8 +568,8 @@
         <div class="layui-input-block">
           <select name="stockInState" id="stockInState" lay-verify>
             <option value>请选择是否入库</option>
-            <option value="1">是</option>
-            <option value="2">否</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
           </select>
         </div>
       </div>
@@ -605,8 +605,8 @@
         <div class="layui-input-block">
           <select name="payState" id="payState" lay-verify>
             <option value>请选择是否回款</option>
-            <option value="1">是</option>
-            <option value="2">否</option>
+            <option value="是">是</option>
+            <option value="否">否</option>
           </select>
         </div>
       </div>
@@ -961,7 +961,6 @@ export default {
             console.log(res);
             if (res.data.retCode == "000000") {
               layer.msg(res.data.retMsg, { icon: 1 });
-              sessionStorage.removeItem("deviceId");
               setTimeout(function() {
                 _this.$router.push("/equipmentList?type=equipmentList");
               }, 3000);

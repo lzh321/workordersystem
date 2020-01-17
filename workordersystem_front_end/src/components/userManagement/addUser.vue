@@ -27,7 +27,7 @@
               type="text"
               name="userName"
               required
-              lay-verify="required"
+              lay-verify="userName"
               placeholder="请输入姓名"
               autocomplete="off"
               :value="UserInfo.userName ? UserInfo.userName : ''"
@@ -42,7 +42,7 @@
               type="text"
               :name="loginId"
               required
-              lay-verify="required"
+              lay-verify="loginId"
               placeholder="请输入账号"
               autocomplete="off"
               class="layui-input"
@@ -59,7 +59,7 @@
               type="password"
               name="userPassword"
               required
-              lay-verify="required"
+              lay-verify="userPassword"
               placeholder="请输入密码"
               autocomplete="off"
               class="layui-input"
@@ -107,7 +107,7 @@
             <input
               type="text"
               name="userMail"
-              lay-verify="required"
+              lay-verify="email"
               placeholder="请输入邮箱"
               autocomplete="off"
               :value="UserInfo.userMail ? UserInfo.userMail : ''"
@@ -364,7 +364,7 @@ export default {
 
       //表单验证
       form.verify({
-        username: function(value, item) {
+        userName: function(value, item) {
           //value：表单的值、item：表单的DOM对象
           if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
             return "用户名不能有特殊字符";
@@ -376,10 +376,14 @@ export default {
             return "用户名不能全为数字";
           }
         },
-
+        loginId:function(value, item) {
+           if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+            return "账号不能有特殊字符";
+          }
+        },
         //我们既支持上述函数式的方式，也支持下述数组的形式
         //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
-        pass: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"]
+        userPassword: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"]
       });
     });
   },
@@ -390,21 +394,21 @@ export default {
         //公司列表
         console.log(res);
         if (res.data.retCode == "000000") {
-          this.companyList = res.data.body.list;
+          this.companyList = res.data.body.CompanyNameList;
         }
       });
       this.$axios.post("/api/getDeptList", userId).then(res => {
         //部门列表
         console.log(res);
         if (res.data.retCode == "000000") {
-          this.DeptList = res.data.body.list;
+          this.DeptList = res.data.body.DeptNameList;
         }
       });
       this.$axios.post("/api/getJobList", userId).then(res => {
         //职务列表
         console.log(res);
         if (res.data.retCode == "000000") {
-          this.JobList = res.data.body.list;
+          this.JobList = res.data.body.JobNameList;
         }
       });
     },

@@ -726,4 +726,7 @@ export default {
   font-size: 13px !important;
   color: blue !important;
 }
+.layui-table-tips-c{
+  padding: 0 !important;
+}
 </style>

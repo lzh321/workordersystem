@@ -1,6 +1,7 @@
 <template>
   <!-- 回访记录 -->
   <div class="returnVisit">
+    <bill :orderStatus="orderStatus"></bill>
     <orderInfo :orderInfo="orderInfo"></orderInfo>
     <form action id="formData">
       <div class="info">
@@ -10,28 +11,69 @@
         <label for>
           <span class="problem">问题是否已解决</span>：
         </label>
-        <input type="radio" name="isFinish" value="0" />已解决
-        <input type="radio" name="isFinish" value="1" />未解决
+        <input
+          type="radio"
+          name="isFinish"
+          v-model="isFinish"
+          @change="setIsFinishVal(isFinish)"
+          value="0"
+          :checked="isFinish == 0 ? true : false"
+        />已解决
+        <input
+          type="radio"
+          name="isFinish"
+          v-model="isFinish"
+          @change="setIsFinishVal(isFinish)"
+          value="1"
+          :checked="isFinish == 1 ? true : false"
+        />未解决
       </div>
       <div>
         <label for>
           <span>满意度情况</span>：
         </label>
-        <input type="radio" name="satisfiedState" value="0" />满意
-        <input type="radio" name="satisfiedState" value="1" />基本满意
-        <input type="radio" name="satisfiedState" value="2" />不满意
+        <input
+          type="radio"
+          name="satisfiedState"
+          v-model="satisfiedState"
+          @change="setVal(satisfiedState)"
+          value="0"
+          :checked="satisfiedState == 0 ? true : false"
+        />满意
+        <input
+          type="radio"
+          name="satisfiedState"
+          v-model="satisfiedState"
+          @change="setVal(satisfiedState)"
+          value="1"
+          :checked="satisfiedState == 1 ? true : false"
+        />基本满意
+        <input
+          type="radio"
+          name="satisfiedState"
+          v-model="satisfiedState"
+          @change="setVal(satisfiedState)"
+          value="2"
+          :checked="satisfiedState == 2 ? true : false"
+        />不满意
       </div>
       <div>
         <label for>
           <span>意见/建议</span>：
         </label>
-        <textarea name="adviseContent" cols="30" rows="10"></textarea>
+        <textarea
+          v-model="adviseContent"
+          @keyup="setAdviseContent(adviseContent)"
+          name="adviseContent"
+          cols="30"
+          rows="10"
+        ></textarea>
       </div>
       <div class="remakeInfo">
         <label for>
           <span>备注</span>：
         </label>
-        <textarea name="remark" cols="30" rows="10"></textarea>
+        <textarea name="remark" v-model="remark" @keyup="setRemark(remark)" cols="30" rows="10"></textarea>
       </div>
     </form>
     <orderLog></orderLog>
@@ -57,26 +99,63 @@
 
 <script>
 import orderInfo from "./orderInfo";
+import bill from "./bill";
 import orderLog from "./orderLog";
 export default {
   name: "returnVisit",
-  props: ["orderInfo"],
   data() {
     return {
       orderInfoId: sessionStorage.getItem("orderInfoId"),
-      isDisabled: false
+      orderInfo: {},
+      orderStatus: this.$route.query.orderStatus,
+      isDisabled: false,
+      isFinish: sessionStorage.getItem("isFinish") ? sessionStorage.getItem("isFinish") : 0,
+      satisfiedState: sessionStorage.getItem("satisfiedState") ? sessionStorage.getItem("satisfiedState") : 0,
+      adviseContent: sessionStorage.getItem("adviseContent") ? sessionStorage.getItem("adviseContent") : "",
+      remark: sessionStorage.getItem("remark") ? sessionStorage.getItem("remark") : ""
     };
   },
   methods: {
+    setIsFinishVal(isFinish) {
+      sessionStorage.setItem("isFinish",isFinish)
+    },
+    setVal(satisfiedState) {
+      sessionStorage.setItem("satisfiedState",satisfiedState)
+    },
+    setAdviseContent(adviseContent) {
+      sessionStorage.setItem("adviseContent",adviseContent)
+    },
+    setRemark(remark) {
+      sessionStorage.setItem("remark",remark)
+    },
+    getOrderInfo() {
+      var data = {
+        userId: this.$store.state.userId,
+        orderInfoId: this.orderInfoId
+      };
+      this.axios.post("/api/getOrderInfo", data).then(res => {
+        console.log(res);
+        if (res.data.retCode == "000000") {
+          this.orderInfo = res.data.body;
+          this.imgData = res.data.body.orderPhoto;
+          for (var i = 0; i < res.data.body.orderPhoto.split(",").length; i++) {
+            if (res.data.body.orderPhoto.split(",")[i] !== "") {
+              this.imgDataArray.push(res.data.body.orderPhoto.split(",")[i]);
+            }
+          }
+        }
+      });
+    },
     kuantan() {
-      var createData = this.$("#formData").serializeObject();
-      this.orderInfo.userId = this.$store.state.userId;
-      this.orderInfo.isFinish = createData.isFinish;
-      this.orderInfo.adviseContent = createData.adviseContent;
-      this.orderInfo.remark = createData.remark;
-      this.orderInfo.satisfiedState = createData.satisfiedState;
-      this.orderInfo.orderInfoId = this.orderInfoId;
-      console.log(this.orderInfo);
+      var createData = this.$("#createData").serializeObject();
+      var formData = this.$("#formData").serializeObject();
+      createData.userId = this.$store.state.userId;
+      createData.isFinish = formData.isFinish;
+      createData.adviseContent = formData.adviseContent;
+      createData.remark = formData.remark;
+      createData.satisfiedState = formData.satisfiedState;
+      createData.orderInfoId = this.orderInfoId;
+      console.log(createData);
       // this.isDisabled = true;
 
       var _this = this;
@@ -85,7 +164,7 @@ export default {
         { icon: 3, title: "提示" },
         function(index) {
           //向服务端发送关单指令
-          _this.axios.post("/api/closeOrderInfo", _this.orderInfo).then(res => {
+          _this.axios.post("/api/closeOrderInfo", createData).then(res => {
             console.log(res);
             if (res.data.retCode == "000000") {
               layer.msg(res.data.retMsg, { icon: 1 });
@@ -107,8 +186,12 @@ export default {
       this.$router.push("/kuantanState?handleState=13");
     }
   },
+  created() {
+    this.getOrderInfo();
+  },
   components: {
     orderInfo,
+    bill,
     orderLog
   }
 };
@@ -205,6 +288,25 @@ h2 {
   position: fixed;
   width: 100%;
   bottom: 0;
+}
+.actionBtn ul {
+  width: 100%;
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: #f0f0f0;
+}
+.actionBtn ul li button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+  background: #f0f0f0;
+}
+.actionBtn ul li button img {
+  width: 21px;
+  height: 21px;
 }
 .actionBtn ul li:nth-child(1) button {
   color: #f8a32c;

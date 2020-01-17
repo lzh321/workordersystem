@@ -5,9 +5,12 @@
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
-        <p>
+        <div>
           <router-link to="/addNetwork" tag="button">添加</router-link>
-        </p>
+          <!-- <form action="" id="formData"> -->
+            <span class="layui-btn layui-btn-primary layui-btn-sm" id="leadIn"><i class="layui-icon">&#xe681;</i>导入</span>
+          <!-- </form> -->
+        </div>
       </div>
       <div class="dataList_table">
         <table id="demo" lay-filter="NetworkList" lay-data="{id: serachData}"></table>
@@ -24,6 +27,7 @@
 import dataScreening from "../dataScreening";
 export default {
   name: "NetworkList",
+  inject: ["reload"],
   data() {
     return {
       type: ""
@@ -34,17 +38,18 @@ export default {
   },
   mounted() {
     var _this = this;
-    layui.use("table", function() {
+    layui.use(["table","upload"], function() {
       var table = layui.table;
       var form = layui.form;
+      var upload = layui.upload;
       form.render();
       form.on("submit(serach)", function(data) {
         data.field.userId = _this.$store.state.userId;
         console.log(data.field);
         table.reload("serachData", {
           url: "/api/getNetworkList",
-          where: data.field
-          // page:{curr: 1}
+          where: data.field,
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例
@@ -62,7 +67,7 @@ export default {
           return {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
-            count: res.body.networkList.length, //解析数据长度
+            count: res.body.totalCount, //解析数据长度
             data: res.body.networkList //解析数据列表
           };
         },
@@ -146,6 +151,48 @@ export default {
           _this.$router.push("/addNetwork");
         }
       });
+
+      upload.render({
+        elem: "#leadIn",
+        url: "/api/importNetworkInfo",
+        method: "post",
+        multiple: false, //是否多文件上传
+        accept: "file", // 规定上传文件类型 ，images/file/video/audio
+        auto: true, // 是否自动上传
+        field: "file", // 设定文件域字段
+        choose: function(obj) {
+          obj.preview(function(index, file, result) {
+            console.log(file);
+            // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
+          });
+          this.data = { userId: _this.$store.state.userId };
+        },
+        before: function(obj) {
+          console.log(obj)
+          //预读本地文件示例，不支持ie8
+        },
+        // allDone:function(obj){
+        //   console.log(obj.total); //得到总文件数
+        //   console.log(obj.successful); //请求成功的文件数
+        //   console.log(obj.aborted); //请求失败的文件数
+        // },
+        done: function(res) {
+          //上传完毕
+          console.log(res);
+          var index = layer.load()
+          setTimeout(()=>{
+            if (res.retCode == 0) {
+              layer.msg(res.retMsg, { icon: 1 });
+              layer.close(index);
+              _this.reload()
+            } else {
+              layer.close(index);
+              layer.msg(res.retMsg, { icon: 2 });
+            }
+          },5000)
+          
+        }
+      });
     });
   },
   created() {
@@ -172,10 +219,12 @@ export default {
   font-size: 13px;
   font-weight: 600;
 }
-.dataList .dataList_top p {
+.dataList .dataList_top div {
   margin-right: 48px;
+  display: flex;
+  align-items: center;
 }
-.dataList .dataList_top p button {
+.dataList .dataList_top div button {
   border: none;
   border-radius: 2px;
   width: 70px;

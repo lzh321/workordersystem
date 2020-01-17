@@ -6,10 +6,10 @@
         <h2>数据列表</h2>
         <p>
           <router-link to="/addEquipment" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 新增</router-link>
-          <router-link to="/bulkImport" class="layui-btn layui-btn-primary layui-btn-sm">
-            <i class="layui-icon">&#xe620;</i>
-            批量导入
-          </router-link>
+          <span id="leadIn" class="layui-btn layui-btn-primary layui-btn-sm">
+            <i class="layui-icon">&#xe681;</i>
+            导入
+          </span>
         </p>
       </div>
       <div class="dataList_table" >
@@ -37,6 +37,7 @@
 import dataScreening from '../dataScreening'
 export default {
   name:'equipmentList',
+  inject: ["reload"],
   data() {
     return {
       type:'',
@@ -48,9 +49,10 @@ export default {
   methods: {
     layui: function(){
       var _this = this  // 改变this指向
-      layui.use(['table', 'form'], function() {
+      layui.use(['table', 'form', 'upload'], function() {
         var table = layui.table;
         var form = layui.form
+        var upload = layui.upload
         form.render()
         form.on('submit(serach)', function(data){
           console.log(data.field)
@@ -71,7 +73,7 @@ export default {
               return {
                 "code": res.retCode, //解析接口状态
                 "msg": res.retMsg, //解析提示文本
-                "count": res.body.deviceInfoList.length, //解析数据长度
+                "count": res.body.totalCount, //解析数据长度
                 "data": res.body.deviceInfoList //解析数据列表
               };
             },
@@ -172,9 +174,42 @@ export default {
             _this.$router.push("/checkEquipmentInfo")
           }
         });
-
-        
+      upload.render({
+        elem: "#leadIn",
+        url: "/api/importDeviceInfo",
+        method: "post",
+        multiple: false, //是否多文件上传
+        accept: "file", // 规定上传文件类型 ，images/file/video/audio
+        auto: true, // 是否自动上传
+        field: "file", // 设定文件域字段
+        choose: function(obj) {
+          obj.preview(function(index, file, result) {
+            console.log(file);
+            // obj.resetFile(index, file, _this.orderInfoId + '-' + index); //重命名文件名
+          });
+          this.data = { userId: _this.$store.state.userId };
+        },
+        before: function(obj) {
+          //预读本地文件示例，不支持ie8
+        },
+        // allDone:function(obj){
+        //   console.log(obj.total); //得到总文件数
+        //   console.log(obj.successful); //请求成功的文件数
+        //   console.log(obj.aborted); //请求失败的文件数
+        // },
+        done: function(res) {
+          //上传完毕
+          console.log(res);
+          if (res.retCode == 0) {
+            layer.msg(res.retMsg, { icon: 1 });
+            _this.reload()
+          } else {
+            layer.msg(res.retMsg, { icon: 2 });
+          }
+        }
       });
+      });
+
     }
   },
   mounted() {

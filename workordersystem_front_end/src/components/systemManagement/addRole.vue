@@ -16,6 +16,7 @@
             placeholder="请输入角色名称"
             autocomplete="off"
             class="layui-input"
+            :value="roleInfo.roleName ? roleInfo.roleName : ''"
           />
         </div>
       </div>
@@ -35,7 +36,9 @@
 export default {
   name: "addRole",
   data() {
-    return {};
+    return {
+      roleInfo: {}
+    };
   },
   methods:{
     cancel(){
@@ -82,6 +85,9 @@ export default {
       });
     });
   },
+  created(){
+    this.roleInfo = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+  }
 
 };
 </script>

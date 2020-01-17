@@ -320,7 +320,11 @@ export default {
             {
               recordModel: 4,
               recordModelName: "银行要求"
-            }
+            },
+            {
+              recordModel: 5,
+              recordModelName: "PM保养"
+            },
           ]
         }
       ]

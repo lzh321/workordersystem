@@ -17,6 +17,21 @@ Vue.use(VueResource)
 Vue.prototype.$axios = Axios
 Vue.prototype.$ = jquery
 
+// 自定义方法
+jquery.prototype.serializeObject = function () {
+
+  var obj = new Object();
+
+  jquery.each(this.serializeArray(), function (index, param) {
+    if (!(param.name in obj)) {
+      obj[param.name] = param.value;
+    }
+  });
+
+  return obj;
+};
+
+
 // 实例对象
 Axios.create({
   timeout: 6000,

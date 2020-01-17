@@ -61,7 +61,7 @@ export default {
         table.reload("serachData", {
           url: "/api/getOrganizationList",
           where: data.field,
-          page: { curr: 1 }
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例
@@ -76,8 +76,8 @@ export default {
           return {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
-            count: res.body.list.length, //解析数据长度
-            data: res.body.list //解析数据列表
+            count: res.body.totalCount, //解析数据长度
+            data: res.body.organizationInfoList //解析数据列表
           };
         },
         page: true, //开启分页

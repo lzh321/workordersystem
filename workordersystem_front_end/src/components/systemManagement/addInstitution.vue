@@ -123,21 +123,21 @@ export default {
         //公司列表
         // console.log(res)
         if (res.data.retCode == "000000") {
-          this.companyList = res.data.body.list;
+          this.companyList = res.data.body.CompanyNameList;
         }
       });
       this.$axios.post("/api/getDeptList", userId).then(res => {
         //部门列表
         // console.log(res)
         if (res.data.retCode == "000000") {
-          this.DeptList = res.data.body.list;
+          this.DeptList = res.data.body.DeptNameList;
         }
       });
       this.$axios.post("/api/getJobList", userId).then(res => {
         //职务列表
         // console.log(res)
         if (res.data.retCode == "000000") {
-          this.JobList = res.data.body.list;
+          this.JobList = res.data.body.JobNameList;
         }
       });
     },

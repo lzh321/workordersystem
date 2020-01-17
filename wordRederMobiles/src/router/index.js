@@ -58,6 +58,8 @@ export default new Router({
       component: bill,
       meta: {
         showTab: false,
+        isBack: false,  // 这个字段的意思稍后再说      
+        keepAlive: true,
       },
     },
     {

@@ -132,8 +132,8 @@ export default {
               return {
                 code: res.retCode, //解析接口状态
                 msg: res.retMsg, //解析提示文本
-                count: res.body.list.length, //解析数据长度
-                data: res.body.list //解析数据列表
+                count: res.body.totalCount, //解析数据长度
+                data: res.body.CompanyNameList //解析数据列表
               };
             },
             request: {
@@ -163,8 +163,8 @@ export default {
               return {
                 code: res.retCode, //解析接口状态
                 msg: res.retMsg, //解析提示文本
-                count: res.body.list.length, //解析数据长度
-                data: res.body.list //解析数据列表
+                count: res.body.totalCount, //解析数据长度
+                data: res.body.DeptNameList //解析数据列表
               };
             },
             request: {
@@ -194,8 +194,8 @@ export default {
               return {
                 code: res.retCode, //解析接口状态
                 msg: res.retMsg, //解析提示文本
-                count: res.body.list.length, //解析数据长度
-                data: res.body.list //解析数据列表
+                count: res.body.totalCount, //解析数据长度
+                data: res.body.JobNameList //解析数据列表
               };
             },
             request: {
@@ -226,8 +226,8 @@ export default {
           return {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
-            count: res.body.list.length, //解析数据长度
-            data: res.body.list //解析数据列表
+            count: res.body.totalCount, //解析数据长度
+            data: res.body.CompanyNameList //解析数据列表
           };
         },
         request: {

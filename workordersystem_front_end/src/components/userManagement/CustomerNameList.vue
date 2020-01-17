@@ -43,8 +43,8 @@ export default {
         data.field.userId = _this.$store.state.userId;
         table.reload("serachData", {
           url: "/api/getCustomerNameList",
-          where: data.field
-          // page:{curr: 1}
+          where: data.field,
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例
@@ -61,7 +61,7 @@ export default {
           return {
             code: res.retCode, //解析接口状态
             msg: res.retMsg, //解析提示文本
-            count: res.body.customerNameList, //解析数据长度
+            count: res.body.totalCount, //解析数据长度
             data: res.body.customerNameList //解析数据列表
           };
         },

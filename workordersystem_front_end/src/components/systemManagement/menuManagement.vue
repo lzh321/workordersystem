@@ -51,7 +51,7 @@ export default {
         table.reload("serachData", {
           url: "/api/getMenuList",
           where: data.field,
-          page: { curr: 1 }
+          page: { curr: 1, limit: 10 }
         });
       });
       //第一个实例

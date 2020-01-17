@@ -17,7 +17,7 @@
               <option value="0">待发单</option>
               <option value="1">待派单</option>
               <option value="2">待受理</option>
-              <option value="3">处理中</option>
+              <option value="3">待处理</option>
               <option value="4">已预约</option>
               <option value="5">已出发</option>
               <option value="7">待回访</option>
@@ -29,7 +29,7 @@
           <p>
             <span for>创建时间</span>
             <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
-            <input class="Times" type="text" autocomplete="off" name="seleEngTime" id="endTime" placeholder="结束时间" /> 
+            <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
           </p>
         </div>
         <div class="search_input" v-if="synergyManagement">
@@ -105,7 +105,7 @@
               >{{item.customerName}}</option>
             </select>
           </p>
-          <p>
+          <p class="Network">
             <span for>投放点</span>
             <input type="text" name="seleNetworkName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
@@ -126,15 +126,15 @@
         <div class="search_input" v-if="messageModule">
           <p v-if="messagePushList">
             <span for>接收手机</span>
-            <input type="text" autocomplete="off" placeholder="请输入接收手机"/>
+            <input type="text" name="seleMobile" autocomplete="off" placeholder="请输入接收手机"/>
           </p>
           <p>
             <span for>模板编号</span>
-            <input type="text" autocomplete="off" placeholder="请输入模板编号"/>
+            <input type="text" name="seleId" autocomplete="off" placeholder="请输入模板编号"/>
           </p>
           <p>
             <span for>模板名称</span>
-            <input type="text" autocomplete="off" placeholder="请输入模板名称"/>
+            <input type="text" name="seleModelName" autocomplete="off" placeholder="请输入模板名称"/>
           </p>
         </div>
         <div class="search_input" v-if="equipmentList">
@@ -152,6 +152,17 @@
           <p>
             <span>存货名称</span>
             <input type="text" lay-verify autocomplete="off" name="seleModelName" placeholder="请输入存货名称"/>
+          </p>
+          <p>
+            <span for>客户名称</span>
+            <select name="seleCustomerName" lay-verify="">
+              <option value>全部</option>
+              <option
+                v-for="(item) in customerList"
+                :key="item.customerId"
+                :value="item.customerName"
+              >{{item.customerName}}</option>
+            </select>
           </p>
           <p>
             <span>设备型号</span>
@@ -203,8 +214,8 @@
 
         <div class="search_input" v-if="permissionsButton">
           <p>
-            <span for>按钮编号</span>
-            <input type="text" name="seleMenuNo" autocomplete="off" placeholder="请输入按钮编号"/>
+            <span for>按钮编码</span>
+            <input type="text" name="seleBtnCode" autocomplete="off" placeholder="请输入按钮编码"/>
           </p>
           <p>
             <span for>菜单名称</span>
@@ -269,13 +280,13 @@ export default {
       this.$axios.post('/api/getDeptList',{userId: userId}).then(res=>{  //部门列表
         // console.log(res)
         if(res.data.retCode == '000000'){
-          this.DeptList = res.data.body.list
+          this.DeptList = res.data.body.DeptNameList
         }
       })
       this.$axios.post('/api/getJobList',{userId: userId}).then(res=>{  //职务列表
         // console.log(res)
         if(res.data.retCode == '000000'){
-          this.JobList = res.data.body.list
+          this.JobList = res.data.body.JobNameList
         }
       })
     }
@@ -389,7 +400,7 @@ export default {
 .data_screening_search p input {
   border: 1px solid #e6e6e6;
   border-radius: 2px;
-  width: 220px;
+  /* width: 220px; */
   height: 38px;
   padding-left: 5px;
   color: #444;
@@ -410,6 +421,10 @@ export default {
 
 .Times{
   width: 40% !important;
+}
+
+.Network span{
+  width: 50px;
 }
 /* .data_screening_search p button{
   border: none;

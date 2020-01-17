@@ -14,6 +14,7 @@ import roleManagement from '@/components/systemManagement/roleManagement'
 import permissionsButton from '@/components/systemManagement/permissionsButton'
 import menuManagement from '@/components/systemManagement/menuManagement'
 import addMenu from '@/components/systemManagement/addMenu'
+import addPermissionsButton from '@/components/systemManagement/addPermissionsButton'
 import addRole from '@/components/systemManagement/addRole'
 import businessEnterprise from '@/components/systemManagement/businessEnterprise'
 import messageModule from '@/components/systemManagement/messageModule'
@@ -165,6 +166,11 @@ export default new Router({
           path: '/addMenu',
           name: 'addMenu',
           component: addMenu
+        },
+        {
+          path: '/addPermissionsButton',
+          name: 'addPermissionsButton',
+          component: addPermissionsButton
         },
         {
           path: '/addRole',

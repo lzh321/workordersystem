@@ -44,8 +44,18 @@ export default {
   },
   mounted() {
     var _this = this
-    layui.use("table", function() {
+    layui.use(["form","table"], function() {
       var table = layui.table;
+      var form = layui.form
+      form.on("submit(serach)", function(data) {
+        data.field.userId = _this.$store.state.userId;
+        console.log(data.field);
+        table.reload("serachData", {
+          url: "/api/getNewsmodelInfoList",
+          where: data.field,
+         page: { curr: 1, limit: 10 }
+        });
+      });
       //第一个实例
       table.render({
         elem: "#messageModule",

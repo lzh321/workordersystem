@@ -17,7 +17,8 @@
       </ul>
     </header>
     <div class="content">
-      <Side @titleFn="titleFn"></Side>
+      <router-view name="Side"></router-view>
+      <Side @titleFn="titleFn" v-if="isRouterAlive"></Side>
       <Main :title="titleText"></Main>
     </div>
   </div>
@@ -29,11 +30,17 @@ import Side from "@/components/side";
 
 export default {
   name: "Home",
+  provide(){
+    return {
+      reload: this.reload,
+    }
+  },
   data() {
     return {
       isLogin: true,
       userId: this.$store.state.userId,
-      titleText: "工作台"
+      titleText: "工作台",
+      isRouterAlive: true,
     };
   },
   components: {
@@ -52,7 +59,13 @@ export default {
         localStorage.clear();
         layer.close(index);
       });
-    }
+    },
+    reload(){
+      this.isRouterAlive = false
+      this.$nextTick(function(){
+        this.isRouterAlive = true
+      })
+    },
   },
   created() {
     if (!sessionStorage.getItem("isLogin")) {
