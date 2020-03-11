@@ -1,7 +1,15 @@
 <template>
   <div>
+    <div class="OrderSearch">
+      <div class="search">
+        <div class="SearchEntrance">
+          <i></i>
+        </div>
+        <input placeholder="搜索" v-model="searchVal" />
+      </div>
+  </div>
     <ul>
-      <li v-for="item in networkList" :key="item.networkId" @click="selectBank(item)">
+      <li v-for="item in NewItems" :key="item.networkId" @click="selectBank(item)">
         <span>{{item.networName}}</span>
       </li>
     </ul>
@@ -13,7 +21,8 @@ export default {
   name: "selectBank",
   data() {
     return {
-      networkList: []
+      networkList: [],
+      searchVal:''
     };
   },
   methods: {
@@ -44,12 +53,32 @@ export default {
     this.getNetworkList();
   },
 
+  computed: {
+    //设置计算属性
+    NewItems() {
+      var _this = this;
+
+      var NewItems = [];
+
+      this.networkList.map(function(item) {
+        if (item.networName.search(_this.searchVal) != -1) {
+          NewItems.push(item);
+        }
+      });
+
+      return NewItems;
+    }
+  }
+
 };
 </script>
 
 <style scoped>
 div {
-  padding: 0 15px;
+  /* padding: 0 15px; */
+}
+ul{
+  padding: 0 10px;
 }
 ul li {
   padding: 10px 0;
@@ -64,5 +93,51 @@ ul li img {
   height: 14px;
   border: 1px solid red;
   margin-right: 5px;
+}
+.OrderSearch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  background: #2f6cff;
+  color: #ffffff;
+  height: 50px;
+  border: none;
+}
+.SearchEntrance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  position: absolute;
+  color: #2f6cff;
+  top: 7px;
+  left: 5px;
+  width: 50px;
+}
+.search {
+  display: flex;
+  flex: 1;
+  position: relative;
+}
+.search input {
+  flex: 1;
+  height: 30px;
+  border: none;
+  border-radius: 30px;
+  padding-left: 45px;
+  color: #333333;
+  font-size: 15px;
+}
+.search input::placeholder {
+  color: #2f6cff;
+}
+.SearchEntrance::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background: url("../../../assets/Images/personnel_search.png") no-repeat;
+  background-size: 100%;
 }
 </style>

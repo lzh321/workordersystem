@@ -51,6 +51,7 @@
             id="customerName"
             lay-filter="billCustomerName"
             lay-verify="required"
+            lay-search
           >
             <option value>请选择一个客户</option>
             <option
@@ -106,6 +107,7 @@
             lay-filter="billSeleNetworkName"
             id="networkId"
             lay-verify="required"
+            lay-search
           >
             <option value>请选择一个投放点</option>
             <option
@@ -120,6 +122,7 @@
             lay-filter="billSeleNetworkName"
             id="networkId"
             lay-verify="required"
+            lay-search
           >
             <option value>请选择一个投放点</option>
             <option

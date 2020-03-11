@@ -10,7 +10,7 @@
       <div class="layui-form-item" v-if=" menuPno  ? false : true ">
         <label class="layui-form-label">菜单类型</label>
         <div class="layui-input-block">
-          <select name="menuType" lay-verify="required" lay-filter="menuType">
+          <select name="menuType" lay-verify="required" lay-search lay-filter="menuType">
             <option value>请选择菜单类型</option>
             <option value="1">父级菜单</option>
             <option value="2">子级菜单</option>
@@ -21,7 +21,7 @@
       <div class="layui-form-item" v-show="isMenuPno">
         <label class="layui-form-label">父级菜单</label>
         <div class="layui-input-block">
-          <select name="menuPno">
+          <select name="menuPno" lay-search>
             <option value>请选择父级菜单</option>
             <option
               v-for="(item) in menuList"

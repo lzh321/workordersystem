@@ -8,7 +8,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <select name="customerId" lay-verify="required">
+          <select name="customerId" lay-verify="required" lay-search>
             <option value>请选择一个客户</option>
             <option
              
@@ -27,7 +27,7 @@
         <div class="layui-form-label">所在城市</div>
         <div class="layui-input-block" style="display:flex;justify-content: space-between;">
           <div class="layui-input-inline" style="flex:1">
-            <select name="province" lay-verify="required" lay-filter="province">
+            <select name="province" lay-verify="required" lay-search lay-filter="province">
               <option value>请选择省</option>
               <option
               @click="selectCity(provinceCode)"
@@ -39,7 +39,7 @@
             </select>
           </div>
           <div class="layui-input-inline" style="flex:1">
-            <select name="regionId" lay-verify="required" lay-filter="city">
+            <select name="regionId" lay-search lay-verify="required" lay-filter="city">
               <option value>请选择市</option>
               <option
                 v-for="(item) in City"

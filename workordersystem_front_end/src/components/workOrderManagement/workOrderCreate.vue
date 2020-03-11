@@ -20,6 +20,7 @@
                   id="customerName"
                   lay-filter="customerName"
                   lay-verify="required"
+                  lay-search
                 >
                   <option value>请选择一个客户</option>
                   <option
@@ -53,6 +54,7 @@
                   lay-filter="seleNetworkName"
                   id="networkId"
                   lay-verify="required"
+                  lay-search
                 >
                   <option value>请选择一个投放点</option>
                   <option

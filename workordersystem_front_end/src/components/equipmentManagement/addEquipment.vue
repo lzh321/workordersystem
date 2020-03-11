@@ -42,6 +42,7 @@
               id="customerName"
               lay-filter="customerName"
               lay-verify="required"
+              lay-search
             >
               <option value>请选择一个客户</option>
               <option
@@ -57,7 +58,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block" layui-filter>
-            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
+            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-search lay-verify="required">
               <option value>请选择设备型号</option>
               <option
                 v-for="(item) in DeviceModelType"
@@ -72,7 +73,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">存货名称</label>
           <div class="layui-input-block" layui-filter>
-            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-verify="required">
+            <select name="modelId" lay-filter="seleModelType" lay-search id="modelType" lay-verify="required">
               <option value>请选择存货名称</option>
               <option
                 v-for="(item) in modelName"
@@ -92,6 +93,7 @@
               lay-filter="seleNetworkName"
               id="networkId"
               lay-verify="required"
+              lay-search
             >
               <option value>请选择一个投放点</option>
               <option

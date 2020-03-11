@@ -15,7 +15,7 @@
       <div class="layui-form-item" v-else>
         <label class="layui-form-label">菜单名称</label>
         <div class="layui-input-block">
-          <select name="menuName" lay-verify="required" lay-filter="getMenuName">
+          <select name="menuName" lay-verify="required" lay-search lay-filter="getMenuName">
             <option value>请选择菜单名称</option>
             <option v-for="item in menuList" :key="item.menuId" :value="item.menuName" :selected="item.menuId == btnList.menuId ? true : false">{{item.menuName}}</option>
           </select>

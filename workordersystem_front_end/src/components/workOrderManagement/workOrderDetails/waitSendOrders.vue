@@ -3,7 +3,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">指派给</label>
       <div class="layui-input-block">
-        <select name="acceptUserId">
+        <select name="acceptUserId" lay-search>
           <option value>请选择指派人</option>
           <option
  

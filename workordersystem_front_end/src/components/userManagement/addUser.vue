@@ -9,7 +9,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">公司名称</label>
           <div class="layui-input-block">
-            <select name="companyId" lay-verify="required">
+            <select name="companyId" lay-search lay-verify="required">
               <option value>请选择公司名称</option>
               <option
                 v-for="(item) in companyList"
@@ -118,7 +118,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">所属部门</label>
           <div class="layui-input-block">
-            <select name="deptId" lay-verify="required">
+            <select name="deptId" lay-search lay-verify="required">
               <option value>选择部门</option>
               <option
                 v-for="(item) in DeptList"
@@ -132,7 +132,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">当前职务</label>
           <div class="layui-input-block">
-            <select name="jobId" lay-verify="required">
+            <select name="jobId" lay-search lay-verify="required">
               <option value></option>
               <option v-for="(item) in JobList" :key="item.id" :value="item.id" :selected="item.jobName == UserInfo.jobName ? true :false">{{item.jobName}}</option>
             </select>

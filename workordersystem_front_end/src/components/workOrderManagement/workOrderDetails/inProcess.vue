@@ -5,7 +5,7 @@
     <reservation :workOrderInfo="workOrderInfo"></reservation>
     <div class="layui-form-item">
       <label class="layui-form-label">故障类型</label>
-      <div class="layui-input-block">
+      <div class="layui-input-block" lay-search>
         <select name="recordType" lay-filter="recordType">
           <option value>请选择故障类型</option>
           <option
@@ -20,7 +20,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">故障模块</label>
       <div class="layui-input-block">
-        <select name="recordModel">
+        <select name="recordModel" lay-search>
           <option value>请选择故障模块</option>
           <option
             v-for="(items,index) in recordList"
