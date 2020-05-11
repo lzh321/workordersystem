@@ -116,7 +116,7 @@ export default {
   },
   created(){
     this.type = this.$route.query.type
-    sessionStorage.clear()
+    localStorage.clear()
   }
 }
 </script>

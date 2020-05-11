@@ -49,7 +49,7 @@
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
-          <button type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button type="" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>

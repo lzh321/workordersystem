@@ -5,8 +5,8 @@
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p>
-          <router-link to="/addEquipment" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 新增</router-link>
-          <span id="leadIn" class="layui-btn layui-btn-primary layui-btn-sm">
+          <router-link to="/addEquipment" v-if="add" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 新增</router-link>
+          <span id="leadIn" v-if="leadIn" class="layui-btn layui-btn-primary layui-btn-sm">
             <i class="layui-icon">&#xe681;</i>
             导入
           </span>
@@ -14,20 +14,6 @@
       </div>
       <div class="dataList_table" >
         <table id="demo" lay-filter="equipmentList" lay-data="{id:'serachData'}"></table>
-        <!-- <script type="text/html" id="toolbarDemo">
-          <div class="layui-btn-container">
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
-            <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
-            <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
-          </div>
-        </script> -->
-        
-        <script type="text/html" id="barDemo">
-          <a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
-          <a class="layui-btn layui-btn-xs" lay-event="deletion" >删除</a>
-        </script>
-        
       </div>
     </div>
   </div>
@@ -41,13 +27,15 @@ export default {
   data() {
     return {
       type:'',
+      add: false,
+      leadIn: false
     }
   },
   components: {
     dataScreening
   },
-  methods: {
-    layui: function(){
+  mounted(){
+
       var _this = this  // 改变this指向
       layui.use(['table', 'form', 'upload'], function() {
         var table = layui.table;
@@ -69,6 +57,7 @@ export default {
           url: "/api/getDeviceInfoList", //数据接口
           method: 'post',
           id: 'serachData',
+          where: {userId: _this.$store.state.userId},
           parseData: function(res){ //res 即为原始返回的数据
               return {
                 "code": res.retCode, //解析接口状态
@@ -106,9 +95,14 @@ export default {
               { field: "networkName", title: "投放点", sort: false,align: "center" },
               { field: "region", title: "所在城市", width: 100, align: "center"},
               { field: "networkAddress", title: "投放点地址", align: "center"},
-              { field: "operation", title: "操作",width: 165, align: "center", toolbar: '#barDemo' }
+              { field: "operation", title: "操作",width: 165, align: "center", templet: function(d) {
+                return '<div class="tabBtn"></div>'
+              } }
             ]
-          ]
+          ],
+          done: function(res, curr, count){
+            _this.getBtns()
+          }
         });
 
         table.reload('serachData',
@@ -146,7 +140,7 @@ export default {
           var data = obj.data;
           console.log(data)
           var deviceId = data.deviceId
-          if(obj.event === 'deletion'){
+          if(obj.event === '删除'){
             layer.confirm('你确定要删除这条记录？',{ icon: 3, title: "提示" }, function(index){
               
               //向服务端发送删除指令
@@ -165,12 +159,12 @@ export default {
                 }
               })
             });
-          } else if(obj.event === 'edit'){;
-            sessionStorage.setItem('deviceId',deviceId)
-            sessionStorage.setItem('data',JSON.stringify(data))
+          } else if(obj.event === '编辑'){;
+            localStorage.setItem('deviceId',deviceId)
+            localStorage.setItem('data',JSON.stringify(data))
             _this.$router.push('/addEquipment')
-          }else if(obj.event === 'detail'){
-            sessionStorage.setItem('deviceId',deviceId)
+          }else if(obj.event === '查看'){
+            localStorage.setItem('deviceId',deviceId)
             _this.$router.push("/checkEquipmentInfo")
           }
         });
@@ -209,11 +203,84 @@ export default {
         }
       });
       });
-
-    }
   },
-  mounted() {
-    this.layui()
+  methods: {
+    getBtns(){
+      this.$('tbody a').hide()
+      this.$('.dataList_top').find('a').hide()
+      // console.log(this.$('.content_main a'))
+      var userId = this.$store.state.userId
+      this.$axios({
+        method: 'post',
+        url: '/api/getAllRoleInfoByUserId',
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      }).then((res) => {
+        console.log(res)
+        // debugger
+        if (res.data.body.roleBtnList.length > 0) {
+          var arr = []
+          for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+            if (res.data.body.roleBtnList[i].btnLimit) {
+              arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit))
+            }
+          }
+          console.log(arr)
+          var url = location.pathname + location.search
+          console.log(url)
+          var str = []
+          for (var j = 0; j < arr.length; j++) {
+            for (var z = 0; z < arr[j].length; z++) {
+              if (arr[j][z].btns && arr[j][z].menuUrl == url) {
+                console.log(arr[j][z].btns)
+                str = arr[j][z].btns
+              }
+            }
+          }
+          if(str.length == 0){
+            this.$('tbody a').hide()
+          }else{
+            var btn = str
+            for (var h = 0; h < btn.length; h++) {
+              for (var k = h + 1; k < btn.length; k++) {
+                if (btn[h].btnCode == btn[k].btnCode) {         //第一个等同于第二个，splice方法删除第二个
+                  btn.splice(k, 1);
+                  k--;
+                }
+              }
+            }
+            var userBtn  = btn
+            this.getBtnList(userBtn)
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getBtnList(userBtn){
+        var btnList = userBtn
+        console.log(btnList)
+        console.log(this.$('.tabBtn'))
+        var str = ''
+        for(var z = 0; z < btnList.length;z++){
+          if(btnList[z].btnName == '添加'){
+            this.add = true
+          }else if(btnList[z].btnName == '导入'){
+            this.leadIn = true
+          }else{
+            str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
+          }
+          // console.log(btnList[z].btnCode)
+        }
+        console.log(str)
+        for(var j = 0; j < this.$('.tabBtn').length; j++){
+          console.log(this.$(this.$('.tabBtn')[j]).html(str))
+          this.$(this.$('.tabBtn')[j]).html(str)
+        }
+       
+    }
   },
   created(){
     this.type = this.$route.query.type
@@ -223,7 +290,7 @@ export default {
     // }).catch(err=>{
     //   console.log(err)
     // })
-    sessionStorage.clear()
+    localStorage.clear()
   }
 }
 </script>

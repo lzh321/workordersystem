@@ -13,7 +13,7 @@
           <p>
             <span for>工单状态</span>
             <select name="seleorderState" id="seleorderState" class="">
-              <option value>全部</option>
+              <option value="">全部</option>
               <option value="0">待发单</option>
               <option value="1">待派单</option>
               <option value="2">待受理</option>
@@ -31,12 +31,32 @@
             <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
             <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
           </p>
+          <p>
+            <span for>创&nbsp;&nbsp;建&nbsp;&nbsp;人</span>
+            <input type="text" name="createUserId" autocomplete="off" value placeholder="创建人" />
+          </p>
+          <p>
+            <span for>客户名称</span>
+            <select name="networName" lay-verify="" lay-search>
+              <option value="">全部</option>
+              <option
+                v-for="(item) in customerList"
+                :key="item.customerId"
+                :value="item.customerName"
+              >{{item.customerName}}</option>
+            </select>
+          </p>
+          <p class="Network">
+            <span for>投&nbsp;&nbsp;放&nbsp;&nbsp;点</span>
+            <input type="text" name="userName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
+          </p>
         </div>
         <div class="search_input" v-if="synergyManagement">
           <p>
             <span for>协同编号</span>
             <input type="text" name="seleID" autocomplete="off" value placeholder="协同编号" />
           </p>
+          
           <p>
             <span for>协同状态</span>
             <select name="seleCoordinateState" class="">
@@ -51,6 +71,10 @@
             <span for>创建时间</span>
             <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
             <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
+          </p>
+          <p>
+            <span for>创&nbsp;&nbsp;建&nbsp;&nbsp;人</span>
+            <input type="text" name="createUserId" autocomplete="off" value placeholder="创建人" />
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
@@ -96,7 +120,7 @@
         <div class="search_input" v-if="NetworkList">
           <p>
             <span for>客户名称</span>
-            <select name="seleCustomerName" lay-verify="">
+            <select name="seleCustomerName" lay-verify="" lay-search>
               <option value>全部</option>
               <option
                 v-for="(item) in customerList"
@@ -113,7 +137,7 @@
         <div class="search_input" v-if="CustomerNameList">
           <p>
             <span for>客户名称</span>
-            <select name="seleCustomerName" lay-verify="">
+            <select name="seleCustomerName" lay-verify="" lay-search>
               <option value>全部</option>
               <option
                 v-for="(item) in customerList"
@@ -155,7 +179,7 @@
           </p>
           <p>
             <span for>客户名称</span>
-            <select name="seleCustomerName" lay-verify="">
+            <select name="seleCustomerName" lay-verify="" lay-search>
               <option value>全部</option>
               <option
                 v-for="(item) in customerList"
@@ -174,6 +198,10 @@
                 :value="item.modelType"
               >{{item.modelType}}</option>
             </select>
+          </p>
+          <p>
+            <span for>投&emsp;放&emsp;点</span>
+            <input type="text" name="seleNetworkName" autocomplete="off"  placeholder="请输入投放点名称"/>
           </p>
         </div>
         <div class="search_input" v-if="equipmentType">
@@ -272,7 +300,7 @@ export default {
       this.$axios.post("/api/getDeviceModelList", {userId: userId}).then(res => {
         // 设备型号
         // console.log(res)
-        this.DeviceModelType = res.data.body.modelList;
+        this.DeviceModelType = res.data.body.devicemodelInfoList;
       });
       this.$axios.post("/api/getCustomerNameList", {userId: userId}).then(res => {  // 客户名称
         this.customerList = res.data.body.customerNameList;
@@ -386,16 +414,23 @@ export default {
 .search_input {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  /* justify-content: space-between; */
+  flex: 1;
 }
 .data_screening_search p {
   /* height: 20px; */
   margin-right: 20px;
+  margin-bottom: 10px;
   display: flex;
   align-items: center;
 }
 .data_screening_search .search_input p span {
   font-size: 13px;
   margin-right: 10px;
+}
+.layui-btn-container{
+  margin-bottom: 10px;
 }
 .data_screening_search p input {
   border: 1px solid #e6e6e6;
@@ -424,7 +459,7 @@ export default {
 }
 
 .Network span{
-  width: 50px;
+  width: 60px;
 }
 /* .data_screening_search p button{
   border: none;

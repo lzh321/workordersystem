@@ -196,7 +196,7 @@ export default {
     };
   },
   created() {
-    sessionStorage.clear()
+    localStorage.clear()
   }
 };
 </script>

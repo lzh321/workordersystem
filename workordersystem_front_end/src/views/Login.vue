@@ -33,7 +33,7 @@ export default {
     return {
       userId: "",
       password: "",
-      userId: "",
+      orgId: "",
       show: false,
       title: "账号密码错误",
       content: ""
@@ -75,9 +75,10 @@ export default {
           // 将用户token保存到vuex中
           if (res.data.retCode == "000000") {
             this.userId = res.data.body.userId;
+            this.orgId = res.data.body.orgId
             // 将用户token保存到vuex中
-            this.changeLogin({ userId: this.userId });
-            this.$router.replace("/workTable?type=workTable");
+            this.changeLogin({ userId: this.userId,orgId: this.orgId });
+            this.$router.push("/workOrderManagement?type=workOrderManagement");
           } else {
             layer.open({
               title: "登录失败",
@@ -106,23 +107,28 @@ export default {
 <style  scoped>
 .login {
   height: 100%;
-  padding: 160px 0 0;
   background: url("../assets/images/loginImg/big_bg@2x.png") 0px -70px no-repeat;
   background-size: 100%;
+  position: relative;
 }
 .login_bg {
   background: url("../assets/images/loginImg/blue_bg@2x.png") no-repeat;
-  height: 600px;
-  width: 1153px;
+  height: 570px;
+  width: 1123px;
   margin: auto;
+  position: absolute;
+  right: 14%;
+  background-size: 100%;
+  top: 15%;
 }
 .login_content {
   background: url("../assets/images/loginImg/white_bg@2x.png") no-repeat;
-  width: 549px;
+  width: 525px;
   position: absolute;
   left: 47%;
   top: 11%;
-  height: 511px;
+  height: 475px;
+  background-size: 100%;
 }
 .login_content .name {
   display: flex;

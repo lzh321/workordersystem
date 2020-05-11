@@ -20,11 +20,13 @@
         </div>
       </div>
 
+      <orgInfo></orgInfo>
+
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button  @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -32,6 +34,7 @@
 </template>
 
 <script>
+import orgInfo from '@/components/orgInfo'
 export default {
   name: "addEquipmentType",
   data() {
@@ -39,12 +42,15 @@ export default {
       echoContent:{}
     };
   },
+  components:{
+    orgInfo:orgInfo
+  },
   methods:{
     cancel(){
       this.$router.push('/equipmentType?type=equipmentType')
     },
     setEcho(){
-      var data = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {};
+      var data = localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : {};
       this.echoContent = data
     }
   },
@@ -56,7 +62,7 @@ export default {
       form.render();
       //监听提交
       form.on("submit(formDemo)", function(data) {
-        var modelId = sessionStorage.getItem('modelId') ? sessionStorage.getItem('modelId') : ''
+        var modelId = localStorage.getItem('modelId') ? localStorage.getItem('modelId') : ''
         data.field.userId = _this.$store.state.userId
         if(modelId === null || modelId === '' || modelId === undefined){
           _this.$axios.post('/api/addDeviceModelInfo',data.field).then(res=>{  // 添加设备类型

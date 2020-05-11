@@ -6,18 +6,13 @@
       <div class="dataList_top">
         <h2>数据列表</h2>
         <div>
-          <router-link to="/addNetwork" tag="button">添加</router-link>
-          <!-- <form action="" id="formData"> -->
-            <span class="layui-btn layui-btn-primary layui-btn-sm" id="leadIn"><i class="layui-icon">&#xe681;</i>导入</span>
-          <!-- </form> -->
+          <router-link to="/addNetwork" tag="button" v-if="add" class="add layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon">&#xe608;</i>添加</router-link>
+          <button class="leadIn layui-btn layui-btn-primary layui-btn-sm" v-if="leadIn" id="leadIn"><i class="layui-icon">&#xe681;</i>导入</button>
         </div>
       </div>
       <div class="dataList_table">
         <table id="demo" lay-filter="NetworkList" lay-data="{id: serachData}"></table>
-        <div id="barDemo" style="display:none">
-          <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a>
-        </div>
+
       </div>
     </div>
   </div>
@@ -25,24 +20,105 @@
 
 <script>
 import dataScreening from "../dataScreening";
+import getData from '../../assets/js/getdata'
 export default {
   name: "NetworkList",
   inject: ["reload"],
   data() {
     return {
-      type: ""
+      type: "",
+      btnList: [],
+      add: false,
+      leadIn:false
     };
   },
   components: {
     dataScreening
   },
+  methods: {
+    getBtns(){
+      this.$('tbody a').hide()
+      this.$('.dataList_top').find('a').hide()
+      // console.log(this.$('.content_main a'))
+      var userId = this.$store.state.userId
+      this.$axios({
+        method: 'post',
+        url: '/api/getAllRoleInfoByUserId',
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      }).then((res) => {
+        console.log(res)
+        // debugger
+        if (res.data.body.roleBtnList.length > 0) {
+          var arr = []
+          for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+            if (res.data.body.roleBtnList[i].btnLimit) {
+              arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit))
+            }
+          }
+          console.log(arr)
+          var url = location.pathname + location.search
+          console.log(url)
+          var str = []
+          for (var j = 0; j < arr.length; j++) {
+            for (var z = 0; z < arr[j].length; z++) {
+              if (arr[j][z].btns && arr[j][z].menuUrl == url) {
+                console.log(arr[j][z].btns)
+                str = arr[j][z].btns
+              }
+            }
+          }
+          if(str.length == 0){
+            this.$('tbody a').hide()
+          }else{
+            var btn = str
+            for (var h = 0; h < btn.length; h++) {
+              for (var k = h + 1; k < btn.length; k++) {
+                if (btn[h].btnCode == btn[k].btnCode) {         //第一个等同于第二个，splice方法删除第二个
+                  btn.splice(k, 1);
+                  k--;
+                }
+              }
+            }
+            var userBtn  = btn
+            this.getBtnList(userBtn)
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getBtnList(userBtn){
+        var btnList = userBtn
+        console.log(btnList)
+        console.log(this.$('.tabBtn'))
+        var str = ''
+        for(var z = 0; z < btnList.length;z++){
+          if(btnList[z].btnName == '添加'){
+            this.add = true
+          }else if(btnList[z].btnName == '导入'){
+            this.leadIn = true
+          }else{
+            str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
+          }
+        }
+        console.log(str)
+        for(var j = 0; j < this.$('.tabBtn').length; j++){
+          console.log(this.$(this.$('.tabBtn')[j]).html(str))
+          this.$(this.$('.tabBtn')[j]).html(str)
+        }
+    }
+  },
+  
   mounted() {
     var _this = this;
     layui.use(["table","upload"], function() {
       var table = layui.table;
       var form = layui.form;
       var upload = layui.upload;
-      form.render();
+      // form.render();
       form.on("submit(serach)", function(data) {
         data.field.userId = _this.$store.state.userId;
         console.log(data.field);
@@ -110,10 +186,17 @@ export default {
               field: "operation",
               title: "操作",
               align: "center",
-              toolbar: "#barDemo"
+              // toolbar: "#btn",
+              templet: function(d) {
+                return '<div class="tabBtn"></div>'
+              }
             }
           ]
-        ]
+        ],
+        done: function(res, curr, count){
+          //  _this.getBtnList()
+           _this.getBtns()
+        }
       });
 
       table.reload("serachData", {
@@ -126,7 +209,7 @@ export default {
         console.log(data);
         var networkId = data.id;
         console.log(networkId);
-        if (obj.event === "deletion") {
+        if (obj.event === "删除") {
           layer.confirm("你确定要删除这条记录？",{ icon: 3, title: "提示" }, function(index) {
             //向服务端发送删除指令
             var delParam = {
@@ -144,10 +227,10 @@ export default {
               }
             });
           });
-        } else if (obj.event === "edit") {
+        } else if (obj.event === "编辑") {
           //编辑
-          sessionStorage.setItem("networkId", networkId);
-          sessionStorage.setItem("data",JSON.stringify(data));
+          localStorage.setItem("networkId", networkId);
+          localStorage.setItem("data",JSON.stringify(data));
           _this.$router.push("/addNetwork");
         }
       });
@@ -196,7 +279,8 @@ export default {
     });
   },
   created() {
-    sessionStorage.clear()
+   
+    localStorage.clear()
     this.type = this.$route.query.type;
     var data = {
       userId: this.$store.state.userId

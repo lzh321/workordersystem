@@ -367,6 +367,11 @@
             lay-submit
             lay-filter="Kuantan"
           >关单</button>
+          <button
+            type="button"
+            class="layui-btn layui-btn-primary"
+            @click="reverseBack"
+          >返回</button>
         </div>
       </div>
     </form>
@@ -385,7 +390,7 @@ export default {
   name: "workOrderCommon",
   data() {
     return {
-      orderState: sessionStorage.getItem("orderState"),
+      orderState: localStorage.getItem("orderState"),
       workOrderInfo: {},
       userList: [],
       imgDataArray: [],
@@ -393,8 +398,8 @@ export default {
       userId: this.$store.state.userId
         ? this.$store.state.userId
         : "",
-      orderInfoId: sessionStorage.getItem("orderInfoId")
-        ? sessionStorage.getItem("orderInfoId")
+      orderInfoId: localStorage.getItem("orderInfoId")
+        ? localStorage.getItem("orderInfoId")
         : ""
     };
   },
@@ -415,6 +420,9 @@ export default {
       });
     },
     cancel() {
+      this.$router.push("/workOrderManagement?type=workOrderManagement");
+    },
+    reverseBack(){  
       this.$router.push("/workOrderManagement?type=workOrderManagement");
     },
     getcoordinateList(data) {
@@ -840,7 +848,10 @@ export default {
         });
         return false;
       });
-
+      // 返回
+      form.on("submit(reverseBack)",function(data){
+        _this.$router.push("/workOrderManagement?type=workOrderManagement");
+      })      
       // 关单
       form.on("submit(Kuantan)", function(data) {
         console.log(data.field);
@@ -926,8 +937,8 @@ export default {
     });
   },
   beforeDestroy() {
-    // sessionStorage.removeItem("orderState")
-    // sessionStorage.removeItem("orderInfoId")
+    // localStorage.removeItem("orderState")
+    // localStorage.removeItem("orderInfoId")
   }
 };
 </script>

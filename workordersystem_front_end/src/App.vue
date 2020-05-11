@@ -13,6 +13,12 @@ export default {
   },
   methods:{
     
+  },
+  mounted(){
+    var _this = this
+    _this.$("body").click(function(){
+      _this.$(".layui-layer-tips").remove()
+    })
   }
 }
 </script>

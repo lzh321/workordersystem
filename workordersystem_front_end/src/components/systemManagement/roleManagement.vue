@@ -11,6 +11,7 @@
             class="layui-btn layui-btn-normal layui-btn-sm"
             tag="button"
             type="button"
+            v-if="add"
           >
             <i class="layui-icon">&#xe608;</i> 添加
           </router-link>
@@ -35,11 +36,89 @@ export default {
   name: "roleManagement",
   data() {
     return {
-      type: ""
+      type: "",
+      add: false
     };
   },
   components: {
     dataScreening
+  },
+  methods: {
+    getBtns(){
+      this.$('tbody a').hide()
+      this.$('.dataList_top').find('a').hide()
+      // console.log(this.$('.content_main a'))
+      var userId = this.$store.state.userId
+      this.$axios({
+        method: 'post',
+        url: '/api/getAllRoleInfoByUserId',
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      }).then((res) => {
+        console.log(res)
+        // debugger
+        if (res.data.body.roleBtnList.length > 0) {
+          var arr = []
+          for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+            if (res.data.body.roleBtnList[i].btnLimit) {
+              arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit))
+            }
+          }
+          console.log(arr)
+          var url = location.pathname + location.search
+          console.log(url)
+          var str = []
+          for (var j = 0; j < arr.length; j++) {
+            for (var z = 0; z < arr[j].length; z++) {
+              if (arr[j][z].btns && arr[j][z].menuUrl == url) {
+                console.log(arr[j][z].btns)
+                str = arr[j][z].btns
+              }
+            }
+          }
+          if(str.length == 0){
+            this.$('tbody a').hide()
+          }else{
+            var btn = str
+            for (var h = 0; h < btn.length; h++) {
+              for (var k = h + 1; k < btn.length; k++) {
+                if (btn[h].btnCode == btn[k].btnCode) {         //第一个等同于第二个，splice方法删除第二个
+                  btn.splice(k, 1);
+                  k--;
+                }
+              }
+            }
+            var userBtn  = btn
+            this.getBtnList(userBtn)
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getBtnList(userBtn){
+        var btnList = userBtn
+        console.log(btnList)
+        console.log(this.$('.tabBtn'))
+        var str = ''
+        for(var z = 0; z < btnList.length;z++){
+          if(btnList[z].btnName == '添加'){
+            this.add = true
+          }else{
+            str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
+          }
+          // console.log(btnList[z].btnCode)
+        }
+        console.log(str)
+        for(var j = 0; j < this.$('.tabBtn').length; j++){
+          console.log(this.$(this.$('.tabBtn')[j]).html(str))
+          this.$(this.$('.tabBtn')[j]).html(str)
+        }
+       
+      
+    }
   },
   mounted() {
     var _this = this;
@@ -62,6 +141,7 @@ export default {
         url: "/api/getRoleInfoList", //数据接口
         method: "post",
         id: "serachData",
+        where: { userId: _this.$store.state.userId },
         parseData: function(res) {
           //res 即为原始返回的数据
           return {
@@ -106,19 +186,19 @@ export default {
               align: "center"
             },
             {
-              field: "roleName",
+              field: "operation",
               title: "操作",
               align: "center",
               // toolbar: "#barDemo",
               templet: function(d) {
-                console.log(d.roleName)
-                
-                  return '<div id="barDemo" ><a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a><a class="layui-btn layui-btn-xs" lay-event="menuAssignment">菜单分配</a><a class="layui-btn layui-btn-xs" style="display:none" lay-event="buttonAssign">按钮分配</a><a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a></div>'
-                
+                return '<div class="tabBtn"></div>'
               }
             }
           ]
-        ]
+        ],
+        done: function(res, curr, count){
+          _this.getBtns()
+        }
       });
 
       //监听行工具事件
@@ -126,7 +206,7 @@ export default {
         var data = obj.data;
         console.log(data);
         var roleId = data.roleId;
-        if (obj.event === "deletion") {
+        if (obj.event === "删除") {
           layer.confirm(
             "你确定要删除这条记录？",
             { icon: 3, title: "提示" },
@@ -148,12 +228,12 @@ export default {
               });
             }
           );
-        } else if (obj.event === "edit") {
+        } else if (obj.event === "编辑") {
           //编辑
-          sessionStorage.setItem("roleId", roleId);
-          sessionStorage.setItem("data", JSON.stringify(data));
+          localStorage.setItem("roleId", roleId);
+          localStorage.setItem("data", JSON.stringify(data));
           _this.$router.push("/addRole");
-        } else if (obj.event === "menuAssignment") {
+        } else if (obj.event === "菜单分配") {
           // 菜单分配
           layer.open({
             type: 1,
@@ -162,7 +242,7 @@ export default {
             fixed: false, //不固定
             maxmin: true,
             content: `<form style="padding: 15px 15px 0;" id="menuAssignment" class="layui-form layui-form-pane">
-                        <div style="display: flex;justify-content: space-between"><span>父级菜单</span><div style="display: flex;justify-content: space-between;width:55%"><span>子级菜单</span><span style="margin-right: 5px;">操作</span></div></div>
+                        <div style="display: flex;justify-content: space-between;margin-bottom:10px"><span>父级菜单</span><div style="display: flex;justify-content: space-between;width:55%"><span>子级菜单</span><span style="margin-right: 5px;">操作</span></div></div>
                       </form>
                     `,
             btn: ["确定", "取消"],
@@ -210,61 +290,55 @@ export default {
                   console.log(res);
                   userMenuList = res.data.body.menuList;
                 });
-
-              _this.$axios
-                .post("/api/getAllMenuList", {
-                  userId: _this.$store.state.userId
-                })
-                .then(res => {
-                  console.log(res);
-                  menuList = res.data.body;
-                  var str = "";
-                  for (var i = 0; i < menuList.length; i++) {
-                    str +=
-                      '<div id="menuList" style="display: flex;justify-content: space-between;border: 1px solid #ccc;" ><span style="display: flex;justify-content: center;align-items: center;border-right:1px solid #ccc" class="boxmenu"><input type="checkbox" class="box" name="menu' +
-                      menuList[i].menuId +
-                      '" title="' +
-                      menuList[i].menuName +
-                      '" value="' +
-                      menuList[i].menuId +
-                      '" lay-skin="primary" lay-filter="checks"></span><div class="childrenMenu" style="display: flex;justify-content: space-between; flex-direction: column;width:57%">';
-
-                    for (var j = 0; j < menuList[i].sonList.length; j++) {
+              setTimeout(()=>{
+                _this.$axios.post("/api/getAllMenuList", {
+                    userId: _this.$store.state.userId
+                  }).then(res => {
+                    console.log(res);
+                    menuList = res.data.body;
+                    var str = '<div style="border-bottom:1px solid #ccc;">';
+                    for (var i = 0; i < menuList.length; i++) {
                       str +=
-                        '<div style="display: flex;justify-content: space-between"><span style="width:90px;text-align:center">' +
-                        menuList[i].sonList[j].menuName +
-                        '</span><input type="checkbox" class="box" name="menu' +
-                        menuList[i].sonList[j].menuId +
-                        '" title="" value="' +
-                        menuList[i].sonList[j].menuId +
-                        '" lay-skin="primary" lay-filter="check"></div>';
-                    }
-
-                    // if(menuList[i].menuPno !== 1){
-
-                    //    str += '<span>'+ menuList[i].menuName +'</span><span><input type="checkbox" class="box" name="menu'+menuList[i].menuId +'" title="" value="'+ menuList[i].menuId +'" lay-skin="primary"></span>'
-
-                    // }
-                    str += "</div></div>";
-                  }
-                  _this.$("#menuAssignment").append(str);
-
-                  for (var z = 0; z < userMenuList.length; z++) {
-                    for (var j = 0; j < _this.$(".box").length; j++) {
-                      if (userMenuList[z].menuId == _this.$(".box")[j].value) {
-                        _this.$(".box")[j].checked = true;
-                        
+                        '<div id="menuList" style="display: flex;justify-content: space-between;border: 1px solid #ccc;border-bottom:none" ><span style="display: flex;justify-content: center;align-items: center;border-right:1px solid #ccc" class="boxmenu"><input type="checkbox" class="box" name="menu' +
+                        menuList[i].menuId +
+                        '" title="' +
+                        menuList[i].menuName +
+                        '" value="' +
+                        menuList[i].menuId +
+                        '" lay-skin="primary" lay-filter="checks"></span><div class="childrenMenu" style="display: flex;justify-content: space-between; flex-direction: column;width:57%">';
+  
+                      for (var j = 0; j < menuList[i].sonList.length; j++) {
+                        str +=
+                          '<div style="display: flex;justify-content: space-between"><span style="width:90px;text-align:center">' +
+                          menuList[i].sonList[j].menuName +
+                          '</span><input type="checkbox" class="box" name="menu' +
+                          menuList[i].sonList[j].menuId +
+                          '" title="" value="' +
+                          menuList[i].sonList[j].menuId +
+                          '" lay-skin="primary" lay-filter="check"></div>';
                       }
-                      if (_this.$(".box")[j].checked == true) {
-                        _this.$(_this.$(".box")[j]).parents("#menuList").find(".boxmenu .box")[0].checked = true;
+                      str += "</div></div>";
+                    }
+                    str +='</div>'
+                    _this.$("#menuAssignment").append(str);
+  
+                    for (var z = 0; z < userMenuList.length; z++) {
+                      for (var j = 0; j < _this.$(".box").length; j++) {
+                        if (userMenuList[z].menuId == _this.$(".box")[j].value) {
+                          _this.$(".box")[j].checked = true;
+                          
+                        }
+                        if (_this.$(".box")[j].checked == true) {
+                          _this.$(_this.$(".box")[j]).parents("#menuList").find(".boxmenu .box")[0].checked = true;
+                        }
                       }
                     }
-                  }
-                  console.log(_this.$(".box"));
-                  setTimeout(() => {
-                    form.render();
-                  }, 200);
-                });
+                    console.log(_this.$(".box"));
+                    setTimeout(() => {
+                      form.render();
+                    }); 
+                  });
+              },100)
             },
             yes: function(index, layero) {
               // 获取当前用户的角色
@@ -299,14 +373,175 @@ export default {
             btnAlign: "c"
           });
           return false;
-        } else if (obj.event === "buttonAssign") {
+        } else if (obj.event === "按钮分配") {
           //按钮分配
+          
+          layer.open({
+            type: 1,
+            title: "按钮分配",
+            area: ["800px", "500px"],
+            fixed: false, //不固定
+            maxmin: true,
+            content: `<form style="padding: 15px 15px 0;" id="menuAssignment" class="layui-form layui-form-pane">
+                        <div style="display: flex;justify-content: space-between;margin-bottom:10px;"><span style="flex: 1;">菜单名称</span><span style="margin-right: 5px;flex: 1;">操作</span><span style="margin-right: 5px;">全选</span></div>
+                      </form>
+                    `,
+            btn: ["确定", "取消"],
+            success: function() {
+              var menuList = [];
+              var roleList = [];
+              var btnList = [];
+              var btnlimit = [];
+              var btns = []
+              _this.$axios
+                .post("/api/getBtnList", {
+                  userId: _this.$store.state.userId,
+                })
+                .then(res => {
+                  console.log(res);
+                  roleList = res.data.body.roleList
+                });
+
+                _this.$axios
+                  .post("/api/getRoleInfoAll", {
+                    userId: _this.$store.state.userId,
+                    roleId: data.roleId
+                  })
+                  .then(res => {
+                    console.log(res)
+                    btnList = res.data.body.menuBtnList
+                    btnlimit = btnList[0].btnLimit ? JSON.parse(btnList[0].btnLimit) : []
+                    console.log(btnlimit)
+                    if(btnList[0].btnLimit && btnlimit.length > 0 && btnlimit[0].btns) {
+                      for(var i = 0; i < btnlimit.length; i++){
+                        // console.log(btnlimit[i].btns)
+                        btnlimit[i].btns.forEach((item,index)=>{
+                          // console.log(item)
+                          btns.push(item)
+                        })
+                      }
+                    }
+                  });
+              setTimeout(()=>{
+                _this.$axios
+                  .post("/api/getMenuListByRoleId", {
+                    userId: _this.$store.state.userId,
+                    seleRoleId: data.roleId
+                  })
+                  .then(res => {
+                    console.log(res);
+                    menuList = res.data.body.menuList;
+                   
+                    var str = '<div style="border-bottom:1px solid #ccc;">';
+                    for (var i = 0; i < menuList.length; i++) {
+                      if(menuList[i].menuPno !== 1){
+                        str +=
+                          '<div class="btnsBox" style="display: flex;justify-content: space-between;min-height:50px;border:1px solid #ccc;border-bottom:none;align-items: center;"><span style="display: flex;height: 100%;align-items: center;min-height:50px ;width:130px;border-right:1px solid #ccc;padding-left:10px">' +
+                          menuList[i].menuName +
+                          '</span><div id="btnList" style="flex:1">'
+                          for(var z = 0; z < roleList.length; z++){
+                            if(menuList[i].menuId == roleList[z].menuId){
+                              str += '<input type="checkbox" class="box" data-id="'+roleList[z].menuId+'" data-code="'+ roleList[z].btnCode + '" name="'+roleList[z].btnId+'" title="'+roleList[z].btnName+'" value=' + "'" + '{"menuId":"' + roleList[z].menuId + '","menuUrl":"' + roleList[z].menuUrl + '"' + ',"btns":[{' + '"btnCode":"' + roleList[z].btnCode + '",' + '"btnName":"' + roleList[z].btnName + '"' + "}]}'" + ' lay-skin="primary" lay-filter="btnBox">'
+                            }
+                          }
+                          str+='</div><input type="checkbox" class="box"  name="" title="" value="" lay-skin="primary" lay-filter="checkAll"></div>';
+                      }
+                    }
+                    str += '</div>'
+                    _this.$("#menuAssignment").append(str);
+                     
+                    // console.log(_this.$(".box"));
+  
+                    console.log(btnlimit,btns)
+                    for (var z = 0; z < btnlimit.length; z++) {
+                      for (var j = 0; j < _this.$(".box").length; j++) {
+                        // console.log(_this.$(_this.$(".box")[j]))
+                        // console.log(_this.$(".box")[j].dataset.code)
+                        if (btnlimit[z].menuId == _this.$(".box")[j].dataset.id) {
+                          for(var h = 0; h < btnlimit[z].btns.length; h++){
+                            if(btnlimit[z].btns[h].btnCode == _this.$(".box")[j].dataset.code){
+                              _this.$(".box")[j].checked = true;
+                            }
+                          }
+                        }
+                      }
+                    }
+                    setTimeout(()=>{
+                      form.render();
+                    })
+                  });
+              },100)
+
+              form.on("checkbox(checkAll)",function(data){
+                var box = _this.$(data.elem).parent().find(".box")
+                // console.log(box)
+                if (_this.$(data.elem).is(":checked")) {
+                  for(var i = 0; i < box.length; i++){
+                    box[i].checked = true
+                  }
+                }else{
+                  for(var i = 0; i < box.length; i++){
+                    box[i].checked = false
+                  }
+                }
+                form.render();
+              })
+            },
+            yes: function(index, layero) {
+              // 获取当前用户的角色
+              var menuAssignment = _this.$("#menuAssignment").serializeObject();
+              console.log(menuAssignment)
+              var arr = [];
+              Object.keys(menuAssignment).forEach(function(key) {
+                // console.log(key)
+                arr.push(JSON.parse(menuAssignment[key]));
+              });
+              for(var i = 0; i < arr.length; i++){
+                for(var j =i+1; j < arr.length; j++){
+                  if(arr[i].menuId == arr[j].menuId){         //第一个等同于第二个，splice方法删除第二个
+                      arr[i].btns.push(arr[j].btns[0])
+                      arr.splice(j,1);
+                      j--;
+                  }
+                }
+              }
+              // for(var z = 0; z < arr.length; z++){
+              //   delete(arr[z].btnCode)
+              // }
+
+              // console.log(data);
+              console.log(arr);
+              
+
+              _this.$axios
+                .post("/api/allotBtnLimit", {
+                  userId: _this.$store.state.userId,
+                  roleId: data.roleId,
+                  btnlimit: JSON.stringify(arr)
+                })
+                .then(res => {
+                  console.log(res);
+                  if (res.data.retCode == "000000") {
+                    layer.msg(res.data.retMsg, { icon: 1 });
+                    setTimeout(() => {
+                      _this.$router.push("/roleManagement?type=roleManagement");
+                    }, 3000);
+                  } else {
+                    layer.msg(res.data.retMsg, { icon: 2 });
+                  }
+                });
+              layer.close(index);
+              return false;
+            },
+            btnAlign: "c"
+          });
+          return false;
         }
       });
     });
   },
   created() {
-    sessionStorage.clear();
+    localStorage.clear();
     this.type = this.$route.query.type;
     var data = {
       userId: this.$store.state.userId,
@@ -320,6 +555,11 @@ export default {
       })
       .catch(err => {
         console.log(err);
+      });
+  },
+  updated() {
+      layui.use("form", function() {
+        layui.form.render();
       });
   }
 };
@@ -359,5 +599,6 @@ export default {
 .dataList .dataList_table td .btn {
   font-size: 13px !important;
   color: blue !important;
+  
 }
 </style>

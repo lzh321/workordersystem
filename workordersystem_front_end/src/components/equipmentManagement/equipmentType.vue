@@ -10,6 +10,7 @@
             class="layui-btn layui-btn-normal layui-btn-sm"
             tag="button"
             type="button"
+            v-if="add"
           >
             <i class="layui-icon">&#xe608;</i> 添加
           </router-link>
@@ -17,10 +18,6 @@
       </div>
       <div class="dataList_table">
         <table id="demo" lay-filter="equipmentTypeList" lay-data="{id:'serachData'}"></table>
-        <div id="barDemo" style="display:none">
-          <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a>
-        </div>
       </div>
     </div>
   </div>
@@ -32,14 +29,15 @@ export default {
   name: "equipmentType",
   data() {
     return {
-      type: ""
+      type: "",
+      add: false
     };
   },
   components: {
     dataScreening
   },
-  methods: {
-    layui: function() {
+  mounted() {
+
       var _this = this;
       layui.use(["table", "form"], function() {
         var table = layui.table;
@@ -59,13 +57,14 @@ export default {
           elem: "#demo",
           url: "/api/getDeviceModelList", //数据接口
           method: "post",
+          where: {userId: _this.$store.state.userId},
           parseData: function(res) {
             //res 即为原始返回的数据
             return {
               code: res.retCode, //解析接口状态
               msg: res.retMsg, //解析提示文本
-              count: res.body.modelList.length, //解析数据长度
-              data: res.body.modelList //解析数据列表
+              count: res.body.totalCount, //解析数据长度
+              data: res.body.devicemodelInfoList //解析数据列表
             };
           },
           id: "serachData",
@@ -101,9 +100,18 @@ export default {
                 sort: false,
                 align: "center"
               },
-              { title: "操作", align: "center", toolbar: "#barDemo" }
+              {
+                title: "操作",
+                align: "center",
+                templet: function(d) {
+                  return '<div class="tabBtn"></div>'
+                }
+              }
             ]
-          ]
+          ],
+          done: function(res, curr, count){
+            _this.getBtns()
+          }
         });
 
         //监听行工具事件
@@ -111,7 +119,7 @@ export default {
           var data = obj.data;
           console.log(data);
           var modelId = data.modelId;
-          if (obj.event === "deletion") {
+          if (obj.event === "删除") {
             layer.confirm(
               "你确定要删除这条记录？",
               { icon: 3, title: "提示" },
@@ -135,21 +143,92 @@ export default {
                   });
               }
             );
-          } else if (obj.event === "edit") {
-            sessionStorage.setItem("modelId", modelId);
-            sessionStorage.setItem("data", JSON.stringify(data));
+          } else if (obj.event === "编辑") {
+            localStorage.setItem("modelId", modelId);
+            localStorage.setItem("data", JSON.stringify(data));
             _this.$router.push("/addEquipmentType");
           }
         });
       });
-    }
   },
-  mounted() {
-    this.layui();
+  methods: {
+    getBtns(){
+      this.$('tbody a').hide()
+      this.$('.dataList_top').find('a').hide()
+      // console.log(this.$('.content_main a'))
+      var userId = this.$store.state.userId
+      this.$axios({
+        method: 'post',
+        url: '/api/getAllRoleInfoByUserId',
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      }).then((res) => {
+        console.log(res)
+        // debugger
+        if (res.data.body.roleBtnList.length > 0) {
+          var arr = []
+          for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+            if (res.data.body.roleBtnList[i].btnLimit) {
+              arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit))
+            }
+          }
+          console.log(arr)
+          var url = location.pathname + location.search
+          console.log(url)
+          var str = []
+          for (var j = 0; j < arr.length; j++) {
+            for (var z = 0; z < arr[j].length; z++) {
+              if (arr[j][z].btns && arr[j][z].menuUrl == url) {
+                console.log(arr[j][z].btns)
+                str = arr[j][z].btns
+              }
+            }
+          }
+          if(str.length == 0){
+            this.$('tbody a').hide()
+          }else{
+            var btn = str
+            for (var h = 0; h < btn.length; h++) {
+              for (var k = h + 1; k < btn.length; k++) {
+                if (btn[h].btnCode == btn[k].btnCode) {         //第一个等同于第二个，splice方法删除第二个
+                  btn.splice(k, 1);
+                  k--;
+                }
+              }
+            }
+            var userBtn  = btn
+            this.getBtnList(userBtn)
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getBtnList(userBtn){
+        var btnList = userBtn
+        console.log(btnList)
+        console.log(this.$('.tabBtn'))
+        var str = ''
+        for(var z = 0; z < btnList.length;z++){
+          if(btnList[z].btnName == '添加'){
+            this.add = true
+          }else{
+            str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
+          }
+          // console.log(btnList[z].btnCode)
+        }
+        console.log(str)
+        for(var j = 0; j < this.$('.tabBtn').length; j++){
+          console.log(this.$(this.$('.tabBtn')[j]).html(str))
+          this.$(this.$('.tabBtn')[j]).html(str)
+        }
+    }
   },
   created() {
     this.type = this.$route.query.type;
-    sessionStorage.clear()
+    localStorage.clear()
   }
 };
 </script>

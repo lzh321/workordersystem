@@ -58,7 +58,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">设备型号</label>
           <div class="layui-input-block" layui-filter>
-            <select name="modelId" lay-filter="seleModelType" id="modelType" lay-search lay-verify="required">
+            <select name="modelType" lay-filter="seleModelType" id="modelType" lay-search lay-verify="required">
               <option value>请选择设备型号</option>
               <option
                 v-for="(item) in DeviceModelType"
@@ -73,7 +73,7 @@
         <div class="layui-form-item">
           <label class="layui-form-label">存货名称</label>
           <div class="layui-input-block" layui-filter>
-            <select name="modelId" lay-filter="seleModelType" lay-search id="modelType" lay-verify="required">
+            <select name="modelId" lay-filter="seleModelType" lay-search id="" lay-verify="required">
               <option value>请选择存货名称</option>
               <option
                 v-for="(item) in modelName"
@@ -121,7 +121,7 @@
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label layui">投放点详细地址</label>
+          <label class="layui-form-label">投放点详细地址</label>
           <div class="layui-input-block">
             <input
               type="text"
@@ -136,7 +136,7 @@
         </div>
 
         <div class="layui-form-item">
-          <label class="layui-form-label layui">请输入序列号</label>
+          <label class="layui-form-label">请输入序列号</label>
           <div class="layui-input-block">
             <input
               type="text"
@@ -148,6 +148,8 @@
             />
           </div>
         </div>
+
+        <orgInfo :type="type"></orgInfo>
 
         <!-- <div class="layui-form-item">
           <label class="layui-form-label">设备序列号</label>
@@ -643,7 +645,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addEquiment">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -651,6 +653,7 @@
 </template>
 
 <script>
+import orgInfo from '@/components/orgInfo'
 export default {
   name: "addEquipment",
   data() {
@@ -664,18 +667,22 @@ export default {
       inventoryName: "",
       deviceNumber: "",
       DeviceInfo: {},
-      deviceNumberList: []
+      deviceNumberList: [],
+      type: 'addEquipment'
     };
+  },
+  components: {
+    orgInfo: orgInfo
   },
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getAllModelType", userId).then(res => {
+      this.$axios.post("/api/getAllModelType", {userId:userId}).then(res => {
         // 设备型号
         // console.log(res);
         this.DeviceModelType = res.data.body.modelTypeList;
       });
-      this.$axios.post("/api/getCustomerNameList", userId).then(res => {
+      this.$axios.post("/api/getCustomerNameList", {userId:userId}).then(res => {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
       });
@@ -683,8 +690,8 @@ export default {
     },
     getDeviceInfo() {
       console.log(111);
-      var deviceId = sessionStorage.getItem("deviceId")
-        ? sessionStorage.getItem("deviceId")
+      var deviceId = localStorage.getItem("deviceId")
+        ? localStorage.getItem("deviceId")
         : "";
 
       if (deviceId) {
@@ -940,8 +947,8 @@ export default {
       });
       //监听提交
       form.on("submit(addEquiment)", function(data) {
-        var deviceId = sessionStorage.getItem("deviceId")
-          ? sessionStorage.getItem("deviceId")
+        var deviceId = localStorage.getItem("deviceId")
+          ? localStorage.getItem("deviceId")
           : "";
         console.log(deviceId);
         data.field.userId = _this.$store.state.userId;
@@ -993,6 +1000,11 @@ export default {
         //数组的两个值分别代表：[正则匹配、匹配不符时的提示文字]
         pass: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"]
       });
+      if(_this.type == 'addEquipment'){
+        console.log(_this.$('.org'))
+        _this.$('.org').css({'width':'130px !important'})
+        form.render()
+      }
     });
   },
 

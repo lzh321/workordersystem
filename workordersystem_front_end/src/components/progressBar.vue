@@ -37,14 +37,14 @@ export default {
   data() {
     return {
       orderInfo: {},
-      orderState: sessionStorage.getItem("orderState")
+      orderState: localStorage.getItem("orderState")
     }
   },
   methods:{
     changeArticleSteps(){
-      var orderState = sessionStorage.getItem("orderState")
+      var orderState = localStorage.getItem("orderState")
       var childrenLen = this.$(".progressBar").children().length
-      var orderState = sessionStorage.getItem("orderState") ? sessionStorage.getItem("orderState") : ''
+      var orderState = localStorage.getItem("orderState") ? localStorage.getItem("orderState") : ''
       console.log(childrenLen)
       // for(var i = 0; i < childrenLen; i++){
         if(orderState == 0){
@@ -94,7 +94,7 @@ export default {
     getOrderInfo(){
       var data = {
         userId: this.$store.state.userId,
-        orderInfoId: sessionStorage.getItem("orderInfoId")
+        orderInfoId: localStorage.getItem("orderInfoId")
       }
       this.$axios.post("/api/getOrderInfo",data).then(res=>{
         console.log(res)

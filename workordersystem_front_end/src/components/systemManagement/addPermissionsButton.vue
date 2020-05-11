@@ -58,7 +58,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addPermissionsButton">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" type="" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -72,7 +72,7 @@ export default {
     return {
       menuList: [],
       getMenu: {},
-      btnList: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : '',
+      btnList: localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : '',
       btnCode: '',
       btnName: ''
     };
@@ -111,7 +111,7 @@ export default {
       })
       //监听提交
       form.on("submit(addPermissionsButton)", function(data) {
-        var btnId = sessionStorage.getItem('btnId') ? sessionStorage.getItem('btnId') : ''
+        var btnId = localStorage.getItem('btnId') ? localStorage.getItem('btnId') : ''
         data.field.userId = _this.$store.state.userId
         if(btnId === null || btnId === '' || btnId === undefined){
           _this.$axios.post('/api/addBtnInfo',data.field).then(res=>{

@@ -202,7 +202,7 @@ export default {
     getDeviceInfo(){
       var data = {
         userId: this.$store.state.userId,
-        deviceId: sessionStorage.getItem('deviceId') ? sessionStorage.getItem('deviceId') : '',
+        deviceId: localStorage.getItem('deviceId') ? localStorage.getItem('deviceId') : '',
       }
       this.$axios.post('/api/getDeviceInfo',data).then(res=>{
         console.log(res.data.body)

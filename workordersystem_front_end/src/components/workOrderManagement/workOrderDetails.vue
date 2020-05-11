@@ -22,8 +22,8 @@ export default {
   },
   beforeDestroy(){
     // console.log('组件销毁')
-    // sessionStorage.removeItem("orderState")
-    // sessionStorage.removeItem("orderInfoId")
+    // localStorage.removeItem("orderState")
+    // localStorage.removeItem("orderInfoId")
   }
 }
 </script>

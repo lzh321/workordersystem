@@ -44,7 +44,7 @@
         <div class="layui-input-block">
           <button type="button" class="layui-btn" lay-submit lay-filter="addCompany">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -77,7 +77,7 @@ export default {
         console.log(data.field);
         data.field.userId = _this.$store.state.userId
         if (_this.type == "CompanyList") {
-          var companyId = sessionStorage.getItem('companyId') ? sessionStorage.getItem('companyId') : ''
+          var companyId = localStorage.getItem('companyId') ? localStorage.getItem('companyId') : ''
           if(companyId === null || companyId === '' || companyId === undefined){
             _this.$axios.post('/api/addCompanyInfo',data.field).then(res=>{
               console.log(res)
@@ -108,7 +108,7 @@ export default {
         }
         if (_this.type == "DeptList") {
 
-          var deptId = sessionStorage.getItem('deptId') ? sessionStorage.getItem('deptId') : ''
+          var deptId = localStorage.getItem('deptId') ? localStorage.getItem('deptId') : ''
           if(deptId === null || deptId === '' || deptId === undefined){
             _this.$axios.post('/api/addDeptInfo',data.field).then(res=>{
               console.log(res)
@@ -138,7 +138,7 @@ export default {
         }
         if (_this.type == "JobList") {
           
-          var jobId = sessionStorage.getItem('jobId') ? sessionStorage.getItem('jobId') : ''
+          var jobId = localStorage.getItem('jobId') ? localStorage.getItem('jobId') : ''
           if(jobId === null || jobId === '' || jobId === undefined){
             _this.$axios.post('/api/addJobInfo',data.field).then(res=>{
               console.log(res)

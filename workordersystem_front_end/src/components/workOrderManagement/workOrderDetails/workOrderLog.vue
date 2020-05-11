@@ -36,7 +36,7 @@ export default {
         url: "/api/getRemarListByOrderInfoId", //数据接口
         where:{
           userId: _this.$store.state.userId,
-          seleOrderInfoId: sessionStorage.getItem("orderInfoId")
+          seleOrderInfoId: localStorage.getItem("orderInfoId")
         },
         id: "serachData",
         parseData: function(res) {

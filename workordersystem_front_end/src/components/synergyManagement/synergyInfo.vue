@@ -105,9 +105,9 @@ export default {
   name: "synergyInfo",
   data() {
     return {
-      id: sessionStorage.getItem("id") ? sessionStorage.getItem("id") : "",
-      coordinateState: sessionStorage.getItem("coordinateState")
-        ? sessionStorage.getItem("coordinateState")
+      id: localStorage.getItem("id") ? localStorage.getItem("id") : "",
+      coordinateState: localStorage.getItem("coordinateState")
+        ? localStorage.getItem("coordinateState")
         : "",
       synergyInfo: {}
     };

@@ -8,6 +8,7 @@ import qs from 'qs'
 import store from './store'
 import jquery from 'jquery'
 import { Tabbar, TabbarItem, NavBar, Tab, Tabs, List, Button, Field, Icon, Uploader, Dialog, Toast, DatetimePicker, Popup,Search,Loading } from 'vant'
+import 'babel-polyfill'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'

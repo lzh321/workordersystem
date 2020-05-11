@@ -44,7 +44,7 @@ export default {
   },
   methods:{
     getOrderCoordinateList(){
-      var orderInfoId = sessionStorage.getItem("orderInfoId") ? sessionStorage.getItem("orderInfoId") : ''
+      var orderInfoId = localStorage.getItem("orderInfoId") ? localStorage.getItem("orderInfoId") : ''
       if(orderInfoId){
         var data = {
           userId: this.$store.state.userId,

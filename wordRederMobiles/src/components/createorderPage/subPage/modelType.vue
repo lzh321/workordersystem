@@ -27,7 +27,8 @@ export default {
   },
   created(){
     var networkId = this.$route.query.networkId
-    this.axios.post("/api/getDeviceNumberListByNetworkId",{networkId: networkId}).then(res=>{
+    var userId = this.$store.state.userId
+    this.axios.post("/api/getDeviceNumberListByNetworkId",{networkId: networkId,userId:userId}).then(res=>{
       console.log(res)
       if(res.data.retCode == '000000'){
         this.modelType = res.data.body.modelList

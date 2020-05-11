@@ -67,7 +67,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addMenu">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -83,8 +83,8 @@ export default {
       isShowMenuPno: false,
       isMenuPno: false,
       menuList: [],
-      menuInfo: sessionStorage.getItem("data")
-        ? JSON.parse(sessionStorage.getItem("data"))
+      menuInfo: localStorage.getItem("data")
+        ? JSON.parse(localStorage.getItem("data"))
         : ""
     };
   },
@@ -122,11 +122,11 @@ export default {
       });
       //监听提交
       form.on("submit(addMenu)", function(data) {
-        var menuId = sessionStorage.getItem("menuId")
-          ? sessionStorage.getItem("menuId")
+        var menuId = localStorage.getItem("menuId")
+          ? localStorage.getItem("menuId")
           : "";
-        var menuPno = sessionStorage.getItem("menuPno")
-          ? sessionStorage.getItem("menuPno")
+        var menuPno = localStorage.getItem("menuPno")
+          ? localStorage.getItem("menuPno")
           : "";
         data.field.userId = _this.$store.state.userId;
         if (menuId === null || menuId === "" || menuId === undefined) {
@@ -164,7 +164,7 @@ export default {
     });
   },
   created() {
-    this.menuPno = sessionStorage.getItem("menuPno");
+    this.menuPno = localStorage.getItem("menuPno");
     if (
       this.menuPno == "" ||
       this.menuPno == null ||

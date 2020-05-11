@@ -311,18 +311,18 @@ export default {
         } else if (obj.event === "edit") {
           if (data.companyName == "" || data.companyName) {
             var companyId = data.id;
-            sessionStorage.setItem("companyId", companyId);
+            localStorage.setItem("companyId", companyId);
             console.log(companyId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
           if (data.deptName) {
             var deptId = data.deptId;
-            sessionStorage.setItem("deptId", deptId);
+            localStorage.setItem("deptId", deptId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
           if (data.jobName) {
             var jobId = data.id;
-            sessionStorage.setItem("jobId", jobId);
+            localStorage.setItem("jobId", jobId);
             _this.$router.push("/addCompany?type=" + _this.type);
           }
         }
@@ -342,7 +342,7 @@ export default {
       this.url = "/api/getJobList";
       this.list = this.JobList;
     }
-    sessionStorage.clear()
+    localStorage.clear()
   },
   updated() {
     var _this = this;

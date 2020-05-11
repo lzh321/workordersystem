@@ -39,13 +39,14 @@ Axios.create({
     'Content-Type': 'application/x-www-form-urlencoded'
   }
 })
+ 
 
 // 添加请求拦截器，在请求头中加token
 Axios.interceptors.request.use(
   config => {
     config.data = qs.stringify(config.data)
-    if (localStorage.getItem('userId')) {
-      config.headers.userId = localStorage.getItem('userId');
+    if (sessionStorage.getItem('userId')) {
+      config.headers.userId = sessionStorage.getItem('userId');
     }
 
     return config;
@@ -62,7 +63,7 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     next();
   } else {
-    let userId = localStorage.getItem('userId');
+    let userId = sessionStorage.getItem('userId');
     if (userId === null || userId === '' || userId === undefined) {
       next('/login');
     } else {

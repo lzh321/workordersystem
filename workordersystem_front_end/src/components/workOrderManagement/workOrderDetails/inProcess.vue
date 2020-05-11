@@ -127,8 +127,8 @@ export default {
   },
   data() {
     return {
-      orderInfoId: sessionStorage.getItem("orderInfoId")
-        ? sessionStorage.getItem("orderInfoId")
+      orderInfoId: localStorage.getItem("orderInfoId")
+        ? localStorage.getItem("orderInfoId")
         : "",
       recordList: [],
       AfterimgArray: [],

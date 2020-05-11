@@ -298,7 +298,7 @@
             lay-submit
             lay-filter="Kuantan"
           >关单</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
       <workOrderLog v-if="orderState == 0 "></workOrderLog>
@@ -327,8 +327,8 @@ export default {
       imgData: "",
       imgDataArray: [],
       orderInfoId: "",
-      orderState: sessionStorage.getItem("orderState")
-        ? sessionStorage.getItem("orderState")
+      orderState: localStorage.getItem("orderState")
+        ? localStorage.getItem("orderState")
         : null,
       DomainName: this.$store.state.url
     };
@@ -349,11 +349,11 @@ export default {
       //   console.log(res)
       //   this.deviceInfoList = res.data.body.modelList;
       // });
-      this.$axios.post("/api/getCustomerNameList", userId).then(res => {
+      this.$axios.post("/api/getCustomerNameList", {userId}).then(res => {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
       });
-      this.$axios.post("/api/getUserList", userId).then(res => {
+      this.$axios.post("/api/getUserList", {userId}).then(res => {
         // 员工列表
         // console.log(res);
         // this.userList = res.data.body.userList;
@@ -475,8 +475,8 @@ export default {
       form.on("submit(bill)", function(data) {
         console.log(data.field, orderInfoId);
 
-        var orderInfoId = sessionStorage.getItem("orderInfoId")
-          ? sessionStorage.getItem("orderInfoId")
+        var orderInfoId = localStorage.getItem("orderInfoId")
+          ? localStorage.getItem("orderInfoId")
           : "";
 
         data.field.userId = _this.$store.state.userId;
@@ -522,8 +522,8 @@ export default {
       form.on("submit(Kuantan)", function(data) {
         console.log(data.field, orderInfoId);
 
-        var orderInfoId = sessionStorage.getItem("orderInfoId")
-          ? sessionStorage.getItem("orderInfoId")
+        var orderInfoId = localStorage.getItem("orderInfoId")
+          ? localStorage.getItem("orderInfoId")
           : "";
         if (
           orderInfoId === null ||

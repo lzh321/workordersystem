@@ -6,15 +6,12 @@
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p>
-          <router-link to="/addCustomer" tag="button">添加</router-link>
+           <router-link to="/addCustomer" tag="button" v-if="add" class="add layui-btn layui-btn-normal layui-btn-sm"><i class="layui-icon">&#xe608;</i>添加</router-link>
         </p>
       </div>
       <div class="dataList_table">
         <table id="demo" lay-filter="CustomerNameList" lay-data="{id: serachData}"></table>
-        <div id="barDemo" style="display:none">
-          <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-          <a class="layui-btn layui-btn-xs" lay-event="deletion">删除</a>
-        </div>
+
       </div>
     </div>
   </div>
@@ -26,11 +23,87 @@ export default {
   name: "CustomerNameList",
   data() {
     return {
-      type: ""
+      type: "",
+      add: false
     };
   },
   components: {
     dataScreening
+  },
+  methods:{
+    getBtns(){
+      this.$('tbody a').hide()
+      var userId = this.$store.state.userId
+      this.$axios({
+        method: 'post',
+        url: '/api/getAllRoleInfoByUserId',
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      }).then((res) => {
+        console.log(res)
+        // debugger
+        if (res.data.body.roleBtnList.length > 0) {
+          var arr = []
+          for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+            if (res.data.body.roleBtnList[i].btnLimit) {
+              arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit))
+            }
+          }
+          console.log(arr)
+          var url = location.pathname + location.search
+          console.log(url)
+          var str = []
+          for (var j = 0; j < arr.length; j++) {
+            for (var z = 0; z < arr[j].length; z++) {
+              if (arr[j][z].btns && arr[j][z].menuUrl == url) {
+                console.log(arr[j][z].btns)
+                str = arr[j][z].btns
+              }
+            }
+          }
+          if(str.length == 0){
+            this.$('tbody a').hide()
+          }else{
+            var btn = str
+            for (var h = 0; h < btn.length; h++) {
+              for (var k = h + 1; k < btn.length; k++) {
+                if (btn[h].btnCode == btn[k].btnCode) {         //第一个等同于第二个，splice方法删除第二个
+                  btn.splice(k, 1);
+                  k--;
+                }
+              }
+            }
+            var userBtn  = btn
+            this.getBtnList(userBtn)
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    getBtnList(userBtn){
+        var btnList = userBtn
+        console.log(btnList)
+        console.log(this.$('.tabBtn'))
+        var str = ''
+        for(var z = 0; z < btnList.length;z++){
+          if(btnList[z].btnName == '添加'){
+            this.add = true
+          }else{
+            str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
+          }
+         
+          // console.log(btnList[z].btnCode)
+        }
+        console.log(str)
+        for(var j = 0; j < this.$('.tabBtn').length; j++){
+          console.log(this.$(this.$('.tabBtn')[j]).html(str))
+          this.$(this.$('.tabBtn')[j]).html(str)
+        }
+        
+    }
   },
   mounted() {
     var _this = this;
@@ -56,6 +129,7 @@ export default {
         response: {
           statusCode: "000000"
         },
+        where: { userId: _this.$store.state.userId },
         parseData: function(res) {
           //res 即为原始返回的数据
           return {
@@ -90,10 +164,15 @@ export default {
               field: "operation",
               title: "操作",
               align: "center",
-              toolbar: "#barDemo"
+              templet: function(d) {
+                return '<div class="tabBtn"></div>'
+              }
             }
           ]
-        ]
+        ],
+        done: function(res, curr, count){
+          _this.getBtns()
+        }
       });
 
       table.reload("serachData", {
@@ -108,7 +187,7 @@ export default {
         var customerName = data.customerName;
         var customerId = data.customerId;
         console.log(customerId);
-        if (obj.event === "deletion") {
+        if (obj.event === "删除") {
           layer.confirm("你确定要删除这条记录？", { icon: 3, title: "提示" },function(index) {
             //向服务端发送删除指令
             var delParam = {
@@ -126,17 +205,17 @@ export default {
               }
             });
           });
-        } else if (obj.event === "edit") {
+        } else if (obj.event === "编辑") {
           //编辑
-          sessionStorage.setItem("customerName", customerName);
-          sessionStorage.setItem("customerId", customerId);
+          localStorage.setItem("data", JSON.stringify(data));
+          localStorage.setItem("customerId", customerId);
           _this.$router.push("/addCustomer");
         }
       });
     });
   },
   created() {
-    sessionStorage.clear()
+    localStorage.clear()
     this.type = this.$route.query.type;
     this.$axios
       .post("/api/getCustomerNameList", this.$store.state.userId)

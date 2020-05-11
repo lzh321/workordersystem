@@ -256,6 +256,13 @@
           </div>
         </div>
       </div>
+      <div  class="layui-input-block">
+        <button
+            type="button"
+            class="layui-btn"
+            @click="goBack"
+          >返回</button>
+      </div>
       <workOrderLog></workOrderLog>
     </form>
   </div>
@@ -271,7 +278,7 @@ export default {
   data() {
     return {
       workOrderInfo: {},
-      orderInfoId: sessionStorage.getItem("orderInfoId"),
+      orderInfoId: localStorage.getItem("orderInfoId"),
       imgDataArray: [],
       DomainName: this.$store.state.url
     };
@@ -291,8 +298,8 @@ export default {
       });
     },
     workValuation() {
-      var orderInfoId = sessionStorage.getItem("orderInfoId")
-        ? sessionStorage.getItem("orderInfoId")
+      var orderInfoId = localStorage.getItem("orderInfoId")
+        ? localStorage.getItem("orderInfoId")
         : "";
       if (orderInfoId) {
         var data = {
@@ -310,6 +317,9 @@ export default {
           }
         });
       }
+    },
+    goBack(){
+      this.$router.push({path: "/workOrderManagement?type=workOrderManagement"})
     }
   },
   created() {

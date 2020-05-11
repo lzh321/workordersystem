@@ -86,7 +86,7 @@
         <input name="modelId" :value="modelType.modelId" type="hidden" />
         <span>可选</span>
       </div>
-      <div class="deviceNumber" @click="selectDeviceNumber(modelType.modelType)">
+      <div class="deviceNumber" @click="selectDeviceNumber(modelType.networkId)">
         <label for>
           <span>设备序列号</span>：
         </label>
@@ -294,8 +294,8 @@ export default {
       this.$router.push("/modelType?networkId=" + networkId);
       sessionStorage.removeItem("DeviceNumber");
     },
-    selectDeviceNumber(modelType) {
-      this.$router.push("/DeviceNumber?modelType=" + modelType);
+    selectDeviceNumber(networkId) {
+      this.$router.push("/DeviceNumber?networkId=" + networkId);
     },
     getOrderInfoId() {
       var date = new Date();

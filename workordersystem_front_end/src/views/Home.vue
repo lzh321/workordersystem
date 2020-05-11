@@ -6,8 +6,8 @@
         <li class="header_nav_item">
           <p>{{userId}}</p>
           <ul class="userOperate">
-            <li class="userOperate_item">修改密码</li>
-            <li class="userOperate_item">基本信息</li>
+            <li class="userOperate_item" @click="lookInfo"><a href="javascript:;">基本信息</a></li>
+            <li class="userOperate_item" @click="alterPassword"><a href="javascript:;">修改密码</a></li>
           </ul>
         </li>
         <li class="header_nav_item">消息中心</li>
@@ -17,7 +17,7 @@
       </ul>
     </header>
     <div class="content">
-      <router-view name="Side"></router-view>
+      <!-- <router-view name="Side"></router-view> -->
       <Side @titleFn="titleFn" v-if="isRouterAlive"></Side>
       <Main :title="titleText"></Main>
     </div>
@@ -39,7 +39,7 @@ export default {
     return {
       isLogin: true,
       userId: this.$store.state.userId,
-      titleText: "工作台",
+      titleText: "",
       isRouterAlive: true,
     };
   },
@@ -60,6 +60,12 @@ export default {
         layer.close(index);
       });
     },
+    lookInfo(){
+      this.$router.push({path:'/userInfo',query:{type: '1'}})
+    },
+    alterPassword(){
+      this.$router.push({path:'/alterPassword'})
+    },
     reload(){
       this.isRouterAlive = false
       this.$nextTick(function(){
@@ -68,9 +74,7 @@ export default {
     },
   },
   created() {
-    if (!sessionStorage.getItem("isLogin")) {
-      this.isLogin = false;
-    }
+
   }
 };
 </script>
@@ -127,13 +131,12 @@ header {
 }
 .header_nav_item .userOperate {
   position: absolute;
-  bottom: -75px;
+  bottom: -35px;
   width: 100%;
   z-index: 9998;
   background: #fff;
   box-shadow: 2px 2px 5px -2px #ccc;
   font-size: 12px;
-  height: 80px;
   text-align: center;
 }
 .header_nav_item .userOperate .userOperate_item {
@@ -156,5 +159,9 @@ header {
   display: flex;
   flex: 1;
   overflow: hidden;
+}
+
+.pwd{
+  text-align: center;
 }
 </style>

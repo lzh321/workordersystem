@@ -25,7 +25,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="addRole">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" type="" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -53,7 +53,7 @@ export default {
       form.render();
       //监听提交
       form.on("submit(addRole)", function(data) {
-        var roleId = sessionStorage.getItem('roleId') ? sessionStorage.getItem('roleId') : ''
+        var roleId = localStorage.getItem('roleId') ? localStorage.getItem('roleId') : ''
         data.field.userId = _this.$store.state.userId
         if(roleId === null || roleId === '' || roleId === undefined){
           _this.$axios.post('/api/addRoleInfo',data.field).then(res=>{
@@ -86,7 +86,7 @@ export default {
     });
   },
   created(){
-    this.roleInfo = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+    this.roleInfo = localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : {}
   }
 
 };

@@ -2,21 +2,13 @@
   <div class="side">
     <ul id="nav" class="side_nav layui-nav layui-nav-tree layui-nav-side" lay-filter="side">
       <li
-        v-for="(items,index) in menuList"
-        :key="items.menuId"
-        :class="index == curId ? 'layui-nav-item layui-this' : 'layui-nav-item'"
-        @click="active(items.menuName,index)"
-      >
-        <router-link :to="items.menuUrl ? items.menuUrl : ''" tag="a">{{items.menuName}}</router-link>
-      </li>
-      <li
         v-for="nav_item in parentMenus"
         :key="nav_item.menuId"
         class="layui-nav-item"
         @click="active(nav_item.menuName)"
       >
-        <router-link :to="nav_item.menuUrl ? nav_item.menuUrl : ''" tag="a">{{nav_item.menuName}}</router-link>
-        <dl v-if="nav_item.menuPno == 1" class="layui-nav-child">
+        <a href="javascript:;">{{nav_item.menuName}}</a>
+        <dl class="layui-nav-child">
           <dd
             v-for="item in childrens"
             :key="item.menuId"
@@ -39,21 +31,6 @@ export default {
       childrens: [],
       parentMenus: [],
       curId: 0,
-      menuList: [
-        { menuName: "工作台", menuUrl: "/workTable?type=workTable" },
-        {
-          menuName: "工单管理",
-          menuUrl: "/workOrderManagement?type=workOrderManagement"
-        },
-        {
-          menuName: "协同管理",
-          menuUrl: "/synergyManagement?type=synergyManagement"
-        }
-        // {
-        //   menuName: "菜单管理",
-        //   menuUrl: "/menuManagement?type=menuManagement"
-        // },
-      ],
       queryType: ""
     };
   },
@@ -74,26 +51,10 @@ export default {
         userId: this.$store.state.userId,
         seleUserId: this.$store.state.userId,
       };
-      // this.$axios.post("/api/getMenuList", data).then(res => {
-      //   console.log(res);
-      //   for (var i = 0; i < res.data.body.menuList.length; i++) {
-      //     if (res.data.body.menuList[i].menuPno == 1) {
-      //       this.parentMenus.push(res.data.body.menuList[i]);
-      //     } else {
-      //       this.childrens.push(res.data.body.menuList[i]);
-      //     }
-      //   }
-      // });
+
       this.$axios.post("/api/getMenuListByUserId", data).then(res => {
         console.log(res);
         //去重
-        // var arr = res.data.body.menuList;
-        // var obj = {}
-        // let menuList = arr.reduce((cur, next) => {
-        //   obj[next.menuPno] ? "" : (obj[next.menuPno] = true && cur.push(next));
-        //   return cur;
-        // }, []);
-        // console.log(menuList);
 
         for (var i = 0; i < res.data.body.menuList.length; i++) {
           for (var i = 0; i < res.data.body.menuList.length; i++) {
@@ -120,9 +81,9 @@ export default {
   },
   created() {
     this.getData();
-    if (this.$route.query.type !== "workTable") {
-      this.$router.push("/workTable?type=workTable");
-    }
+    // if (this.$route.query.type !== "workTable") {
+    //   this.$router.push("/workOrderManagement?type=workOrderManagement");
+    // }
   },
   computed: {
     // parentMenu() {

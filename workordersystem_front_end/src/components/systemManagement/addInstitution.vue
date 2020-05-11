@@ -5,44 +5,40 @@
         <span>基础信息</span>
         <span>为必填项</span>
       </div>
-      <div class="layui-form-item">
-        <label class="layui-form-label">公司名称</label>
+      <div class="layui-form-item" v-if="this.Institution.parentId == '' ? false : true">
+        <label class="layui-form-label">所属机构</label>
         <div class="layui-input-block">
-          <select name="companyId" id="companyId" lay-verify="required">
-            <option value>请选择公司</option>
+          <select name="parentId" id="parentId" >
+            <option value>请选择机构</option>
             <option
-              v-for="(item) in companyList"
-              :key="item.id"
-              :value="item.id"
-            >{{item.companyName}}</option>
+              v-for="(item) in orgInfoList"
+              :key="item.orgId"
+              :value="item.orgId"
+            >{{item.orgName}}</option>
           </select>
         </div>
       </div>
       <div class="layui-form-item">
-        <label class="layui-form-label">部门名称</label>
+        <label class="layui-form-label">机构名称</label>
         <div class="layui-input-block">
-          <select name="deptId" id="deptId" lay-verify="required">
-            <option value>请选择部门</option>
-            <option v-for="(item) in DeptList" :key="item.id" :value="item.deptId">{{item.deptName}}</option>
-          </select>
+           <input
+            type="text"
+            name="orgName"
+            lay-verify="required"
+            placeholder="请输入机构名称"
+            autocomplete="off"
+            class="layui-input"
+            :value="Institution.orgName ? Institution.orgName : ''"
+          />
         </div>
       </div>
 
-      <div class="layui-form-item">
-        <label class="layui-form-label">职务名称</label>
-        <div class="layui-input-block">
-          <select name="jobId" id="jobId" lay-verify="required">
-            <option value>请选择一个职务</option>
-            <option v-for="(item) in JobList" :key="item.id" :value="item.id">{{item.jobName}}</option>
-          </select>
-        </div>
-      </div>
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button type="button" class="layui-btn" lay-submit lay-filter="addInstitution">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button @click="cancel" type="reset" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -54,12 +50,13 @@ export default {
   name: "addInstitution",
   data() {
     return {
-      companyList: [],
+      orgInfoList: [],
       DeptList: [],
       JobList: [],
-      Institution: sessionStorage.getItem("data")
-        ? JSON.parse(sessionStorage.getItem("data"))
-        : ""
+      Institution: localStorage.getItem("data")
+        ? JSON.parse(localStorage.getItem("data"))
+        : "",
+      isShow: true
     };
   },
   mounted() {
@@ -73,13 +70,13 @@ export default {
       //监听提交
       form.on("submit(addInstitution)", function(data) {
         // layer.msg(JSON.stringify(data.field));
-        var listId = sessionStorage.getItem("listId")
-          ? sessionStorage.getItem("listId")
+        var orgId = localStorage.getItem("orgId")
+          ? localStorage.getItem("orgId")
           : "";
         data.field.userId = _this.$store.state.userId;
-        if (listId === null || listId === "" || listId === undefined) {
+        if (orgId === null || orgId === "" || orgId === undefined) {
           _this.$axios
-            .post("/api/addOrganizationInfo", data.field)
+            .post("/api/addOrgInfo", data.field)
             .then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
@@ -94,10 +91,10 @@ export default {
               }
             });
         } else {
-          data.field.listId = listId;
+          data.field.orgId = orgId;
           console.log(data.field);
           _this.$axios
-            .post("/api/alterOrganizationInfo", data.field)
+            .post("/api/alterOrgInfo", data.field)
             .then(res => {
               console.log(res);
               if (res.data.retCode == "000000") {
@@ -119,65 +116,24 @@ export default {
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getCompanyList", userId).then(res => {
-        //公司列表
-        // console.log(res)
+      this.$axios.post("/api/getOrgInfoList", {userId:userId}).then(res => {
+        //机构列表
+        console.log(res)
         if (res.data.retCode == "000000") {
-          this.companyList = res.data.body.CompanyNameList;
-        }
-      });
-      this.$axios.post("/api/getDeptList", userId).then(res => {
-        //部门列表
-        // console.log(res)
-        if (res.data.retCode == "000000") {
-          this.DeptList = res.data.body.DeptNameList;
-        }
-      });
-      this.$axios.post("/api/getJobList", userId).then(res => {
-        //职务列表
-        // console.log(res)
-        if (res.data.retCode == "000000") {
-          this.JobList = res.data.body.JobNameList;
+          this.orgInfoList = res.data.body.orgInfoList;
         }
       });
     },
     getInstitution() {
       // 公司
-      var companyId = this.Institution.companyId
-      var companyIdLen = this.$("#companyId option").length;
-      for (var i = 0; i < companyIdLen; i++) {
-        var companyIdVal = this.$("#companyId option")
+      var parentId = this.Institution.parentId
+      var orgIdLen = this.$("#parentId option").length;
+      for (var i = 0; i < orgIdLen; i++) {
+        var orgIdVal = this.$("#parentId option")
           .eq(i)
           .val();
-        if (companyId == companyIdVal) {
-          this.$("#companyId option")
-            .eq(i)
-            .attr("selected", "selected");
-        }
-      }
-      // 部门
-      var deptId = this.Institution.deptId;
-      var deptIdLen = this.$("#deptId option").length;
-      for (var i = 0; i < deptIdLen; i++) {
-        var deptIdVal = this.$("#deptId option")
-          .eq(i)
-          .val();
-        if (deptId == deptIdVal) {
-          this.$("#deptId option")
-            .eq(i)
-            .attr("selected", "selected");
-        }
-      }
-      // 职务
-      var jobId = this.Institution.jobId;
-      var jobIdLen = this.$("#jobId option").length;
-
-      for (var i = 0; i < jobIdLen; i++) {
-        var jobIdVal = this.$("#jobId option")
-          .eq(i)
-          .val();
-        if (jobId == jobIdVal) {
-          this.$("#jobId option")
+        if (parentId == orgIdVal) {
+          this.$("#parentId option")
             .eq(i)
             .attr("selected", "selected");
         }

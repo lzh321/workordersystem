@@ -9,15 +9,16 @@
       <div class="layui-form-item">
         <label class="layui-form-label">客户名称</label>
         <div class="layui-input-block">
-          <input type="text" class="layui-input" lay-verify="required" :value="customerName" autocomplete="off" name="customerName" placeholder="请输入客户名称">
+          <input type="text" class="layui-input" lay-verify="required" :value="data.customerName" autocomplete="off" name="customerName" placeholder="请输入客户名称">
         </div>
       </div>
+      <orgInfo></orgInfo>
 
       <div class="layui-form-item" style="text-align:center">
         <div class="layui-input-block">
           <button type="button" class="layui-btn" lay-submit lay-filter="addCustomer">确认</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -25,12 +26,17 @@
 </template>
 
 <script>
+import orgInfo from '@/components/orgInfo'
+
 export default {
   name: "addCustomer",
   data() {
     return {
-      customerName: ''
+      data: localStorage.getItem('data') ? JSON.parse(localStorage.getItem('data')) : {}
     };
+  },
+  components:{
+    orgInfo : orgInfo
   },
   methods:{
     cancel(){
@@ -45,8 +51,15 @@ export default {
       form.render();
       //监听提交
       form.on("submit(addCustomer)", function(data) {
-        var customerId = sessionStorage.getItem('customerId') ? sessionStorage.getItem('customerId') : ''
+        var customerId = localStorage.getItem('customerId') ? localStorage.getItem('customerId') : ''
         data.field.userId = _this.$store.state.userId
+        var orgId = data.field.orgId.split(",")
+        if(orgId[orgId.length-1] == ""){
+          console.log(orgId[orgId.length-2])
+          data.field.orgId = orgId[orgId.length-2]
+        }else{
+          data.field.orgId = orgId[orgId.length-1]
+        }
         if(customerId === null || customerId === '' || customerId === undefined){
           _this.$axios.post('/api/addCustomerInfo',data.field).then(res=>{  // 添加客户
             if(res.data.retCode == '000000'){
@@ -81,7 +94,7 @@ export default {
     });
   },
   created(){
-    this.customerName = sessionStorage.getItem("customerName") ? sessionStorage.getItem("customerName") : ''
+    this.customerName = localStorage.getItem("customerName") ? localStorage.getItem("customerName") : ''
   },
 
 };

@@ -26,6 +26,9 @@ import addUser from '@/components/userManagement/addUser'
 import addNetwork from '@/components/userManagement/addNetwork'
 import addCustomer from '@/components/userManagement/addCustomer'
 import CustomerNameList from '@/components/userManagement/CustomerNameList'
+import userInfo from '@/components/userManagement/userInfo'
+import alterPassword from '@/components/userManagement/alterPassword'
+import checkUserInfo from '@/components/userManagement/checkUserInfo'
 import addInstitution from '@/components/systemManagement/addInstitution'
 import addMessage from '@/components/systemManagement/addMessage'
 import deploy from '@/components/systemManagement/deploy'
@@ -56,15 +59,16 @@ export default new Router({
       name: 'Home',
       component: Home,
       children: [
-        {
-          path: '/workTable',
-          name: 'workTable',
-          component: workTable
-        },
+        
         {
           path: '/workOrderManagement',
           name: 'workOrderManagement',
           component: workOrderManagement
+        },
+        {
+          path: '/workTable',
+          name: 'workTable',
+          component: workTable
         },
         {
           path: '/workOrderDetails',
@@ -146,6 +150,21 @@ export default new Router({
           path: '/CustomerNameList',
           name: 'CustomerNameList',
           component: CustomerNameList
+        },
+        {
+          path: '/userInfo',
+          name: 'userInfo',
+          component: userInfo
+        },
+        {
+          path: '/alterPassword',
+          name: 'alterPassword',
+          component: alterPassword
+        },
+        {
+          path: '/checkUserInfo',
+          name: 'checkUserInfo',
+          component: checkUserInfo
         },
         {
           path: '/roleManagement',

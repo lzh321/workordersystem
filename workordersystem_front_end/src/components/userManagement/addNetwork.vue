@@ -66,6 +66,7 @@
           />
         </div>
       </div>
+      <orgInfo></orgInfo>
 
       <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">投放点详细地址</label>
@@ -83,7 +84,7 @@
         <div class="layui-input-block">
           <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
           <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
     </form>
@@ -91,6 +92,7 @@
 </template>
 
 <script>
+import orgInfo from '@/components/orgInfo'
 export default {
   name: "addNetwork",
   data() {
@@ -103,6 +105,9 @@ export default {
       networName: '',
       networAddress: ''
     };
+  },
+  components:{
+    orgInfo : orgInfo
   },
   methods: {
     send() {
@@ -126,7 +131,7 @@ export default {
           }
         }
       });
-      var data = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : ''
+      var data = localStorage.getItem("data") ? JSON.parse(localStorage.getItem("data")) : ''
       this.networkInfo = data
       this.networName = data.networName
       this.networAddress = data.networAddress
@@ -157,10 +162,18 @@ export default {
 
       //监听提交
       form.on("submit(formDemo)", function(data) {
-        var networkId = sessionStorage.getItem("networkId")
-          ? sessionStorage.getItem("networkId")
+        var networkId = localStorage.getItem("networkId")
+          ? localStorage.getItem("networkId")
           : "";
         data.field.userId = _this.$store.state.userId;
+        var orgId = data.field.orgId.split(",")
+        if(orgId[orgId.length-1] == ""){
+          console.log(orgId[orgId.length-2])
+          data.field.orgId = orgId[orgId.length-2]
+        }else{
+          data.field.orgId = orgId[orgId.length-1]
+        }
+        console.log(data.field)
         if (networkId === null || networkId === "" || networkId === undefined) {
           _this.$axios.post("/api/addNetworkInfo", data.field).then(res => {
             console.log(res);

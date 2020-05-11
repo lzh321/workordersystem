@@ -300,13 +300,13 @@ export default {
             });
           } else if (obj.event === "finish") {
             //完成
-            sessionStorage.setItem("id", id);
-            sessionStorage.setItem("coordinateState", coordinateState);
+            localStorage.setItem("id", id);
+            localStorage.setItem("coordinateState", coordinateState);
             _this.$router.push("/synergyInfo");
           } else if (obj.event === "edit") {
             // 编辑
-            sessionStorage.setItem("id", id);
-            sessionStorage.setItem("coordinateState", coordinateState);
+            localStorage.setItem("id", id);
+            localStorage.setItem("coordinateState", coordinateState);
             _this.$router.push("/synergyInfo");
           }
         });
@@ -318,7 +318,7 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
-    sessionStorage.clear()
+    localStorage.clear()
     this.getOrderInfoNum();
   }
 };

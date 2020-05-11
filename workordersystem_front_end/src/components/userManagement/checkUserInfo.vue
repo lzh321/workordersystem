@@ -9,15 +9,13 @@
         <!-- <div class="layui-form-item">
           <label class="layui-form-label">公司名称</label>
           <div class="layui-input-block">
-            <select name="companyId" lay-search >
-              <option value>请选择公司名称</option>
-              <option
-                v-for="(item) in companyList"
-                :key="item.id"
-                :value="item.id"
-                :selected="item.id == UserInfo.companyId ? true : false"
-              >{{item.companyName}}</option>
-            </select>
+            <input
+              type="text"
+              placeholder=""
+              autocomplete="off"
+              :value="UserInfo.companyName"
+              class="layui-input"
+            />
           </div>
         </div> -->
         <div class="layui-form-item">
@@ -25,11 +23,8 @@
           <div class="layui-input-block">
             <input
               type="text"
-              name="userName"
-              required
-              placeholder="请输入姓名"
               autocomplete="off"
-              :value="UserInfo.userName ? UserInfo.userName : ''"
+              :value="UserInfo.userName"
               class="layui-input"
             />
           </div>
@@ -39,60 +34,38 @@
           <div class="layui-input-block">
             <input
               type="text"
-              :name="loginId"
-              required
-              placeholder="请输入账号"
               autocomplete="off"
               class="layui-input"
               id="alterId"
-              :value="alterId"
+              :value="UserInfo.userId"
             />
           </div>
         </div>
 
-        <div class="layui-form-item" v-if="show">
+        <div class="layui-form-item">
           <label class="layui-form-label">登录密码</label>
           <div class="layui-input-inline">
             <input
               type="password"
               name="userPassword"
               required
+              lay-verify="userPassword"
               placeholder="请输入密码"
               autocomplete="off"
               class="layui-input"
-              value=""
+              :value="UserInfo.userPassword"
             />
           </div>
           <div class="layui-form-mid layui-word-aux">辅助文字</div>
         </div>
-        <div class="layui-form-item" pang>
-          <label class="layui-form-label">性别</label>
-          <div class="layui-input-block">
-            <input
-              type="radio"
-              name="userSex"
-              :checked="UserInfo.userSex == 0 ? true : false"
-              value="0"
-              title="男"
-            />
-            <input
-              type="radio"
-              name="userSex"
-              :checked="UserInfo.userSex == 1 ? true : false"
-              value="1"
-              title="女"
-            />
-          </div>
-        </div>
+
         <div class="layui-form-item">
           <label class="layui-form-label">手机号码</label>
           <div class="layui-input-block">
             <input
               type="text"
-              name="userPhone"
-              required
-              placeholder="请输入手机号码"
               autocomplete="off"
+              name="userPhone"
               :value="UserInfo.userPhone ? UserInfo.userPhone : ''"
               class="layui-input"
             />
@@ -103,9 +76,8 @@
           <div class="layui-input-block">
             <input
               type="text"
-              name="userMail"
-              placeholder="请输入邮箱"
               autocomplete="off"
+              name="userMail"
               :value="UserInfo.userMail ? UserInfo.userMail : ''"
               class="layui-input"
             />
@@ -114,72 +86,30 @@
         <!-- <div class="layui-form-item">
           <label class="layui-form-label">所属部门</label>
           <div class="layui-input-block">
-            <select name="deptId" lay-search>
-              <option value>选择部门</option>
-              <option
-                v-for="(item) in DeptList"
-                :key="item.id"
-                :value="item.deptId"
-                :selected="item.deptName == UserInfo.deptName ? true : false"
-              >{{item.deptName}}</option>
-            </select>
+            <input
+              type="text"
+              required
+              placeholder=""
+              autocomplete="off"
+              :value="UserInfo.deptName ? UserInfo.deptName : ''"
+              class="layui-input"
+            />
           </div>
         </div>
         <div class="layui-form-item">
           <label class="layui-form-label">当前职务</label>
           <div class="layui-input-block">
-            <select name="jobId" lay-search>
-              <option value></option>
-              <option v-for="(item) in JobList" :key="item.id" :value="item.id" :selected="item.jobName == UserInfo.jobName ? true :false">{{item.jobName}}</option>
-            </select>
-          </div>
-        </div> -->
-        <!-- <div class="layui-form-item">
-          <label class="layui-form-label">企业机构</label>
-          <div id="cat_ids2"></div>
-        </div> -->
-
-        <orgInfo></orgInfo>
-
-        <div class="Plane layui-form-item">
-          <label class="layui-form-label">座机/分机</label>
-          <div class="layui-input-block" style="display:flex">
-            <!-- <input
-            type="text"
-            name="title"
-            lay-verify=""
-            placeholder="电话区号"
-            autocomplete="off"
-            class="layui-input"
-          />
-          <input
-            type="text"
-            name="title"
-            lay-verify=""
-            placeholder="电话号码"
-            autocomplete="off"
-            class="layui-input"
-          />
-          <input
-            type="text"
-            name="title"
-            lay-verify=""
-            placeholder="分机号码"
-            autocomplete="off"
-            class="layui-input"
-            />-->
             <input
               type="text"
-              name="telePhone"
-              lay-verify
-              placeholder="请输入座机/分机号"
+              placeholder=""
               autocomplete="off"
+              :value="UserInfo.jobName ? UserInfo.jobName : ''"
               class="layui-input"
-              :value="UserInfo.telePhone ? UserInfo.telePhone : ''"
             />
           </div>
-        </div>
+        </div> -->
       </div>
+
       <div class="info">辅助信息</div>
       <div class="layui-form-item">
         <label class="layui-form-label">工号</label>
@@ -187,8 +117,7 @@
           <input
             type="text"
             name="userJobNumber"
-          
-            placeholder="请输入工号"
+            placeholder=""
             autocomplete="off"
             class="layui-input"
             :value="UserInfo.userJobNumber ? UserInfo.userJobNumber : ''"
@@ -202,7 +131,7 @@
             type="text"
             name="userNativePlace"
            
-            placeholder="请输入籍贯"
+            placeholder=""
             autocomplete="off"
             class="layui-input"
             :value="UserInfo.userNativePlace ? UserInfo.userNativePlace : ''"
@@ -216,8 +145,7 @@
           <input
             type="text"
             name="graduateSchool"
-           
-            placeholder="请输入毕业院校"
+            placeholder=""
             autocomplete="off"
             class="layui-input"
             :value="UserInfo.graduateSchool ? UserInfo.graduateSchool : ''"
@@ -235,7 +163,7 @@
             name="graduateTime"
             id="graduateTime"
             autocomplete="off"
-            placeholder="毕业时间"
+            placeholder=""
             :value="UserInfo.graduateTime ? UserInfo.graduateTime : ''"
           />
         </div>
@@ -243,16 +171,14 @@
       <div class="layui-form-item">
         <label class="layui-form-label">学历</label>
         <div class="layui-input-block">
-          <select name="userEducation" >
-            <option value>请选择学历</option>
-            <option :selected="UserInfo.userEducation == 1 ? true : false" value="1">全部</option>
-            <option :selected="UserInfo.userEducation == 2 ? true : false" value="2">博士</option>
-            <option :selected="UserInfo.userEducation == 3 ? true : false" value="3">硕士</option>
-            <option :selected="UserInfo.userEducation == 4 ? true : false" value="4">本科</option>
-            <option :selected="UserInfo.userEducation == 5 ? true : false" value="5">大专</option>
-            <option :selected="UserInfo.userEducation == 6 ? true : false" value="6">高中</option>
-            <option :selected="UserInfo.userEducation == 7 ? true : false" value="7">中专</option>
-          </select>
+          <input
+            type="text"
+            name="userEducation"
+            placeholder=""
+            autocomplete="off"
+            class="layui-input"
+            :value="UserInfo.userEducation ? UserInfo.userEducation : ''"
+          />
         </div>
       </div>
 
@@ -262,7 +188,7 @@
           <input
             type="text"
             name="major"
-            placeholder="请输入所学专业"
+            placeholder=""
             autocomplete="off"
             class="layui-input"
             :value="UserInfo.major ? UserInfo.major : ''"
@@ -273,14 +199,13 @@
       <div class="layui-form-item layui-form-text">
         <label class="layui-form-label">备注</label>
         <div class="layui-input-block">
-          <textarea name="remark" placeholder="请输入内容" :value="UserInfo.remark ? UserInfo.remark : ''" class="layui-textarea"></textarea>
+          <textarea name="remark" placeholder="" :value="UserInfo.remark ? UserInfo.remark : ''" class="layui-textarea"></textarea>
         </div>
       </div>
+
       <div class="layui-form-item">
         <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="addUser" >立即提交</button>
-          <button type="reset" class="layui-btn layui-btn-primary" lay-filter="reset">重置</button>
-          <button @click="cancel" class="layui-btn layui-btn-primary">{{msg}}</button>
+          <button type="reset" @click="cancel" class="layui-btn layui-btn-primary">{{textMsg}}</button>
         </div>
       </div>
     </form>
@@ -288,11 +213,8 @@
 </template>
 
 <script>
-// import selectN from '@/layui_extends/selectN'
-import orgInfo from '@/components/orgInfo'
 export default {
-  name: "addUser",
-  inject: ["reload"],
+  name: "userInfo",
   data() {
     return {
       alterId: "",
@@ -300,21 +222,20 @@ export default {
       DeptList: [],
       JobList: [],
       UserInfo: [],
-      OrgList: [],
-      loginId: "addUserId",
-      show: true,
-      msg: '取消'
+      loginId: "",
+      show: null,
+      textMsg: ''
     };
   },
-  components:{
-    orgInfo : orgInfo
+  watch: {
+    '$route': 'cutPage'
   },
   mounted() {
     //Demo
-    this.checkPage()
+    this.cutPage()
     var _this = this;
     layui.use(["form", "laydate"], function() {
-      var form = layui.form
+      var form = layui.form;
       var laydate = layui.laydate;
       form.render();
       laydate.render({
@@ -323,7 +244,6 @@ export default {
         type: "date",
         closeStop: "#graduateTime"
       });
-
       // select监听
       form.on("select(filter)", function(data) {
         console.log(data.elem); //得到select原始DOM对象
@@ -335,47 +255,22 @@ export default {
         console.log(data.elem); //得到radio原始DOM对象
         console.log(data.value); //被点击的radio的value值
       });
-      
       //监听提交
       form.on("submit(addUser)", function(data) {
-        console.log(data.field);
-        var alterId = localStorage.getItem("alterId")
-          ? localStorage.getItem("alterId")
-          : "";
+        // console.log(data.field);
         data.field.userId = _this.$store.state.userId;
-        var orgId = data.field.orgId.split(",")
-        if(orgId[orgId.length-1] == ""){
-          console.log(orgId[orgId.length-2])
-          data.field.orgId = orgId[orgId.length-2]
-        }else{
-          data.field.orgId = orgId[orgId.length-1]
-        }
-        if (alterId === null || alterId === "" || alterId === undefined) {
-          _this.$axios.post("/api/addUserInfo", data.field).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              setTimeout(() => {
-                _this.$router.push("/staffManagement?type=staffManagement");
-              }, 2000);
-            } else {
-              layer.msg(res.data.retMsg, { icon: 2 });
-            }
-          });
-        } else {
-          console.log(data.field);
-          _this.$axios.post("/api/alterUserInfo", data.field).then(res => {
-            console.log(res);
-            if (res.data.retCode == "000000") {
-              layer.msg(res.data.retMsg, { icon: 1 });
-              setTimeout(() => {
-                _this.$router.push("/staffManagement?type=staffManagement");
-              }, 2000);
-            } else {
-              layer.msg(res.data.retMsg, { icon: 2 });
-            }
-          });
-        }
+        console.log(data.field)
+        // _this.$axios.post("/api/alterUserInfo", data.field).then(res => {
+        //     console.log(res);
+        //     if (res.data.retCode == "000000") {
+        //       layer.msg(res.data.retMsg, { icon: 1 });
+        //       setTimeout(() => {
+        //         _this.$router.push("/staffManagement?type=staffManagement");
+        //       }, 2000);
+        //     } else {
+        //       layer.msg(res.data.retMsg, { icon: 2 });
+        //     }
+        //   });
         return false;
       });
 
@@ -403,82 +298,42 @@ export default {
         userPassword: [/^[\S]{6,12}$/, "密码必须6到12位，且不能出现空格"]
       });
     });
-
     
-
   },
   methods: {
-    send() {
-      var userId = this.$store.state.userId;
-      this.$axios.post("/api/getCompanyList", userId).then(res => {
-        //公司列表
-        // console.log(res);
-        if (res.data.retCode == "000000") {
-          this.companyList = res.data.body.CompanyNameList;
-        }
-      });
-      this.$axios.post("/api/getDeptList", userId).then(res => {
-        //部门列表
-        // console.log(res);
-        if (res.data.retCode == "000000") {
-          this.DeptList = res.data.body.DeptNameList;
-        }
-      });
-      this.$axios.post("/api/getJobList", userId).then(res => {
-        //职务列表
-        // console.log(res);
-        if (res.data.retCode == "000000") {
-          this.JobList = res.data.body.JobNameList;
-        }
-      });
+    cutPage(){
+      if(this.$route.query.check == 1){
+        this.$('input').attr('disabled',true)
+        this.$('textarea').attr('disabled',true)
+        this.textMsg = '返回'
+      }
     },
-
-
-    getUserInfo() {
-      var userId = localStorage.getItem("alterId") ? localStorage.getItem("alterId") : "";
+    send() {
+      var userId = localStorage.getItem('alterId');
 
       this.$axios.post("/api/getUserInfo",{'userId':userId}).then(res=> {
         console.log(res)
         if(res.data.retCode == '000000'){
           this.UserInfo = res.data.body[0]
+          
         }
       })
     },
     cancel() {
-      this.$router.push("/staffManagement?type=staffManagement");
-    },
-    checkPage(){
-      if(this.$route.query.check == 1) {
-        this.$('input').attr('disabled',true)
-        this.$('select').attr('disabled',true)
-        this.$('select').attr('disabled',true)
-        this.show = false
-        this.msg = '返回'
-      }
+      this.$router.go(-1);
     }
   },
   created() {
     this.send();
-    this.getUserInfo();
-    // this.checkPage()
-    
   },
   updated() {
+    
     setTimeout(function() {
       layui.use("form", function() {
         layui.form.render();
       });
-    });
-    var alterId = localStorage.getItem("alterId")
-      ? localStorage.getItem("alterId")
-      : "";
-    if (alterId !== null || alterId !== "" || alterId !== undefined) {
-      this.show = false
-      this.alterId = alterId;
-      this.loginId = "alterId";
-      document.getElementById("alterId").disabled = true;
-      
-    }
+    }, 10);
+
   },
 
 };
@@ -525,8 +380,5 @@ export default {
   color: red;
   line-height: 30px;
   height: 20px;
-}
-#cat_ids2{
-  display: flex;
 }
 </style>

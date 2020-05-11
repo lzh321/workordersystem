@@ -379,9 +379,9 @@ export default {
       networAddress: "",
       imgData: "",
       imgDataArray: [],
-      orderInfoId: sessionStorage.getItem("orderInfoId"),
-      orderState: sessionStorage.getItem("orderState")
-        ? sessionStorage.getItem("orderState")
+      orderInfoId: localStorage.getItem("orderInfoId"),
+      orderState: localStorage.getItem("orderState")
+        ? localStorage.getItem("orderState")
         : null,
       DomainName: this.$store.state.url,
       selectBank: false
@@ -421,8 +421,8 @@ export default {
       });
     },
     workValuation() {
-      var orderInfoId = sessionStorage.getItem("orderInfoId")
-        ? sessionStorage.getItem("orderInfoId")
+      var orderInfoId = localStorage.getItem("orderInfoId")
+        ? localStorage.getItem("orderInfoId")
         : "";
       if (orderInfoId) {
         var data = {
