@@ -4,9 +4,11 @@ import Login from '@/views/Login'
 import Home from '@/views/Home'
 import workTable from '@/components/workTable/workTable'
 import workOrderManagement from '@/components/workOrderManagement/workOrderManagement'
+import personOrder from '@/components/workOrderManagement/personOrder'
 import workOrderDetails from '@/components/workOrderManagement/workOrderDetails'
 import Kuantan from '@/components/workOrderManagement/workOrderDetails/Kuantan'
 import synergyManagement from '@/components/synergyManagement/synergyManagement'
+import personSynergy from '@/components/synergyManagement/personSynergy'
 import synergyInfo from '@/components/synergyManagement/synergyInfo'
 import staffManagement from '@/components/userManagement/staffManagement'
 import NetworkList from '@/components/userManagement/NetworkList'
@@ -66,6 +68,11 @@ export default new Router({
           component: workOrderManagement
         },
         {
+          path: '/personOrder',
+          name: 'personOrder',
+          component: personOrder
+        },
+        {
           path: '/workTable',
           name: 'workTable',
           component: workTable
@@ -84,6 +91,11 @@ export default new Router({
           path: '/synergyManagement',
           name: 'synergyManagement',
           component: synergyManagement
+        },
+        {
+          path: '/personSynergy',
+          name: 'personSynergy',
+          component: personSynergy
         },
         {
           path: '/synergyInfo',
@@ -240,7 +252,7 @@ export default new Router({
     },
     {
       path: '*',
-      redirect: '/login'
+      redirect: '/Home'
     }
   ]
 })

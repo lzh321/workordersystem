@@ -22,7 +22,7 @@
           <label class="layui-form-label">员工姓名</label>
           <div class="layui-input-block">
             <input
-              name=""
+              name="userName"
               type="text"
               autocomplete="off"
               :value="UserInfo.userName"
@@ -132,7 +132,7 @@ export default {
       UserInfo: [],
       loginId: "",
       show: null,
-      textMsg: ''
+      textMsg: '',
     };
   },
   watch: {
@@ -213,7 +213,7 @@ export default {
         this.$('input').attr('disabled',true)
         this.$('input[name="userPhone"]').attr('disabled',false)
         this.$('input[name="userMail"]').attr('disabled',false)
-        // this.$('input[name="userPassword"]').attr('disabled',false)
+        this.$('input[name="userName"]').attr('disabled',false)
         this.show = true
         this.textMsg = '返回'
       }

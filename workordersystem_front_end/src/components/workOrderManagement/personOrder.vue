@@ -40,7 +40,7 @@
 <script>
 import dataScreening from "../dataScreening";
 export default {
-  name: "workOrderManagement",
+  name: "personOrder",
   inject: ["reload"],
   data() {
     return {
@@ -79,7 +79,7 @@ export default {
       data.userName = this.$("input[name='userName']").val();
       console.log(data);
       window.open(
-        "/api/exportOrderInfo?isAll=0&userId=" +
+        "/api/exportOrderInfo?isAll=1&userId=" +
           this.$store.state.userId +
           "&orderInfoId=" +
           data.seleOrderInfoId +
@@ -93,7 +93,7 @@ export default {
     },
     getOrderInfoNum() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getOrderInfoNum", { userId:userId,isAll:0 }).then(res => {
+      this.$axios.post("/api/getOrderInfoNum", { userId:userId,isAll:1 }).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
           // this.workType[0].num = res.data.body.allNum
@@ -112,7 +112,7 @@ export default {
         userId: userId,
         orderInfoId: orderInfoId,
         handleState: handleState,
-        isAll:0
+        isAll:1
       };
       this.$axios.post("/api/handleOrderInfo", data).then(res => {
         console.log(res);
@@ -355,7 +355,7 @@ export default {
         };
         _this.seleorderState = seleorderState
         table.reload("serachData", {
-          url: "/api/getAllOrderInfo",
+          url: "/api/getOrderInfoList",
           where: dataTab,
           page: { curr: 1, limit: 10 }
         });
@@ -364,7 +364,7 @@ export default {
         data.field.userId = _this.$store.state.userId;
         console.log(data.field);
         table.reload("serachData", {
-          url: "/api/getAllOrderInfo",
+          url: "/api/getOrderInfoList",
           where: data.field,
           page: { curr: 1, limit: 10 }
         });
@@ -373,7 +373,7 @@ export default {
       table.render({
         elem: "#workOrderManagement",
         method: "post",
-        url: "/api/getAllOrderInfo", //数据接口
+        url: "/api/getOrderInfoList", //数据接口
         id: "serachData",
         where: {
           userId: _this.$store.state.userId
@@ -596,7 +596,7 @@ export default {
                 orderInfoId: orderInfoId,
                 handleState: handleState,
                 appoinmentTime: appoinmentTime,
-                isAll:0
+                isAll:1
               };
               console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
@@ -651,7 +651,7 @@ export default {
                 orderInfoId: orderInfoId,
                 handleState: handleState,
                 appoinmentTime: appoinmentTime,
-                isAll:0
+                isAll:1
               };
               console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
@@ -705,7 +705,7 @@ export default {
                   orderInfoId: orderInfoId,
                   handleState: 8,
                   content: content,
-                  isAll:0
+                  isAll:1
                 };
                 console.log(datas);
                 _this.$axios.post("/api/handleOrderInfo", datas).then(res => {
@@ -867,7 +867,7 @@ export default {
                 handleState: handleState,
                 content: content,
                 isAppoint: isAppoint,
-                isAll: 0
+                isAll: 1
               };
               console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
@@ -918,7 +918,7 @@ export default {
                 orderInfoId: orderInfoId,
                 handleState: 10,
                 content: content,
-                isAll: 0
+                isAll: 1
               };
               console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
@@ -947,7 +947,7 @@ export default {
     //   currentPage: 1,
     //   everyCount: 10
     // };
-    // this.$axios.post("/api/getAllOrderInfo", data).then(res => {
+    // this.$axios.post("/api/getOrderInfoList", data).then(res => {
     //   console.log(res);
     // });
     localStorage.clear();

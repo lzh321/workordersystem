@@ -68,6 +68,7 @@ export default {
     getorderNum(type) {
       var data = {
         userId: this.$store.state.userId,
+        isAll:0,
         type: type,
         seleBeginTime: this.$("input[name='seleBeginTime']").val(),
         seleEndTime: this.$("input[name='seleEngTime']").val()

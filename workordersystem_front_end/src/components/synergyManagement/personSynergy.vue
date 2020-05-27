@@ -1,5 +1,5 @@
 <template>
-  <div class="synergyManagement">
+  <div class="personSynergy">
     <div class="layui-tab layui-tab-brief" lay-filter="synergyManagement">
       <ul class="layui-tab-title">
         <li
@@ -40,7 +40,7 @@
 <script>
 import dataScreening from "../dataScreening";
 export default {
-  name: "equipmentType",
+  name: "personSynergy",
   inject: ["reload"],
   data() {
     return {
@@ -68,7 +68,7 @@ export default {
     },
     getOrderInfoNum() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getCoordinateListNum", { userId:userId,isAll:0 }).then(res => {
+      this.$axios.post("/api/getCoordinateListNum", { userId:userId,isAll:1 }).then(res => {
         console.log(res);
         if (res.data.retCode == "000000") {
           // this.workType[0].num = res.data.body.allNum
@@ -98,7 +98,7 @@ export default {
             seleCoordinateState: seleCoordinateState
           };
           table.reload("serachData", {
-            url: "/api/getAllCoordinateInfoList",
+            url: "/api/getCoordinateInfoList",
             where: dataTab,
             page: { curr: 1, limit: 10 }
           });
@@ -107,7 +107,7 @@ export default {
           console.log(data.field);
           data.field.userId = _this.$store.state.userId;
           table.reload("serachData", {
-            url: "/api/getAllCoordinateInfoList",
+            url: "/api/getCoordinateInfoList",
             where: data.field,
             page: { curr: 1, limit: 10 }
           });
@@ -115,7 +115,7 @@ export default {
         //第一个实例
         table.render({
           elem: "#synergyManagement",
-          url: "/api/getAllCoordinateInfoList", //数据接口
+          url: "/api/getCoordinateInfoList", //数据接口
           method: "post",
           where: {
             userId: _this.$store.state.userId
@@ -325,7 +325,7 @@ export default {
 </script>
 
 <style scoped>
-.synergyManagement {
+.personSynergy {
   padding: 15px 15px 0;
 }
 .dataList .dataList_top {

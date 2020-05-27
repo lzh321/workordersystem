@@ -5,7 +5,7 @@
     </div>
     <form action class="layui-form">
       <div class="data_screening_search">
-        <div class="search_input" v-if="workOrderManagement">
+        <div class="search_input" v-if="workOrderManagement || personOrder">
           <p>
             <span for>工单编号</span>
             <input type="text" name="seleOrderInfoId" autocomplete="off" value placeholder />
@@ -51,7 +51,7 @@
             <input type="text" name="userName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
-        <div class="search_input" v-if="synergyManagement">
+        <div class="search_input" v-if="synergyManagement || personSynergy">
           <p>
             <span for>协同编号</span>
             <input type="text" name="seleID" autocomplete="off" value placeholder="协同编号" />
@@ -277,6 +277,7 @@ export default {
     return {
       staffManagement: "",
       workOrderManagement: "",
+      personOrder: "",
       NetworkList: "",
       CustomerNameList: "",
       businessEnterprise: "",
@@ -288,6 +289,7 @@ export default {
       roleManagement: "",
       permissionsButton: "",
       synergyManagement: "",
+      personSynergy: "",
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
@@ -297,26 +299,30 @@ export default {
   methods: {
     send() {
       var userId = this.$store.state.userId;
-      this.$axios.post("/api/getDeviceModelList", {userId: userId}).then(res => {
-        // 设备型号
-        // console.log(res)
-        this.DeviceModelType = res.data.body.devicemodelInfoList;
-      });
+      if(this.equipmentList || this.equipmentType){
+        this.$axios.post("/api/getDeviceModelList", {userId: userId}).then(res => {
+          // 设备型号
+          // console.log(res)
+          this.DeviceModelType = res.data.body.devicemodelInfoList;
+        });
+      }
       this.$axios.post("/api/getCustomerNameList", {userId: userId}).then(res => {  // 客户名称
         this.customerList = res.data.body.customerNameList;
       });
-      this.$axios.post('/api/getDeptList',{userId: userId}).then(res=>{  //部门列表
-        // console.log(res)
-        if(res.data.retCode == '000000'){
-          this.DeptList = res.data.body.DeptNameList
-        }
-      })
-      this.$axios.post('/api/getJobList',{userId: userId}).then(res=>{  //职务列表
-        // console.log(res)
-        if(res.data.retCode == '000000'){
-          this.JobList = res.data.body.JobNameList
-        }
-      })
+      if(this.staffManagement || this.businessEnterprise){
+        this.$axios.post('/api/getDeptList',{userId: userId}).then(res=>{  //部门列表
+          // console.log(res)
+          if(res.data.retCode == '000000'){
+            this.DeptList = res.data.body.DeptNameList
+          }
+        })
+        this.$axios.post('/api/getJobList',{userId: userId}).then(res=>{  //职务列表
+          // console.log(res)
+          if(res.data.retCode == '000000'){
+            this.JobList = res.data.body.JobNameList
+          }
+        })
+      }
     }
   },
   mounted() {
@@ -353,6 +359,9 @@ export default {
     if (this.type == "workOrderManagement") {
       this.workOrderManagement = this.type;
     }
+    if (this.type == "personOrder") {
+      this.personOrder = this.type;
+    }
     if (this.type == "CustomerNameList") {
       this.CustomerNameList = this.type;
     }
@@ -383,6 +392,9 @@ export default {
     }
     if (this.type == "synergyManagement") {
       this.synergyManagement = this.type;
+    }
+    if (this.type == "personSynergy") {
+      this.personSynergy = this.type;
     }
     this.send()
   },

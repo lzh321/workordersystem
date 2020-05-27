@@ -78,7 +78,7 @@ export default {
             this.orgId = res.data.body.orgId
             // 将用户token保存到vuex中
             this.changeLogin({ userId: this.userId,orgId: this.orgId });
-            this.$router.push("/workOrderManagement?type=workOrderManagement");
+            this.$router.push("/workTable?type=workTable");
           } else {
             layer.open({
               title: "登录失败",

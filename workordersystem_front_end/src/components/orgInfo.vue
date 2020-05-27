@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import selectN from "../../static/layui_extends/selectN"
+import selectN from "@/assets/js/selectN"
 export default {
   props: ['type'],
   name: "orgInfo",

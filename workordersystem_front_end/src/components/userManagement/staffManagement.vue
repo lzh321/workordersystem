@@ -227,7 +227,7 @@ export default {
 
                 setTimeout(()=>{
                   _this.$axios
-                    .post("/api/getRoleInfoList", {userId: _this.$store.state.userId, currentPage: 1,everyCount:100})
+                    .post("/api/getRoleInfoList", {userId: _this.$store.state.userId,seleUserId: data.userId, currentPage: 1,everyCount:100})
                     .then(res => {
                       console.log(res);
                        roleList = res.data.body.roleList;

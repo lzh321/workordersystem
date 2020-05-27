@@ -26,7 +26,7 @@
       <div class="layui-form-item" id="area-picker">
         <div class="layui-form-label">所在城市</div>
         <div class="layui-input-block" style="display:flex;justify-content: space-between;">
-          <div class="layui-input-inline" style="flex:1">
+          <div class="layui-input-inline" style="flex:1;">
             <select name="province" lay-verify="required" lay-search lay-filter="province">
               <option value>请选择省</option>
               <option
@@ -38,7 +38,7 @@
               >{{item.provinceName}}</option>
             </select>
           </div>
-          <div class="layui-input-inline" style="flex:1">
+          <div class="layui-input-inline" style="flex:1;margin-right: 0;">
             <select name="regionId" lay-search lay-verify="required" lay-filter="city">
               <option value>请选择市</option>
               <option

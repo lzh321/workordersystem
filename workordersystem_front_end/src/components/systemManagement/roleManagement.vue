@@ -394,12 +394,23 @@ export default {
               var btnlimit = [];
               var btns = []
               _this.$axios
-                .post("/api/getBtnList", {
+                .post("/api/getBtnListByUserId", {
                   userId: _this.$store.state.userId,
                 })
                 .then(res => {
                   console.log(res);
-                  roleList = res.data.body.roleList
+                  res.data.body.list.forEach(item=>{
+                    roleList.push(...JSON.parse(item.btnLimit))
+                  })
+                  for(var i = 0; i < roleList.length; i++){
+                    for(var j =i+1; j < roleList.length; j++){
+                      if(roleList[i].menuId == roleList[j].menuId){         //第一个等同于第二个，splice方法删除第二个
+                          roleList.splice(j,1);
+                          j--;
+                      }
+                    }
+                  }
+                  console.log(roleList,5555555)
                 });
 
                 _this.$axios
@@ -436,12 +447,14 @@ export default {
                     for (var i = 0; i < menuList.length; i++) {
                       if(menuList[i].menuPno !== 1){
                         str +=
-                          '<div class="btnsBox" style="display: flex;justify-content: space-between;min-height:50px;border:1px solid #ccc;border-bottom:none;align-items: center;"><span style="display: flex;height: 100%;align-items: center;min-height:50px ;width:130px;border-right:1px solid #ccc;padding-left:10px">' +
+                          '<div class="btnsBox" style="display: flex;justify-content: space-between;border:1px solid #ccc;border-bottom:none;align-items: center;"><span style="display: flex;align-items: center;width:130px;padding-left:10px">' +
                           menuList[i].menuName +
-                          '</span><div id="btnList" style="flex:1">'
+                          '</span><div id="btnList" style="flex:1;border-left:1px solid #ccc;padding: 10px 0;">'
                           for(var z = 0; z < roleList.length; z++){
                             if(menuList[i].menuId == roleList[z].menuId){
-                              str += '<input type="checkbox" class="box" data-id="'+roleList[z].menuId+'" data-code="'+ roleList[z].btnCode + '" name="'+roleList[z].btnId+'" title="'+roleList[z].btnName+'" value=' + "'" + '{"menuId":"' + roleList[z].menuId + '","menuUrl":"' + roleList[z].menuUrl + '"' + ',"btns":[{' + '"btnCode":"' + roleList[z].btnCode + '",' + '"btnName":"' + roleList[z].btnName + '"' + "}]}'" + ' lay-skin="primary" lay-filter="btnBox">'
+                              roleList[z].btns.forEach(item=>{
+                                str += '<input type="checkbox" class="box" data-id="'+roleList[z].menuId+'" data-code="'+item.btnCode + '" name="'+roleList[z].menuId + item.btnCode+'" title="'+item.btnName+'" value=' + "'" + '{"menuId":"' + roleList[z].menuId + '","menuUrl":"' + roleList[z].menuUrl + '"' + ',"btns":[{' + '"btnCode":"' + item.btnCode + '",' + '"btnName":"' + item.btnName + '"' + "}]}'" + ' lay-skin="primary" lay-filter="btnBox">'
+                              })
                             }
                           }
                           str+='</div><input type="checkbox" class="box"  name="" title="" value="" lay-skin="primary" lay-filter="checkAll"></div>';
@@ -490,7 +503,7 @@ export default {
             yes: function(index, layero) {
               // 获取当前用户的角色
               var menuAssignment = _this.$("#menuAssignment").serializeObject();
-              console.log(menuAssignment)
+              console.log(menuAssignment,1111)
               var arr = [];
               Object.keys(menuAssignment).forEach(function(key) {
                 // console.log(key)

@@ -283,8 +283,8 @@
         </div>
       </div>
       <div class="layui-form-item">
-        <div class="layui-input-block">
-          <button
+        <div class="layui-input-block pageBtn">
+          <!-- <button
             type="button"
             class="layui-btn"
             lay-submit
@@ -366,12 +366,7 @@
             class="layui-btn layui-btn-primary"
             lay-submit
             lay-filter="Kuantan"
-          >关单</button>
-          <button
-            type="button"
-            class="layui-btn layui-btn-primary"
-            @click="reverseBack"
-          >返回</button>
+          >关单</button> -->
         </div>
       </div>
     </form>
@@ -449,6 +444,171 @@ export default {
         //     : ""
         // );
       });
+    },
+
+    getBtns() {
+      // console.log(this.$('.content_main a'))
+      var userId = this.$store.state.userId;
+      this.$axios({
+        method: "post",
+        url: "/api/getAllRoleInfoByUserId",
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      })
+        .then(res => {
+          console.log(res);
+          // debugger
+          if (res.data.body.roleBtnList.length > 0) {
+            var arr = [];
+            for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+              if (res.data.body.roleBtnList[i].btnLimit) {
+                arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit));
+              }
+            }
+            console.log(arr);
+            var url = location.pathname + location.search;
+            console.log(url);
+            var str = [];
+            for (var j = 0; j < arr.length; j++) {
+              for (var z = 0; z < arr[j].length; z++) {
+                if (arr[j][z].btns && arr[j][z].menuUrl == '/workOrderManagement?type=workOrderManagement' || arr[j][z].btns && arr[j][z].menuUrl == '/personOrder?type=personOrder') {
+                  console.log(arr[j][z].btns);
+                  str = arr[j][z].btns;
+                }
+              }
+            }
+            if (str.length == 0) {
+              return
+            } else {
+              var btn = str;
+              for (var h = 0; h < btn.length; h++) {
+                for (var k = h + 1; k < btn.length; k++) {
+                  if (btn[h].btnCode == btn[k].btnCode) {
+                    //第一个等同于第二个，splice方法删除第二个
+                    btn.splice(k, 1);
+                    k--;
+                  }
+                }
+              }
+              var userBtn = btn;
+              this.getBtnList(userBtn);
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    getBtnList(userBtn) {
+      var btnList = userBtn;
+      console.log(btnList)
+      var str = "";
+      for (var z = 0; z < btnList.length; z++) {
+        if (btnList[z].btnName == "添加") {
+          this.add = true;
+        } else if (btnList[z].btnName == "配置") {
+          this.config = true;
+        } else {
+          str += `<button
+            type="button"
+            class="${btnList[z].btnCode} layui-btn"
+            lay-submit
+            lay-filter="${btnList[z].btnName}"
+          >${ btnList[z].btnName}</button>`
+        }
+        // console.log(btnList[z].btnCode)
+      }
+
+      this.$(".pageBtn").html(str);
+      
+      var btn = this.$(".pageBtn").children();
+      console.log(btn)
+      for(var x = 0; x < btn.length; x++){
+        console.log(this.$(btn[0]).text());
+        if (this.orderState == 0) {
+          //待发单
+            // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "派单" || this.$(btn[x]).text() == "受理" || this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "改派" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "协同" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "开始" ||this.$(btn[x]).text() == "完成" ) {
+              this.$(btn[x]).remove()
+            }
+        }
+        if (this.orderState == 1) {
+          //待派单
+
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "受理"  ||this.$(btn[x]).text() == "改派" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "协同" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "开始" ||this.$(btn[x]).text() == "完成" ) {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 2) {
+          console.log("0000")
+          // 待受理
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+          if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "协同" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "开始" ||this.$(btn[x]).text() == "完成" ) {
+            this.$(btn[x]).remove()
+          }
+        }
+        if (this.orderState == 3) {
+          // 处理中
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+ 
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "受理" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "开始" || this.$(btn[x]).text() == "改派" ) {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 4) {
+          // 已预约
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+          
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "受理"  ||this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "开始" || this.$(btn[x]).text() == "改派" || this.$(btn[x]).text() == "完成") {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 5) {
+          // 已出发
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+          
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "受理" || this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "开始" || this.$(btn[x]).text() == "改派" || this.$(btn[x]).text() == "完成") {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 7) {
+          //待回访
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+         
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "协同" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "受理" || this.$(btn[x]).text() == "出发" || this.$(btn[x]).text() == "到达" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "开始" || this.$(btn[x]).text() == "改派" || this.$(btn[x]).text() == "完成") {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 8) {
+          //已关单
+            this.$(btn[x]).remove()
+        }
+        if (this.orderState == 9) {
+          // 已到达
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+          
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "受理" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "到达" || this.$(btn[x]).text() == "改派" || this.$(btn[x]).text() == "完成") {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+        if (this.orderState == 10) {
+          // 完成
+          // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+          
+            if(this.$(btn[x]).text() == "编辑" || this.$(btn[x]).text() == "发单" || this.$(btn[x]).text() == "派单"  ||this.$(btn[x]).text() == "驳回" ||this.$(btn[x]).text() == "预约" ||this.$(btn[x]).text() == "受理" ||this.$(btn[x]).text() == "出发" ||this.$(btn[x]).text() == "更改预约" ||this.$(btn[x]).text() == "到达" || this.$(btn[x]).text() == "改派" || this.$(btn[x]).text() == "开始") {
+              this.$(btn[x]).remove()
+            }
+          
+        }
+      }
     }
   },
   mounted() {
@@ -459,9 +619,9 @@ export default {
       var upload = layui.upload;
       var laydate = layui.laydate;
       form.render();
-
+      _this.getBtns()
       // 完成
-      form.on("submit(finish)", function(data) {
+      form.on("submit(完成)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         console.log(data.field);
@@ -470,9 +630,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -482,7 +640,7 @@ export default {
       });
 
       // 派单
-      form.on("submit(sendOrders)", function(data) {
+      form.on("submit(派单)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 1;
@@ -492,9 +650,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -503,7 +659,7 @@ export default {
         return false;
       });
       // 受理
-      form.on("submit(acceptance)", function(data) {
+      form.on("submit(受理)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 2;
@@ -513,9 +669,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -524,7 +678,7 @@ export default {
         return false;
       });
       // 改派
-      form.on("submit(reassignment)", function(data) {
+      form.on("submit(改派)", function(data) {
         layer.open({
           type: 1,
           title: "填写改派说明",
@@ -554,9 +708,7 @@ export default {
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
                 setTimeout(() => {
-                  _this.$router.push(
-                    "/workOrderManagement?type=workOrderManagement"
-                  );
+                  _this.$router.go(-1)
                 }, 3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
@@ -569,7 +721,7 @@ export default {
         return false;
       });
       // 出发
-      form.on("submit(start)", function(data) {
+      form.on("submit(出发)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 4;
@@ -578,9 +730,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -590,7 +740,7 @@ export default {
       });
 
       // 到达
-      form.on("submit(arrive)", function(data) {
+      form.on("submit(到达)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 5;
@@ -599,9 +749,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -610,7 +758,7 @@ export default {
         return false;
       });
       // 开始
-      form.on("submit(begin)", function(data) {
+      form.on("submit(开始)", function(data) {
         data.field.userId = _this.userId;
         data.field.orderInfoId = _this.orderInfoId;
         data.field.handleState = 6;
@@ -619,9 +767,7 @@ export default {
           if (res.data.retCode == "000000") {
             layer.msg(res.data.retMsg, { icon: 1 });
             setTimeout(() => {
-              _this.$router.push(
-                "/workOrderManagement?type=workOrderManagement"
-              );
+              _this.$router.go(-1);
             }, 3000);
           } else {
             layer.msg(res.data.retMsg, { icon: 2 });
@@ -631,7 +777,7 @@ export default {
         return false;
       });
       // 预约上门
-      form.on("submit(reservation)", function(data) {
+      form.on("submit(预约)", function(data) {
         console.log(data.field);
         layer.open({
           type: 1,
@@ -661,11 +807,7 @@ export default {
           btnAlign: "c",
           yes: function(index, layero) {
             var appoinmentTime = $("#reservation").val();
-            if (_this.orderState == 4) {
-              data.field.handleState = 12;
-            } else {
-              data.field.handleState = 3;
-            }
+            data.field.handleState = 3;
             data.field.userId = _this.userId;
             data.field.orderInfoId = _this.orderInfoId;
             data.field.appoinmentTime = appoinmentTime;
@@ -675,9 +817,60 @@ export default {
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
                 setTimeout(() => {
-                  _this.$router.push(
-                    "/workOrderManagement?type=workOrderManagement"
-                  );
+                  _this.$router.go(-1);
+                }, 3000);
+              } else {
+                layer.msg(res.data.retMsg, { icon: 2 });
+              }
+            });
+            layer.close(index);
+          }
+        });
+        return false;
+      });
+
+      // 更改预约
+      form.on("submit(更改预约)", function(data) {
+        console.log(data.field);
+        layer.open({
+          type: 1,
+          title: "预约上门时间",
+          area: ["600px", "400px"],
+          fixed: false,
+          maxmin: true,
+          content: `<form class="layui-form layui-form-pane">
+                    <div style="padding:10px" class="layui-form-item">
+                      <label class="layui-form-label">选择时间</label>
+                      <div class="layui-input-block">
+                        <input type="text" id="reservation" name="reservation" class="layui-input" />
+                      </div>
+                    </div>
+                  </form>`,
+          success: function() {
+            form.render();
+            laydate.render({
+              // 维保开始时间
+              elem: "#reservation",
+              type: "datetime",
+              closeStop: "#reservation",
+              trigger: "click"
+            });
+          },
+          btn: ["确定", "取消"],
+          btnAlign: "c",
+          yes: function(index, layero) {
+            var appoinmentTime = $("#reservation").val();
+            data.field.handleState = 12;
+            data.field.userId = _this.userId;
+            data.field.orderInfoId = _this.orderInfoId;
+            data.field.appoinmentTime = appoinmentTime;
+            console.log(data.field);
+            _this.$axios.post("/api/handleOrderInfo", data.field).then(res => {
+              console.log(res);
+              if (res.data.retCode == "000000") {
+                layer.msg(res.data.retMsg, { icon: 1 });
+                setTimeout(() => {
+                  _this.$router.go(-1);
                 }, 3000);
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
@@ -690,7 +883,7 @@ export default {
       });
 
       // 发起协同
-      form.on("submit(synergy)", function(data) {
+      form.on("submit(协同)", function(data) {
         // console.log(data.field);
         layer.open({
           type: 1,
@@ -730,7 +923,7 @@ export default {
           btn: ["确定", "取消"],
           success: function() {
             _this.$axios
-              .post("/api/getUserList", _this.$store.state.userId)
+              .post("/api/getUserList", {userId: _this.$store.state.userId})
               .then(res => {
                 console.log(res);
                 var userList = res.data.body.userList;
@@ -771,9 +964,7 @@ export default {
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
+                    _this.$router.go(-1);
                   }, 3000);
                 } else {
                   layer.msg(res.data.retMsg, { icon: 2 });
@@ -788,7 +979,7 @@ export default {
       });
 
       // 驳回
-      form.on("submit(reject)", function(data) {
+      form.on("submit(驳回)", function(data) {
         layer.open({
           type: 1,
           title: "是否驳回此工单？",
@@ -833,9 +1024,7 @@ export default {
               if (res.data.retCode == "000000") {
                 layer.msg(res.data.retMsg, { icon: 1 });
                 setTimeout(() => {
-                  _this.$router.push(
-                    "/workOrderManagement?type=workOrderManagement"
-                  );
+                  _this.$router.go(-1);
                 });
               } else {
                 layer.msg(res.data.retMsg, { icon: 2 });
@@ -849,11 +1038,11 @@ export default {
         return false;
       });
       // 返回
-      form.on("submit(reverseBack)",function(data){
-        _this.$router.push("/workOrderManagement?type=workOrderManagement");
+      form.on("submit(返回)",function(data){
+        _this.$router.go(-1);
       })      
       // 关单
-      form.on("submit(Kuantan)", function(data) {
+      form.on("submit(关单)", function(data) {
         console.log(data.field);
         console.log(data.field);
         if (_this.orderState == 7) {
@@ -871,9 +1060,7 @@ export default {
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
+                    _this.$router.go(-1);
                   });
                 } else {
                   layer.msg(res.data.retMsg, { icon: 2 });
@@ -910,9 +1097,7 @@ export default {
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
+                    _this.$router.go(-1);
                   });
                 } else {
                   layer.msg(res.data.retMsg, { icon: 2 });
