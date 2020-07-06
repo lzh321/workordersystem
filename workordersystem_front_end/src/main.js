@@ -10,13 +10,19 @@ import qs from 'qs'
 import VueResource from 'vue-resource'
 import jquery from 'jquery'
 import 'babel-polyfill'
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 
 Vue.config.productionTip = false
 Vue.component('chart', ECharts)
 Vue.use(VueResource)
 Vue.prototype.$axios = Axios
 Vue.prototype.$ = jquery
-
+Vue.use(Viewer, {
+  defaultOptions: {
+      zIndex: 9999
+  }
+})
 // 自定义方法
 jquery.prototype.serializeObject = function () {
 

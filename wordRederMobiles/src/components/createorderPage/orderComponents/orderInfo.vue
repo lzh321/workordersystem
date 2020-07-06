@@ -35,18 +35,18 @@
         <div class="layui-upload">
           <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding:0;font-size:15px">
             附件
-            <div class="layui-upload-list" id="AfterImgBox">
-              <img
-                v-for="(item,index) in AfterimgArray"
-                :key="index"
-                class="layui-upload-img"
-                style="width:100px;height:100px;margin-right:10px"
-                :src="DomainName+ item "
-                @click="previewImg()"
-                :layer-src="DomainName+ item"
-                alt
-              />
-            </div>
+            <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="AfterimgArray">
+              <div v-for="(item,index) in AfterimgArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
+                <img
+                  class="layui-upload-img"
+                  style="width:100%;height:100%"
+                  :src="DomainName+ item "
+                  :layer-src="DomainName+ item"
+                  alt
+                />
+              <!-- <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a> -->
+              </div>
+            </viewer>
           </blockquote>
         </div>
       </div>
@@ -73,13 +73,6 @@ export default {
     appointment
   },
   methods: {
-    previewImg(){  // 图片预览
-      layer.photos({
-        photos: "#AfterImgBox"
-        ,anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-        closeBtn: 1
-      });
-    },
     send() {
       if (this.orderInfo.recordPhoto) {
         this.Afterimg = this.orderInfo.recordPhoto;

@@ -19,7 +19,6 @@
                   name="customerName"
                   id="customerName"
                   lay-filter="customerName"
-                  lay-verify="required"
                   lay-search
                 >
                   <option value>请选择一个客户</option>
@@ -53,7 +52,6 @@
                   name="networkId"
                   lay-filter="seleNetworkName"
                   id="networkId"
-                  lay-verify="required"
                   lay-search
                 >
                   <option value>请选择一个投放点</option>
@@ -75,7 +73,6 @@
                   autocomplete="off"
                   class="layui-input"
                   :value="networAddress"
-                  lay-verify="required"
                   disabled
                 />
               </div>
@@ -91,7 +88,6 @@
                   placeholder="请输入联系人"
                   value
                   class="layui-input"
-                  lay-verify="required"
                 />
               </div>
             </div>
@@ -106,7 +102,6 @@
                   placeholder="请输入联系电话"
                   value
                   class="layui-input"
-                  lay-verify="required"
                 />
               </div>
             </div>
@@ -120,7 +115,7 @@
             <div class="layui-form-item">
               <label class="layui-form-label">工单来源</label>
               <div class="layui-input-block">
-                <select name="orderSource" id="orderSource" lay-verify="required">
+                <select name="orderSource" id="orderSource" >
                   <option value>选择工单来源</option>
                   <option value="电话">电话</option>
                   <option value="微信">微信</option>
@@ -132,7 +127,7 @@
             <div class="layui-form-item">
               <label class="layui-form-label">工单类型</label>
               <div class="layui-input-block">
-                <select name="orderType" id="orderType" lay-verify="required">
+                <select name="orderType" id="orderType" >
                   <option value>请选择工单类型</option>
                   <option value="设备报障">设备报障</option>
                   <option value="差错账">差错账</option>
@@ -152,7 +147,7 @@
             <div class="layui-form-item">
               <label class="layui-form-label">紧急程度</label>
               <div class="layui-input-block">
-                <select name="orderUrgency" id="orderUrgency" lay-verify="required">
+                <select name="orderUrgency" id="orderUrgency" >
                   <option value>请选择紧急程度</option>
                   <option value="0">一般</option>
                   <option value="1">紧急</option>
@@ -167,7 +162,6 @@
                   type="text"
                   name="reportTime"
                   value
-                  lay-verify="required"
                   class="layui-input"
                   autocomplete="off"
                   placeholder="请选择报障时间"
@@ -184,7 +178,6 @@
                   name="modelId"
                   lay-filter="seleModelType"
                   id="modelType"
-                  lay-verify="required"
                 >
                   <option value>请选择设备型号</option>
                   <option
@@ -200,7 +193,7 @@
             <div class="layui-form-item CDkey">
               <label class="layui-form-label">设备序列号</label>
               <div class="layui-input-block">
-                <select name="deviceNumber" lay-filter="deviceNumber" id="deviceNumber" lay-verify>
+                <select name="deviceNumber" lay-filter="deviceNumber" id="deviceNumber" >
                   <option value>请选择设备序列号</option>
                   <option
                     v-for="(item) in deviceNumberList"
@@ -218,7 +211,6 @@
                   name="problemDescription"
                   value
                   placeholder="请输入内容"
-                  lay-verify="required"
                   class="layui-textarea"
                   autocomplete="off"
                 ></textarea>
@@ -232,23 +224,18 @@
               <div class="layui-upload">
                 <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
                   预览
-                  <div class="layui-upload-list"  id="imgBox">
-                    <div
-                      style="width:100px;height:100px;margin-right:10px;display:inline-block;"
-                      v-for="(item,index) in imgDataArray"
-                      :key="index"
-                    >
+                  <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="imgDataArray">
+                    <div v-for="(item,index) in imgDataArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
                       <img
-                        @click="previewImg()"
-                        class="layui-upload-img"
-                        style="width:100%;height:100%"
-                        :src="DomainName+ item "
-                        :layer-src="DomainName+ item"
-                        alt
+                      class="layui-upload-img"
+                      style="width:100%;height:100%"
+                      :src="DomainName+ item "
+                      :layer-src="DomainName+ item"
+                      alt
                       />
                       <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
                     </div>
-                  </div>
+                </viewer>
                   <input type="hidden" name="orderImg" :value="imgData" />
                 </blockquote>
               </div>
@@ -257,7 +244,7 @@
           <div class="layui-form-item">
             <label class="layui-form-label">指派给</label>
             <div class="layui-input-block">
-              <select name="acceptUserId" id="acceptUserId" lay-verify="required">
+              <select name="acceptUserId" id="acceptUserId" >
                 <option value>请选择指派人</option>
                 <option
                   v-for="(item) in userList"
@@ -298,7 +285,7 @@
             lay-submit
             lay-filter="Kuantan"
           >关单</button>
-          <button @click="cancel" class="layui-btn layui-btn-primary">取消</button>
+          <button type="button" lay-submit lay-filter="cancel" class="layui-btn layui-btn-primary">取消</button>
         </div>
       </div>
       <workOrderLog v-if="orderState == 0 "></workOrderLog>
@@ -339,9 +326,7 @@ export default {
     workOrderLog
   },
   methods: {
-    cancel() {
-      this.$router.push("/workOrderManagement?type=workOrderManagement");
-    },
+
     send() {
       var userId = this.$store.state.userId;
       // this.$axios.post("/api/getDeviceModelList", userId).then(res => {
@@ -353,15 +338,15 @@ export default {
         // 客户名称
         this.customerNameList = res.data.body.customerNameList;
       });
-      this.$axios.post("/api/getUserList", {userId}).then(res => {
-        // 员工列表
-        // console.log(res);
-        // this.userList = res.data.body.userList;
-        for (var i = 0; i < res.data.body.userList.length; i++) {
-        if (res.data.body.userList[i].userId !== "admin") {
-          this.userList.push(res.data.body.userList[i])
+      this.$axios.post("/api/getUserInfoByUserState",{"userId": this.$store.state.userId}).then(res => {
+        console.log(res);
+        if(res.data.retCode == '000000'){
+          if(res.data.body.length > 0){
+            for (var i = 0; i < res.data.body.length; i++) {
+              this.userList.push(res.data.body[i])
+            }
+          }
         }
-      }
       });
 
       var date = new Date();
@@ -388,12 +373,6 @@ export default {
       this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
         console.log(res)
       })
-    },
-    previewImg(){  // 图片预览
-      layer.photos({
-        photos: "#imgBox"
-        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-      });
     },
   },
   mounted() {
@@ -491,9 +470,7 @@ export default {
             if (res.data.retCode == "000000") {
               layer.msg(res.data.retMsg, { icon: 1 });
               setTimeout(() => {
-                _this.$router.push(
-                  "/workOrderManagement?type=workOrderManagement"
-                );
+                _this.$router.go(-1)
               }, 2000);
             } else {
               layer.msg(res.data.retMsg, { icon: 2 });
@@ -506,9 +483,7 @@ export default {
             if (res.data.retCode == "000000") {
               layer.msg(res.data.retMsg, { icon: 1 });
               setTimeout(() => {
-                _this.$router.push(
-                  "/workOrderManagement?type=workOrderManagement"
-                );
+                _this.$router.go(-1)
               }, 2000);
             } else {
               layer.msg(res.data.retMsg, { icon: 2 });
@@ -544,9 +519,7 @@ export default {
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
+                    _this.$router.go(-1)
                   }, 2000);
                 } else {
                   layer.msg(res.data.retMsg, { icon: 2 });
@@ -568,9 +541,7 @@ export default {
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
-                    _this.$router.push(
-                      "/workOrderManagement?type=workOrderManagement"
-                    );
+                    _this.$router.go(-1)
                   }, 2000);
                 } else {
                   layer.msg(res.data.retMsg, { icon: 2 });
@@ -581,6 +552,12 @@ export default {
         }
         return false;
       });
+      //  取消
+      
+      form.on("submit(cancel)",function(){
+        _this.$router.go(-1)
+        // _this.$router.push("/workOrderManagement?type=workOrderManagement");
+      })
 
       //上传图片
       upload.render({

@@ -65,7 +65,7 @@ export default new Router({
         {
           path: '/workOrderManagement',
           name: 'workOrderManagement',
-          component: workOrderManagement
+          component: workOrderManagement,
         },
         {
           path: '/personOrder',

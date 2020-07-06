@@ -31,12 +31,21 @@ export default {
       currentPage: 1,
       everyCount: 100
     }
-    this.axios.post("/api/getUserList",data).then(res=>{
-      console.log(res)
-      if(res.data.retCode == '000000'){
-        this.userList = res.data.body.userList
-      }
-    })
+    if(this.$route.query.orderStatus == 1) {
+      this.axios.post("/api/getUserList",data).then(res=>{
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.userList = res.data.body.userList
+        }
+      })
+    }else{
+      this.axios.post("/api/getUserInfoByUserState",data).then(res=>{
+        console.log(res)
+        if(res.data.retCode == '000000'){
+          this.userList = res.data.body
+        }
+      })
+    }
   }
 
 }

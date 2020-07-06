@@ -111,23 +111,18 @@
           <div class="layui-upload">
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;padding: 6px;">
               预览
-              <div class="layui-upload-list" id="createImgBox">
-                    <div
-                      style="width:100px;height:100px;margin-right:10px;margin-bottom:10px;padding:0;display:inline-block;"
-                      v-for="(item,index) in imgDataArray"
-                      :key="index"
-                    >
-                      <img
-                        class="layui-upload-img"
-                        style="width:100%;height:100%"
-                        :src="DomainName+ item "
-                        @click="previewImg()"
-                        :layer-src="DomainName+ item"
-                        alt
-                      />
-                      <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
-                    </div>
-                  </div>
+              <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="imgDataArray">
+                <div v-for="(item,index) in imgDataArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
+                    <img
+                    class="layui-upload-img"
+                    style="width:100%;height:100%"
+                    :src="DomainName+ item "
+                    :layer-src="DomainName+ item"
+                    alt
+                  />
+                  <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+                </div>
+              </viewer>
                   <input type="hidden" name="orderImg" :value="imgData" />
             </blockquote>
           </div>
@@ -264,13 +259,6 @@ export default {
       this.axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
         console.log(res)
       })
-    },
-    previewImg(){  // 图片预览
-      layer.photos({
-        photos: "#createImgBox"
-        ,anim: 5, //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-        closeBtn: 1
-      });
     },
     showPopup() {
       this.show = true;

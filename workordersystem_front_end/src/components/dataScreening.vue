@@ -33,11 +33,11 @@
           </p>
           <p>
             <span for>创&nbsp;&nbsp;建&nbsp;&nbsp;人</span>
-            <input type="text" name="createUserId" autocomplete="off" value placeholder="创建人" />
+            <input type="text" name="userName" autocomplete="off" value placeholder="创建人" />
           </p>
           <p>
             <span for>客户名称</span>
-            <select name="networName" lay-verify="" lay-search>
+            <select name="customerName" lay-verify="" lay-search>
               <option value="">全部</option>
               <option
                 v-for="(item) in customerList"
@@ -48,7 +48,7 @@
           </p>
           <p class="Network">
             <span for>投&nbsp;&nbsp;放&nbsp;&nbsp;点</span>
-            <input type="text" name="userName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
+            <input type="text" name="networName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
         <div class="search_input" v-if="synergyManagement || personSynergy">
@@ -74,7 +74,7 @@
           </p>
           <p>
             <span for>创&nbsp;&nbsp;建&nbsp;&nbsp;人</span>
-            <input type="text" name="createUserId" autocomplete="off" value placeholder="创建人" />
+            <input type="text" name="createrUserName" autocomplete="off" value placeholder="创建人" />
           </p>
         </div>
         <div class="search_input" v-if="staffManagement">
@@ -82,39 +82,12 @@
             <span for>输入查询</span>
             <input type="text" name="val" autocomplete="off" value placeholder="姓名/账号/手机"/>
           </p>
-          <p>
-            <span for>员工职务</span>
-            <select name="selejobName">
-              <option value>全部</option>
-              <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
-            </select>
-          </p>
-          <p>
-            <span for>所属部门</span>
-            <select name="seleDeptName">
-              <option value>全部</option>
-              <option v-for="(item) in DeptList" :key="item.id" :value="item.deptName">{{item.deptName}}</option>
-            </select>
-          </p>
+
         </div>
         <div class="search_input" v-if="businessEnterprise">
           <p>
             <span for>输入查询</span>
             <input type="text" name="seleCompanyName" autocomplete="off" value placeholder="请输入公司名称" />
-          </p>
-          <p>
-            <span for>员工职务</span>
-            <select name="seleJobName">
-              <option value>全部</option>
-              <option v-for="(item) in JobList" :key="item.id" :value="item.jobName">{{item.jobName}}</option>
-            </select>
-          </p>
-          <p>
-            <span for>所属部门</span>
-            <select name="seleDeptName">
-              <option value>全部</option>
-              <option v-for="(item) in DeptList" :key="item.id" :value="item.deptName">{{item.deptName}}</option>
-            </select>
           </p>
         </div>
         <div class="search_input" v-if="NetworkList">
@@ -201,7 +174,7 @@
           </p>
           <p>
             <span for>投&emsp;放&emsp;点</span>
-            <input type="text" name="seleNetworkName" autocomplete="off"  placeholder="请输入投放点名称"/>
+            <input type="text" name="networkName" autocomplete="off"  placeholder="请输入投放点名称"/>
           </p>
         </div>
         <div class="search_input" v-if="equipmentType">

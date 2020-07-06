@@ -952,8 +952,25 @@ export default {
     // });
     localStorage.clear();
     this.getOrderInfoNum();
-  }
-};
+  },
+  beforeRouteEnter(to, from, next) {
+    if(from.name=='ListDetail'){
+      to.meta.isBack=true;
+    }
+    next();
+  },
+  activated() {
+
+    if(this.$route.meta.isBack){
+    // 如果isBack是false，表明需要获取新数据，否则就不再请求，直接使用缓存的数据
+      this.reload();
+    }
+
+  // 恢复成默认的false，避免isBack一直是true，导致下次无法获取数据
+    this.$route.meta.isBack=false
+
+  },
+}
 </script>
 
 <style scoped>

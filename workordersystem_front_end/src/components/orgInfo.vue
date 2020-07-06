@@ -123,7 +123,7 @@ export default {
   /* width: 130px !important; */
 }
 .org::before {
-  content: "*";
+  content: "";
   font-size: 20px;
   display: inline-block;
   color: red;

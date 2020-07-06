@@ -94,23 +94,18 @@
       <div class="layui-upload">
         <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
           预览
-          <div class="layui-upload-list" id="imgBoxs">
-            <div
-              style="width:100px;height:100px;margin-right:10px;display:inline-block;"
-              v-for="(item,index) in AfterimgArray"
-              :key="index"
-            >
+          <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="AfterimgArray">
+            <div v-for="(item,index) in AfterimgArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
               <img
-                @click="previewImgs()"
-                :layer-src="DomainName+ item"
-                class="layui-upload-img"
-                style="width:100%;height:100%"
-                :src="DomainName+ item "
-                alt
+              class="layui-upload-img"
+              style="width:100%;height:100%"
+              :src="DomainName+ item "
+              :layer-src="DomainName+ item"
+              alt
               />
               <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
             </div>
-          </div>
+          </viewer>
           <input type="hidden" name="recordPhoto" :value="Afterimg" />
         </blockquote>
       </div>
@@ -513,8 +508,12 @@ export default {
           _this.AfterimgArray.push(res.body.url.split(",")[0]);
           _this.Afterimg = _this.AfterimgArray.join(",");
           console.log(_this.Afterimg);
-        }
+        },
+
       });
+      $("#layui-layer-photos").click(function(){
+        console.log(this)
+      })
     });
   },
   methods: {
@@ -525,12 +524,6 @@ export default {
       this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
         console.log(res)
       })
-    },
-    previewImgs(){  // 图片预览
-      layer.photos({
-        photos: "#imgBoxs"
-        ,anim: 5 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-      });
     },
     getImg() {
       if (this.workOrderInfo.recordPhoto) {

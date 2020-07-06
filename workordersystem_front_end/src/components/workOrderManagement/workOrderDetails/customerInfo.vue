@@ -50,7 +50,6 @@
             name="customerName"
             id="customerName"
             lay-filter="billCustomerName"
-            lay-verify="required"
             lay-search
           >
             <option value>请选择一个客户</option>
@@ -106,7 +105,7 @@
             name="networkId"
             lay-filter="billSeleNetworkName"
             id="networkId"
-            lay-verify="required"
+            lay-verify=""
             lay-search
           >
             <option value>请选择一个投放点</option>
@@ -121,7 +120,7 @@
             name="networkId"
             lay-filter="billSeleNetworkName"
             id="networkId"
-            lay-verify="required"
+            lay-verify=""
             lay-search
           >
             <option value>请选择一个投放点</option>
@@ -145,7 +144,7 @@
             class="layui-input"
             :value="networAddress"
             disabled
-            lay-verify="required"
+            lay-verify=""
           />
         </div>
       </div>
@@ -156,7 +155,7 @@
           <input
             type="text"
             name="contactName"
-            lay-verify="required"
+            lay-verify=""
             autocomplete="off"
             :value="orderInfo.contactName ? orderInfo.contactName : ''"
             placeholder="请输入联系人"
@@ -172,7 +171,7 @@
             type="text"
             name="contactPhone"
             autocomplete="off"
-            lay-verify="required"
+            lay-verify=""
             :value="orderInfo.contactPhone ? orderInfo.contactPhone : ''"
             placeholder="请输入联系电话"
             class="layui-input"
@@ -189,7 +188,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">工单来源</label>
         <div class="layui-input-block">
-          <select name="orderSource" id="orderSource" lay-verify="required">
+          <select name="orderSource" id="orderSource" lay-verify="">
             <option value>选择工单来源</option>
             <option value="电话">电话</option>
             <option value="微信">微信</option>
@@ -201,7 +200,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">工单类型</label>
         <div class="layui-input-block">
-          <select name="orderType" id="orderType" lay-verify="required">
+          <select name="orderType" id="orderType" lay-verify="">
             <option value>请选择工单类型</option>
             <option :selected="orderInfo.orderType == '设备报障' ? true : false" value="设备报障">设备报障</option>
             <option :selected="orderInfo.orderType == '差错账' ? true : false" value="差错账">差错账</option>
@@ -221,7 +220,7 @@
       <div class="layui-form-item">
         <label class="layui-form-label">紧急程度</label>
         <div class="layui-input-block">
-          <select name="orderUrgency" id="orderUrgency" lay-verify="required">
+          <select name="orderUrgency" id="orderUrgency" lay-verify="">
             <option value>请选择紧急程度</option>
             <option value="0">一般</option>
             <option value="1">紧急</option>
@@ -240,7 +239,7 @@
             id="reportedBarrierTime"
             placeholder="请选择报障时间"
             autocomplete="off"
-            lay-verify="required"
+            lay-verify=""
           />
           <i></i>
         </div>
@@ -254,7 +253,7 @@
             name="modelId"
             lay-filter="billSeleModelType"
             id="modelType"
-            lay-verify="required"
+            lay-verify=""
           >
             <option value>请选择设备型号</option>
             <option
@@ -268,7 +267,7 @@
             name="modelId"
             lay-filter="billSeleModelType"
             id="modelType"
-            lay-verify="required"
+            lay-verify=""
           >
             <option value>请选择设备型号</option>
             <option
@@ -312,7 +311,7 @@
             :value="orderInfo.problemDescription ? orderInfo.problemDescription : ''"
             placeholder="请输入内容"
             class="layui-textarea"
-            lay-verify="required"
+            lay-verify=""
             autocomplete="off"
           ></textarea>
         </div>
@@ -325,23 +324,18 @@
         <div class="layui-upload">
           <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
             预览
-            <div class="layui-upload-list" id="imgBox">
-              <div
-                style="width:100px;height:100px;margin-right:10px;display:inline-block;"
-                v-for="(item,index) in imgDataArray"
-                :key="index"
-              >
+            <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="imgDataArray">
+              <div v-for="(item,index) in imgDataArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
                 <img
-                  @click="previewImg()"
-                  :layer-src="DomainName+ item"
-                  class="layui-upload-img"
-                  style="width:100%;height:100%;"
-                  :src="DomainName+ item "
-                  alt
+                class="layui-upload-img"
+                style="width:100%;height:100%"
+                :src="DomainName+ item "
+                :layer-src="DomainName+ item"
+                alt
                 />
                 <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
               </div>
-            </div>
+            </viewer>
             <input type="hidden" name="orderImg" :value="imgData" />
           </blockquote>
         </div>
@@ -349,7 +343,7 @@
       <div v-if="orderInfo.orderState == 7 ? false : true" class="layui-form-item">
         <label class="layui-form-label">指派给</label>
         <div class="layui-input-block">
-          <select name="acceptUserId" id="acceptUserId" lay-verify="required">
+          <select name="acceptUserId" id="acceptUserId" lay-verify="">
             <option value>请选择指派人</option>
             <option
               v-for="(item) in userList"
@@ -396,12 +390,6 @@ export default {
         console.log(res)
       })
     },
-    previewImg(){  // 图片预览
-      layer.photos({
-        photos: "#imgBox"
-        ,anim: 0 //0-6的选择，指定弹出图片动画类型，默认随机（请注意，3.0之前的版本用shift参数）
-      });
-    },
     send() {
       var userId = this.$store.state.userId;
       this.$axios
@@ -410,14 +398,15 @@ export default {
           // 客户名称
           this.customerNameList = res.data.body.customerNameList;
         });
-      this.$axios.post("/api/getUserList", { userId: userId }).then(res => {
-        // 员工列表
-        // console.log(res);
-        for (var i = 0; i < res.data.body.userList.length; i++) {
-        if (res.data.body.userList[i].userId !== "admin") {
-          this.userList.push(res.data.body.userList[i])
+      this.$axios.post("/api/getUserInfoByUserState",{"userId": this.$store.state.userId}).then(res => {
+        console.log(res);
+        if(res.data.retCode == '000000'){
+          if(res.data.body.length > 0){
+            for (var i = 0; i < res.data.body.length; i++) {
+              this.userList.push(res.data.body[i])
+            }
+          }
         }
-      }
       });
     },
     workValuation() {

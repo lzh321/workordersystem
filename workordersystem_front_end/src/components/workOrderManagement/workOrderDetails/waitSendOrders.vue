@@ -28,9 +28,7 @@ export default {
     this.$axios.post("/api/getUserList", {userId:this.$store.state.userId}).then(res => {
       console.log(res);
       for (var i = 0; i < res.data.body.userList.length; i++) {
-        if (res.data.body.userList[i].userId !== "admin") {
-          this.userList.push(res.data.body.userList[i])
-        }
+        this.userList.push(res.data.body.userList[i])
       }
     });
   },

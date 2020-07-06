@@ -1,7 +1,7 @@
 <template>
   <div class="sendOrder">
-    <form action id="sendOrderData">
-      <router-link to="/userList" tag="div">
+    <form action id="sendOrderData" class="layui-form">
+      <router-link :to="'/userList?orderStatus='+orderStatus" tag="div">
         <label for>
           <span>指派给</span>：
         </label>
@@ -104,6 +104,7 @@ export default {
   },
   created() {
     this.send();
+    console.log(this.orderStatus)
   },
   activated() {}
 };

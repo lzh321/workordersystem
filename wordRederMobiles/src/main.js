@@ -9,10 +9,17 @@ import store from './store'
 import jquery from 'jquery'
 import { Tabbar, TabbarItem, NavBar, Tab, Tabs, List, Button, Field, Icon, Uploader, Dialog, Toast, DatetimePicker, Popup,Search,Loading } from 'vant'
 import 'babel-polyfill'
+import Viewer from 'v-viewer'
+import 'viewerjs/dist/viewer.css'
 
 import 'lib-flexible/flexible'
 import '../static/reset.css'
-
+//Vue.use(Viewer) 默认配置写法
+Vue.use(Viewer, {
+  defaultOptions: {
+      zIndex: 9999
+  }
+})
 // 全局注册
 Vue.use(Loading)
 Vue.use(Search);
