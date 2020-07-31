@@ -17,30 +17,6 @@
       </div>
     </form>
     <orderLog></orderLog>
-    <div class="perch"></div>
-    <div class="actionBtn">
-      <ul>
-        <li>
-          <button @click="sendOrder" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_send-orders.png" alt />
-            <span>派单</span>
-          </button>
-        </li>
-        <li>
-          <button @click="reject" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_rejected.png" alt />
-            <span>驳回</span>
-          </button>
-        </li>
-        <li>
-          <button @click="kuantan" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
-          </button>
-        </li>
-      </ul>
-    </div>
-    
   </div>
 </template>
 

@@ -137,63 +137,6 @@
       </div>
     </form>
     <orderLog></orderLog>
-    <div class="perch"></div>
-    <div class="actionBtn">
-      <ul>
-        <li v-if="orderStatus == 3 || orderStatus == 10">
-          <button @click="finish" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_complete.png" alt />
-            <span>完成</span>
-          </button>
-        </li>
-        <li v-if="orderStatus == 3">
-          <button @click="showPopup" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_order.png" alt />
-            <span>预约</span>
-          </button>
-        </li>
-        <li v-if="orderStatus == 4">
-          <button @click="start" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_order.png" alt />
-            <span>出发</span>
-          </button>
-        </li>
-        <li v-if="orderStatus == 4 ">
-          <button @click="showPopup" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_order.png" alt />
-            <span>更改预约</span>
-          </button>
-        </li>
-        <li v-if="orderStatus == 5">
-          <button @click="reach" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_order.png" alt />
-            <span>到达</span>
-          </button>
-        </li>
-        <li v-if="orderStatus == 9">
-          <button @click="begin" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_order.png" alt />
-            <span>开始</span>
-          </button>
-        </li>
-        <li
-          v-if="orderStatus == 3 || orderStatus == 4 || orderStatus == 5 || orderStatus == 9 || orderStatus == 10"
-        >
-          <button @click="synergy" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_synergy.png" alt />
-            <span>协同</span>
-          </button>
-        </li>
-        <li
-          v-if="orderStatus == 3 || orderStatus == 4 || orderStatus == 5 || orderStatus == 9 || orderStatus == 10"
-        >
-          <button @click="kuantan" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
-          </button>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 

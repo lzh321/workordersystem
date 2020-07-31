@@ -1,6 +1,6 @@
 <template>
   <div class="bill">
-    <form action id="createData" class="layui-form">
+    <form action id="createData">
       <div class="info">
         <h2>客户信息</h2>
         <i>为必填项</i>
@@ -226,33 +226,6 @@
           rows="10"
         ></textarea>
       </div>
-      <!-- <div class="affix">
-        <label for>
-          <span>附件</span>：
-        </label>
-        <div>
-          <van-uploader :after-read="afterRead" v-model="fileList" multiple></van-uploader>
-        </div>
-        <van-button icon="photo" type="primary" @click="uploadImg">上传图片</van-button>
-      </div>-->
-
-      <!-- <div class="affix">
-        <div>
-          <label for>
-            <span>附件</span>：
-          </label>
-          <button type="button" class="layui-btn" id="uploadImage">上传图片</button>
-        </div>
-        <div class="uploadImg">
-          <div class="layui-upload">
-            <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-              预览
-              <div class="layui-upload-list" id="imgBox"></div>
-              <input type="hidden" name="orderImg" value />
-            </blockquote>
-          </div>
-        </div>
-      </div>-->
 
       <div v-if="orderStatus == 7 ? false : true" class="affix layui-form-item">
         <div>
@@ -316,22 +289,10 @@
     <div class="perchs"></div>
     <div v-if="orderStatus == 7 ? false : true" class="actionBtn">
       <ul>
-        <li>
-          <button :disabled="isDisabled" @click="bill">
-            <img src="../../../assets/Images/operation_receipt.png" alt />
-            <span>发单</span>
-          </button>
-        </li>
-        <li>
-          <button :disabled="isDisabled" @click="cancel">
-            <img src="../../../assets/Images/operation_cancel.png" alt />
-            <span>取消</span>
-          </button>
-        </li>
-        <li>
-          <button :disabled="isDisabled" @click="kuantan">
-            <img src="../../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
+        <li v-for="(item,index) in btnList" :key="index">
+          <button lay-submit :lay-filter="item.btnName" :disabled="isDisabled">
+            <img v-for="(itemImg,index) in imgList" v-show="item.btnName == itemImg.title" :key="index" :src="itemImg.img" alt />
+            <span>{{item.btnName}}</span>
           </button>
         </li>
       </ul>
@@ -343,7 +304,6 @@
 import orderLog from "../orderComponents/orderLog";
 export default {
   name: "bill",
-  props: ["orderStatus"],
   data() {
     return {
       fileList: [],
@@ -365,7 +325,14 @@ export default {
       agreenmentId: "",
       reportTime: sessionStorage.getItem("reportTime") ? sessionStorage.getItem("reportTime") : "",
       problemDescription: "",
-      orderUrgency: ""
+      orderUrgency: "",
+      orderStatus: "",
+      imgList: [
+        {title: '发单', img: require('../../../assets/Images/operation_receipt.png')},
+        {title: '返回', img: require('../../../assets/Images/operation_cancel.png')},
+        {title: '关单', img: require('../../../assets/Images/operation_kuantan.png')},
+      ],
+      btnList: [],
     };
   },
   components: {
@@ -374,8 +341,10 @@ export default {
   mounted() {
     this.send();
     var _this = this;
-    layui.use(["laydate", "upload"], function() {
+    layui.use(["form","jquery","laydate", "upload"], function() {
       var laydate = layui.laydate;
+      var form = layui.form;
+      var $ = layui.jquery;
       var upload = layui.upload;
       //执行一个laydate实例
       laydate.render({
@@ -388,6 +357,15 @@ export default {
           sessionStorage.setItem("reportTime",value)
         }
       });
+      form.on("submit(发单)", function(data) {
+        _this.bill()
+      })
+      form.on("submit(关单)", function(data) {
+        _this.kuantan()
+      })
+      form.on("submit(返回)", function(data) {
+        _this.cancel()
+      })
 
       //上传图片
       upload.render({
@@ -524,10 +502,6 @@ export default {
         this.DeviceNumber = JSON.parse(DeviceNumber);
       }
     },
-    getImg() {
-      if (this.orderInfo.recordPhoto) {
-      }
-    },
     getOrderInfo() {
       var data = {
         userId: this.$store.state.userId,
@@ -550,6 +524,70 @@ export default {
           this.orderUrgency = sessionStorage.getItem("orderUrgency") ? sessionStorage.getItem("orderUrgency") : res.data.body.orderUrgency
         }
       });
+    },
+    getBtns() {
+      console.log(this.orderStatus)
+      var userId = this.$store.state.userId;
+      this.axios({
+        method: "post",
+        url: "/api/getAllRoleInfoByUserId",
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      })
+        .then(res => {
+          console.log(res);
+          // debugger
+          if (res.data.body.roleBtnList.length > 0) {
+            var arr = [];
+            for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+              if (res.data.body.roleBtnList[i].btnLimit) {
+                arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit));
+              }
+            }
+            console.log(arr);
+            var url = location.pathname + location.search;
+            console.log(url);
+            var str = [];
+            for (var j = 0; j < arr.length; j++) {
+              for (var z = 0; z < arr[j].length; z++) {
+                if (arr[j][z].btns && arr[j][z].menuUrl == '/workOrderManagement?type=workOrderManagement' || arr[j][z].btns && arr[j][z].menuUrl == '/personOrder?type=personOrder') {
+                  console.log(arr[j][z].btns);
+                  str = arr[j][z].btns;
+                }
+              }
+            }
+            if (str.length == 0) {
+              return
+            } else {
+              var btns = str;
+              for (var h = 0; h < btns.length; h++) {
+                for (var k = h + 1; k < btns.length; k++) {
+                  if (btns[h].btnCode == btns[k].btnCode) {
+                    //第一个等同于第二个，splice方法删除第二个
+                    btns.splice(k, 1);
+                    k--;
+                  }
+                }
+              }
+              btns.forEach((item)=>{
+                // console.log(item)                   
+                if (this.orderStatus == 0 ) {
+                  //待发单
+                    // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+                    if(item.btnName == '发单' || item.btnName == '返回' || item.btnName == '关单'){
+                      this.btnList.push(item)
+                    }
+                    return
+                }
+              })
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
     bill() {
       // 发单
@@ -614,8 +652,11 @@ export default {
     }
   },
   created() {
+    this.orderStatus = this.$route.query.orderStatus
     this.getOrderInfo();
     this.send();
+    this.getBtns()
+    
   },
   updated(){
     layui.use(["laydate"],function(){

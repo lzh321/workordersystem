@@ -15,7 +15,7 @@
         </li>
       </ul>
       <div class="layui-tab-content">
-        <data-screening :type="type"></data-screening>
+        <data-screening ref="getData" :type="type"></data-screening>
         <div class="dataList">
           <div class="dataList_top">
             <h2>数据列表</h2>
@@ -94,7 +94,7 @@ export default {
     getOrderInfoNum() {
       var userId = this.$store.state.userId;
       this.$axios.post("/api/getOrderInfoNum", { userId:userId,isAll:0 }).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.retCode == "000000") {
           // this.workType[0].num = res.data.body.allNum
           this.workType[1].num = res.data.body.sendNum;
@@ -115,7 +115,7 @@ export default {
         isAll:0
       };
       this.$axios.post("/api/handleOrderInfo", data).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res.data.retCode == "000000") {
           layer.msg(res.data.retMsg, { icon: 1 });
           setTimeout(() => {
@@ -128,10 +128,10 @@ export default {
     },
 
     getDemo() {
-      console.log(this.$("tbody tr"));
+      // console.log(this.$("tbody tr"));
       var demo = this.$("tbody tr");
       for (var i = 0; i < demo.length; i++) {
-        console.log(this.$(demo[i]).children()[0].textContent);
+        // console.log(this.$(demo[i]).children()[0].textContent);
       }
     },
 
@@ -148,7 +148,7 @@ export default {
         }
       })
         .then(res => {
-          console.log(res);
+          // console.log(res);
           // debugger
           if (res.data.body.roleBtnList.length > 0) {
             var arr = [];
@@ -157,14 +157,14 @@ export default {
                 arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit));
               }
             }
-            console.log(arr);
+            // console.log(arr);
             var url = location.pathname + location.search;
-            console.log(url);
+            // console.log(url);
             var str = [];
             for (var j = 0; j < arr.length; j++) {
               for (var z = 0; z < arr[j].length; z++) {
                 if (arr[j][z].btns && arr[j][z].menuUrl == url) {
-                  console.log(arr[j][z].btns);
+                  // console.log(arr[j][z].btns);
                   str = arr[j][z].btns;
                 }
               }
@@ -222,10 +222,10 @@ export default {
 
       var demo = this.$("tbody tr");
       for (var i = 0; i < demo.length; i++) {
-        console.log(this.$(demo[i]).children()[0].textContent);
+        // console.log(this.$(demo[i]).children()[0].textContent);
         if (this.$(demo[i]).children()[0].textContent == 0) {
           //待发单
-          console.log(this.$(".tabBtn"))
+          // console.log(this.$(".tabBtn"))
           var btn = this.$(demo[i]).find(".tabBtn").children()
           for(var x = 0; x < btn.length; x++){
             // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
@@ -332,9 +332,14 @@ export default {
       var laydate = layui.laydate;
       var $ = layui.jquery;
       var form = layui.form;
-      element.on("tab(workOrderManagement)", function(data) {
-        console.log(this); //当前Tab标题所在的原始DOM元素
-        console.log(data.index); //得到当前Tab的所在下标
+      var curr = ''
+      setTimeout(()=>{
+        curr = sessionStorage.getItem("curr") ? sessionStorage.getItem("curr") : 1
+        _this.$refs.getData.serachData = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+      })
+      element.on("tab(workOrderManagement)",  function(data) {
+        // console.log(this); //当前Tab标题所在的原始DOM元素
+        // console.log(data.index); //得到当前Tab的所在下标
         var seleorderState = data.index - 1;
         if (data.index == 0) {
           seleorderState = "";
@@ -357,18 +362,21 @@ export default {
         table.reload("serachData", {
           url: "/api/getAllOrderInfo",
           where: dataTab,
-          page: { curr: 1, limit: 10 }
+          page: { curr: 1, limit: 10}
         });
       });
       form.on("submit(serach)", function(data) {
         data.field.userId = _this.$store.state.userId;
-        console.log(data.field);
+        sessionStorage.setItem("data",JSON.stringify(data.field))
+        
+        // console.log(data.field);
         table.reload("serachData", {
           url: "/api/getAllOrderInfo",
           where: data.field,
           page: { curr: 1, limit: 10 }
         });
       });
+      
       //第一个实例
       table.render({
         elem: "#workOrderManagement",
@@ -376,7 +384,7 @@ export default {
         url: "/api/getAllOrderInfo", //数据接口
         id: "serachData",
         where: {
-          userId: _this.$store.state.userId
+          userId: _this.$store.state.userId,
         },
         parseData: function(res) {
           //res 即为原始返回的数据
@@ -391,7 +399,7 @@ export default {
           pageName: "currentPage", //页码的参数名称，默认：page
           limitName: "everyCount" //每页数据量的参数名，默认：limit
         },
-        page: true, //开启分页
+        page:  { curr: 1, limit: 10 }, //开启分页
         cols: [
           [
             //表头
@@ -489,64 +497,38 @@ export default {
               templet: function(d) {
                 // console.log(d.orderState)
                 return '<div class="tabBtn"></div>'
-                // 编辑  关单  发单 派单 受理 驳回  改派 预约  协同 更改预约 出发  到达  开始 完成
-                // if (d.orderState == 0) {
-                //   //待发单
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>';
-                // }
-                // if (d.orderState == 1) {
-                //   //待派单
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
-                // }
-                // if (d.orderState == 2) {
-                //   // 待受理
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a><a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>';
-                // }
-                // if (d.orderState == 3) {
-                //   // 处理中
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
-                // }
-                // if (d.orderState == 4) {
-                //   // 已预约
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="start">出发</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >更改预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 5) {
-                //   // 已出发
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="reach">到达</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 7) {
-                //   //待回访
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
-                // }
-                // if (d.orderState == 8) {
-                //   //已关单
-                //   return "";
-                // }
-                // if (d.orderState == 9) {
-                //   // 已到达
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 10) {
-                //   // 完成
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
+        
               }
             }
           ]
         ],
-        done: function() {
+        done: function(count) {
           _this.getBtns()
+          if(count == 0){
+              sessionStorage.setItem("curr",1)
+          }else{
+            sessionStorage.setItem("curr",_this.$('.layui-laypage-skip').find(".layui-input").val())
+          }
         }
       });
+
+      setTimeout(()=>{
+        table.reload("serachData", {
+          url: "/api/getAllOrderInfo",
+          where: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {userId: _this.$store.state.userId},
+          page: { curr: curr, limit: 10 }
+        });
+      })
+      
 
       //监听行工具事件
       table.on("tool(workOrderManagement)", function(obj) {
         var data = obj.data;
-        console.log(data);
+        // console.log(data);
         var orderState = data.orderState;
         var orderInfoId = data.orderInfoId;
         var appoinmentTime = data.appoinmentTime;
-        console.log(orderState);
+        // console.log(orderState);
         if (obj.event === "编辑") {
           //编辑
           localStorage.setItem("orderState", orderState);
@@ -598,9 +580,9 @@ export default {
                 appoinmentTime: appoinmentTime,
                 isAll:0
               };
-              console.log(data);
+              // console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
@@ -653,9 +635,9 @@ export default {
                 appoinmentTime: appoinmentTime,
                 isAll:0
               };
-              console.log(data);
+              // console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
@@ -707,9 +689,9 @@ export default {
                   content: content,
                   isAll:0
                 };
-                console.log(datas);
+                // console.log(datas);
                 _this.$axios.post("/api/handleOrderInfo", datas).then(res => {
-                  console.log(res);
+                  // console.log(res);
                   if (res.data.retCode == "000000") {
                     layer.msg(res.data.retMsg, { icon: 1 });
                     setTimeout(() => {
@@ -770,10 +752,10 @@ export default {
               _this.$axios
                 .post("/api/getUserList", { userId: _this.$store.state.userId })
                 .then(res => {
-                  console.log(res);
+                  // console.log(res);
                   var userList = res.data.body.userList;
                   for (var i = 0; i < userList.length; i++) {
-                    console.log(userList[i].userName);
+                    // console.log(userList[i].userName);
                     if (userList[i].userId !== "admin") {
                       $("#acceptUserId").append(
                         '<option value="' +
@@ -784,7 +766,7 @@ export default {
                       );
                     }
                   }
-                  console.log($("#acceptUserId"));
+                  // console.log($("#acceptUserId"));
                   form.render();
                 });
             },
@@ -802,9 +784,9 @@ export default {
                 responsibleId: responsibleId,
                 createrId: data.createUserId
               };
-              console.log(datas);
+              // console.log(datas);
               _this.$axios.post("/api/addCoordinateInfo", datas).then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
@@ -869,9 +851,9 @@ export default {
                 isAppoint: isAppoint,
                 isAll: 0
               };
-              console.log(data);
+              // console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
-                console.log(res);
+                // console.log(res);
                 if (res.data.retCode == "000000") {
                   layer.msg(res.data.retMsg, { icon: 1 });
                   setTimeout(() => {
@@ -920,7 +902,7 @@ export default {
                 content: content,
                 isAll: 0
               };
-              console.log(data);
+              // console.log(data);
               _this.$axios.post("/api/handleOrderInfo", data).then(res => {
                 console.log(res);
                 if (res.data.retCode == "000000") {
@@ -942,6 +924,7 @@ export default {
   },
   created() {
     this.type = this.$route.query.type;
+    
     // var data = {
     //   userId: this.$store.state.userId,
     //   currentPage: 1,
@@ -952,13 +935,10 @@ export default {
     // });
     localStorage.clear();
     this.getOrderInfoNum();
+
+    console.log('第一次进入')
   },
-  beforeRouteEnter(to, from, next) {
-    if(from.name=='ListDetail'){
-      to.meta.isBack=true;
-    }
-    next();
-  },
+
   activated() {
 
     if(this.$route.meta.isBack){

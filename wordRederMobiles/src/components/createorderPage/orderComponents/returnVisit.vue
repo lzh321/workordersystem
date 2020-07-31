@@ -77,23 +77,6 @@
       </div>
     </form>
     <orderLog></orderLog>
-    <div class="perch"></div>
-    <div class="actionBtn">
-      <ul>
-        <li>
-          <button @click="rejeck" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_rejected.png" alt />
-            <span>驳回</span>
-          </button>
-        </li>
-        <li>
-          <button @click="kuantan" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
-          </button>
-        </li>
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -182,7 +165,7 @@ export default {
         }
       );
     },
-    rejeck() {
+    reject() {
       this.$router.push("/kuantanState?handleState=13");
     }
   },

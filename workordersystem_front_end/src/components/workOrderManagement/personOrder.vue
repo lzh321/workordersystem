@@ -15,7 +15,7 @@
         </li>
       </ul>
       <div class="layui-tab-content">
-        <data-screening :type="type"></data-screening>
+        <data-screening ref="getData" :type="type"></data-screening>
         <div class="dataList">
           <div class="dataList_top">
             <h2>数据列表</h2>
@@ -332,6 +332,11 @@ export default {
       var laydate = layui.laydate;
       var $ = layui.jquery;
       var form = layui.form;
+      var curr = ''
+      setTimeout(()=>{
+        curr = sessionStorage.getItem("curr") ? sessionStorage.getItem("curr") : 1
+        _this.$refs.getData.serachData = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+      })
       element.on("tab(workOrderManagement)", function(data) {
         console.log(this); //当前Tab标题所在的原始DOM元素
         console.log(data.index); //得到当前Tab的所在下标
@@ -362,6 +367,7 @@ export default {
       });
       form.on("submit(serach)", function(data) {
         data.field.userId = _this.$store.state.userId;
+        sessionStorage.setItem("data",JSON.stringify(data.field))
         console.log(data.field);
         table.reload("serachData", {
           url: "/api/getOrderInfoList",
@@ -489,55 +495,29 @@ export default {
               templet: function(d) {
                 // console.log(d.orderState)
                 return '<div class="tabBtn"></div>'
-                // 编辑  关单  发单 派单 受理 驳回  改派 预约  协同 更改预约 出发  到达  开始 完成
-                // if (d.orderState == 0) {
-                //   //待发单
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="bill">发单</a>';
-                // }
-                // if (d.orderState == 1) {
-                //   //待派单
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="sendOrders">派单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
-                // }
-                // if (d.orderState == 2) {
-                //   // 待受理
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="acceptance">受理</a><a class="layui-btn layui-btn-xs" lay-event="reassignment">改派</a>';
-                // }
-                // if (d.orderState == 3) {
-                //   // 处理中
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a>';
-                // }
-                // if (d.orderState == 4) {
-                //   // 已预约
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="start">出发</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reservation" >更改预约</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 5) {
-                //   // 已出发
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="reach">到达</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 7) {
-                //   //待回访
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="reject">驳回</a>';
-                // }
-                // if (d.orderState == 8) {
-                //   //已关单
-                //   return "";
-                // }
-                // if (d.orderState == 9) {
-                //   // 已到达
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="begin">开始</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
-                // if (d.orderState == 10) {
-                //   // 完成
-                //   return '<a class="layui-btn layui-btn-xs" lay-event="edit" >编辑</a><a class="layui-btn layui-btn-xs" lay-event="finish">完成</a><a class="layui-btn layui-btn-xs" lay-event="Kuantan">关单</a><a class="layui-btn layui-btn-xs" lay-event="synergy" >协同</a>';
-                // }
+
               }
             }
           ]
         ],
-        done: function() {
+        done: function(count) {
           _this.getBtns()
+          if(count == 0){
+              sessionStorage.setItem("curr",1)
+          }else{
+            sessionStorage.setItem("curr",_this.$('.layui-laypage-skip').find(".layui-input").val())
+          }
         }
       });
+      // 重新传参
+      setTimeout(()=>{
+        table.reload("serachData", {
+          url: "/api/getOrderInfoList",
+          where: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {userId: _this.$store.state.userId},
+          page: { curr: curr, limit: 10 }
+        });
+      })
+      
 
       //监听行工具事件
       table.on("tool(workOrderManagement)", function(obj) {

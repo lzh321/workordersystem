@@ -5,53 +5,54 @@
     </div>
     <form action class="layui-form">
       <div class="data_screening_search">
-        <div class="search_input" v-if="workOrderManagement || personOrder">
+        <div class="search_input" v-if=" type == 'workOrderManagement' || type == 'personOrder'">
           <p>
             <span for>工单编号</span>
-            <input type="text" name="seleOrderInfoId" autocomplete="off" value placeholder />
+            <input type="text" name="seleOrderInfoId" autocomplete="off" :value="serachData.seleOrderInfoId" placeholder />
           </p>
           <p>
             <span for>工单状态</span>
             <select name="seleorderState" id="seleorderState" class="">
-              <option value="">全部</option>
-              <option value="0">待发单</option>
-              <option value="1">待派单</option>
-              <option value="2">待受理</option>
-              <option value="3">待处理</option>
-              <option value="4">已预约</option>
-              <option value="5">已出发</option>
-              <option value="7">待回访</option>
-              <option value="8">已关单</option>
-              <option value="9">已到达</option>
-              <option value="10">故障处理中</option>
+              <option value="" :selected="serachData.seleorderState == '' ? true : false">全部</option>
+              <option value="0" :selected="serachData.seleorderState === '0' ? true : false">待发单</option>
+              <option value="1" :selected="serachData.seleorderState == 1 ? true : false">待派单</option>
+              <option value="2" :selected="serachData.seleorderState == 2 ? true : false">待受理</option>
+              <option value="3" :selected="serachData.seleorderState == 3 ? true : false">待处理</option>
+              <option value="4" :selected="serachData.seleorderState == 4 ? true : false">已预约</option>
+              <option value="5" :selected="serachData.seleorderState == 5 ? true : false">已出发</option>
+              <option value="7" :selected="serachData.seleorderState == 6 ? true : false">待回访</option>
+              <option value="8" :selected="serachData.seleorderState == 7 ? true : false">已关单</option>
+              <option value="9" :selected="serachData.seleorderState == 8 ? true : false">已到达</option>
+              <option value="10" :selected="serachData.seleorderState == 9 ? true : false">故障处理中</option>
             </select>
           </p>
           <p>
             <span for>创建时间</span>
-            <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" placeholder="开始时间" />-
-            <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" placeholder="结束时间" /> 
+            <input class="Times" type="text" autocomplete="off" name="seleBeginTime" id="startTime" :value="serachData.seleBeginTime" placeholder="开始时间" />-
+            <input class="Times" type="text" autocomplete="off" name="seleEndTime" id="endTime" :value="serachData.seleEndTime" placeholder="结束时间" /> 
           </p>
           <p>
             <span for>创&nbsp;&nbsp;建&nbsp;&nbsp;人</span>
-            <input type="text" name="userName" autocomplete="off" value placeholder="创建人" />
+            <input type="text" name="userName" :value="serachData.userName" placeholder="创建人" />
           </p>
           <p>
             <span for>客户名称</span>
-            <select name="customerName" lay-verify="" lay-search>
+            <select name="customerName" lay-search>
               <option value="">全部</option>
               <option
                 v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
+                 :selected="serachData.customerName == item.customerName ? true : false"
               >{{item.customerName}}</option>
             </select>
           </p>
           <p class="Network">
             <span for>投&nbsp;&nbsp;放&nbsp;&nbsp;点</span>
-            <input type="text" name="networName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
+            <input type="text" name="networName" autocomplete="off" :value="serachData.networName" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
-        <div class="search_input" v-if="synergyManagement || personSynergy">
+        <div class="search_input" v-if="type == 'synergyManagement' || type == 'personSynergy'">
           <p>
             <span for>协同编号</span>
             <input type="text" name="seleID" autocomplete="off" value placeholder="协同编号" />
@@ -77,20 +78,20 @@
             <input type="text" name="createrUserName" autocomplete="off" value placeholder="创建人" />
           </p>
         </div>
-        <div class="search_input" v-if="staffManagement">
+        <div class="search_input" v-if="type == 'staffManagement'">
           <p>
             <span for>输入查询</span>
-            <input type="text" name="val" autocomplete="off" value placeholder="姓名/账号/手机"/>
+            <input type="text" name="val" autocomplete="off" :value="serachData.val" placeholder="姓名/账号/手机"/>
           </p>
 
         </div>
-        <div class="search_input" v-if="businessEnterprise">
+        <div class="search_input" v-if="type == 'businessEnterprise'">
           <p>
             <span for>输入查询</span>
-            <input type="text" name="seleCompanyName" autocomplete="off" value placeholder="请输入公司名称" />
+            <input type="text" name="orgName" autocomplete="off" :value="serachData.orgName" placeholder="请输入公司名称" />
           </p>
         </div>
-        <div class="search_input" v-if="NetworkList">
+        <div class="search_input" v-if=" type == 'NetworkList'">
           <p>
             <span for>客户名称</span>
             <select name="seleCustomerName" lay-verify="" lay-search>
@@ -99,15 +100,16 @@
                 v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
+                :selected="serachData.seleCustomerName == item.customerName ? true :false"
               >{{item.customerName}}</option>
             </select>
           </p>
           <p class="Network">
             <span for>投放点</span>
-            <input type="text" name="seleNetworkName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
+            <input type="text" name="seleNetworkName" :value="serachData.seleNetworkName" autocomplete="off" class="layui-input" placeholder="请输入投放点名称"/>
           </p>
         </div>
-        <div class="search_input" v-if="CustomerNameList">
+        <div class="search_input" v-if="type == 'CustomerNameList'">
           <p>
             <span for>客户名称</span>
             <select name="seleCustomerName" lay-verify="" lay-search>
@@ -116,25 +118,26 @@
                 v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
+                :selected="serachData.seleCustomerName == item.customerName ? true :false"
               >{{item.customerName}}</option>
             </select>
           </p>
         </div>
-        <div class="search_input" v-if="messageModule">
-          <p v-if="messagePushList">
+        <div class="search_input" v-if="type == 'messageModule' || type == 'messagePushList'">
+          <p v-if="type == 'messagePushList'">
             <span for>接收手机</span>
-            <input type="text" name="seleMobile" autocomplete="off" placeholder="请输入接收手机"/>
+            <input type="text" name="seleMobile" :value="serachData.seleMobile" autocomplete="off" placeholder="请输入接收手机"/>
           </p>
           <p>
             <span for>模板编号</span>
-            <input type="text" name="seleId" autocomplete="off" placeholder="请输入模板编号"/>
+            <input type="text" name="seleId" :value="serachData.seleId" autocomplete="off" placeholder="请输入模板编号"/>
           </p>
           <p>
             <span for>模板名称</span>
-            <input type="text" name="seleModelName" autocomplete="off" placeholder="请输入模板名称"/>
+            <input type="text" name="seleModelName" :value="serachData.seleModelName" autocomplete="off" placeholder="请输入模板名称"/>
           </p>
         </div>
-        <div class="search_input" v-if="equipmentList">
+        <div class="search_input" v-if=" type == 'equipmentList'">
           <p>
             <span>设备序列号</span>
             <input
@@ -144,11 +147,12 @@
               lay-verify
               placeholder="请输入设备序列号"
               autocomplete="off"
+              :value="serachData.seleDeviceNumber"
             />
           </p>
           <p>
             <span>存货名称</span>
-            <input type="text" lay-verify autocomplete="off" name="seleModelName" placeholder="请输入存货名称"/>
+            <input type="text" lay-verify autocomplete="off" :value="serachData.seleModelName" name="seleModelName" placeholder="请输入存货名称"/>
           </p>
           <p>
             <span for>客户名称</span>
@@ -158,6 +162,7 @@
                 v-for="(item) in customerList"
                 :key="item.customerId"
                 :value="item.customerName"
+                :selected="serachData.seleCustomerName == item.customerName ? true :false"
               >{{item.customerName}}</option>
             </select>
           </p>
@@ -169,15 +174,16 @@
                 v-for="(item) in DeviceModelType"
                 :key="item.modelId"
                 :value="item.modelType"
+                :selected="serachData.seleModelType == item.modelType ? true :false"
               >{{item.modelType}}</option>
             </select>
           </p>
           <p>
             <span for>投&emsp;放&emsp;点</span>
-            <input type="text" name="networkName" autocomplete="off"  placeholder="请输入投放点名称"/>
+            <input type="text" name="networkName" :value="serachData.networkName" autocomplete="off"  placeholder="请输入投放点名称"/>
           </p>
         </div>
-        <div class="search_input" v-if="equipmentType">
+        <div class="search_input" v-if="type == 'equipmentType'">
           <p>
             <span for>设备型号</span>
             <select name="seleModelType">
@@ -186,41 +192,42 @@
                 v-for="(item) in DeviceModelType"
                 :key="item.modelId"
                 :value="item.modelType"
+                :selected="serachData.seleModelType == item.modelType ? true : false"
               >{{item.modelType}}</option>
             </select>
           </p>
           <p>
             <span for>存货名称</span>
-            <input type="text" name="seleModelName" autocomplete="off" placeholder="请输入存货名称"/>
+            <input type="text" name="seleModelName" :value="serachData.seleModelName" autocomplete="off" placeholder="请输入存货名称"/>
           </p>
         </div>
 
-        <div class="search_input" v-if="menuManagement">
+        <div class="search_input" v-if=" type == 'menuManagement'">
           <p>
             <span for>菜单编号</span>
-            <input type="text" name="seleMenuNo" autocomplete="off" placeholder="请输入菜单编号"/>
+            <input type="text" name="seleMenuNo" :value="serachData.seleMenuNo" autocomplete="off" placeholder="请输入菜单编号"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
+            <input type="text" name="seleMenuName" :value="serachData.seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
           </p>
         </div>
 
-        <div class="search_input" v-if="roleManagement">
+        <div class="search_input" v-if="type == 'roleManagement'">
           <p>
             <span for>角色名称</span>
-            <input type="text" name="seleRoleName" autocomplete="off" placeholder="请输入角色名称"/>
+            <input type="text" name="seleRoleName" :value="serachData.seleRoleName" autocomplete="off" placeholder="请输入角色名称"/>
           </p>
         </div>
 
-        <div class="search_input" v-if="permissionsButton">
+        <div class="search_input" v-if="type == 'permissionsButton'">
           <p>
             <span for>按钮编码</span>
-            <input type="text" name="seleBtnCode" autocomplete="off" placeholder="请输入按钮编码"/>
+            <input type="text" name="seleBtnCode" :value="serachData.seleBtnCode" autocomplete="off" placeholder="请输入按钮编码"/>
           </p>
           <p>
             <span for>菜单名称</span>
-            <input type="text" name="seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
+            <input type="text" name="seleMenuName" :value="serachData.seleMenuName" autocomplete="off" placeholder="请输入菜单名称"/>
           </p>
         </div>
 
@@ -248,41 +255,28 @@ export default {
   props: ["type"],
   data() {
     return {
-      staffManagement: "",
-      workOrderManagement: "",
-      personOrder: "",
-      NetworkList: "",
-      CustomerNameList: "",
-      businessEnterprise: "",
-      messageModule: "",
-      messagePushList: "",
-      equipmentList: "",
-      equipmentType: "",
-      menuManagement: "",
-      roleManagement: "",
-      permissionsButton: "",
-      synergyManagement: "",
-      personSynergy: "",
       DeviceModelType: [],
       DeptList: [],
       JobList: [],
-      customerList: []
+      customerList: [],
+      serachData: {}
     };
   },
   methods: {
+    
     send() {
       var userId = this.$store.state.userId;
-      if(this.equipmentList || this.equipmentType){
+      if(this.type == 'equipmentList' || this.type == 'equipmentType'){
         this.$axios.post("/api/getDeviceModelList", {userId: userId}).then(res => {
           // 设备型号
-          // console.log(res)
+          console.log(res)
           this.DeviceModelType = res.data.body.devicemodelInfoList;
         });
       }
       this.$axios.post("/api/getCustomerNameList", {userId: userId}).then(res => {  // 客户名称
         this.customerList = res.data.body.customerNameList;
       });
-      if(this.staffManagement || this.businessEnterprise){
+      if(this.type == 'staffManagement' || this.type == 'businessEnterprise'){
         this.$axios.post('/api/getDeptList',{userId: userId}).then(res=>{  //部门列表
           // console.log(res)
           if(res.data.retCode == '000000'){
@@ -299,6 +293,7 @@ export default {
     }
   },
   mounted() {
+    
     layui.use(["laydate","form"], function(){
       var laydate = layui.laydate
       var form = layui.form
@@ -322,59 +317,13 @@ export default {
     })
   },
   created() {
-    console.log(this.type);
-    if (this.type == "staffManagement") {
-      this.staffManagement = this.type;
-    }
-    if (this.type == "businessEnterprise") {
-      this.businessEnterprise = this.type;
-    }
-    if (this.type == "workOrderManagement") {
-      this.workOrderManagement = this.type;
-    }
-    if (this.type == "personOrder") {
-      this.personOrder = this.type;
-    }
-    if (this.type == "CustomerNameList") {
-      this.CustomerNameList = this.type;
-    }
-    if (this.type == "NetworkList") {
-      this.NetworkList = this.type;
-    }
-    if (this.type == "messageModule") {
-      this.messageModule = this.type;
-    }
-    if (this.type == "messagePushList") {
-      this.messagePushList = this.type;
-      this.messageModule = true;
-    }
-    if (this.type == "equipmentList") {
-      this.equipmentList = this.type;
-    }
-    if (this.type == "equipmentType") {
-      this.equipmentType = this.type;
-    }
-    if (this.type == "menuManagement") {
-      this.menuManagement = this.type;
-    }
-    if (this.type == "roleManagement") {
-      this.roleManagement = this.type;
-    }
-    if (this.type == "permissionsButton") {
-      this.permissionsButton = this.type;
-    }
-    if (this.type == "synergyManagement") {
-      this.synergyManagement = this.type;
-    }
-    if (this.type == "personSynergy") {
-      this.personSynergy = this.type;
-    }
     this.send()
+    
   },
   updated() {
-      layui.use("form", function() {
-        layui.form.render();
-      });
+    layui.use("form", function() {
+      layui.form.render();
+    });
   }
 };
 </script>

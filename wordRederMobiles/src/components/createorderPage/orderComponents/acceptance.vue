@@ -9,30 +9,6 @@
       </div>
     </form>
     <orderLog></orderLog>
-    <div class="perch"></div>
-    <div class="actionBtn">
-      <ul>
-        <li>
-          <button @click="accept" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_To-accept-the.png" alt />
-            <span>受理</span>
-          </button>
-        </li>
-        <li>
-          <button @click="reassignment" :disabled="isDisabled" >
-            <img src="../../../assets/Images/operation_To-send.png" alt />
-            <span>改派</span>
-          </button>
-        </li>
-        <li>
-          <button @click="kuantan" :disabled="isDisabled">
-            <img src="../../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
-          </button>
-        </li>
-      </ul>
-    </div>
-    
   </div>
 </template>
 
@@ -40,6 +16,7 @@
 import orderLog from "./orderLog";
 export default {
   name: "acceptance",
+  props: ["orderStatus"],
   data() {
     return {
       orderInfoId: sessionStorage.getItem("orderInfoId"),

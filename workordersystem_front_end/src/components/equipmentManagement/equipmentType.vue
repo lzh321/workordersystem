@@ -1,6 +1,6 @@
 <template>
   <div class="equipmentType">
-    <data-screening :type="type"></data-screening>
+    <data-screening ref="getData" :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
@@ -42,10 +42,16 @@ export default {
       layui.use(["table", "form"], function() {
         var table = layui.table;
         var form = layui.form;
+        var curr = ''
+        setTimeout(()=>{
+          curr = sessionStorage.getItem("curr") ? sessionStorage.getItem("curr") : 1
+          _this.$refs.getData.serachData = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+        })
         form.render();
         form.on("submit(serach)", function(data) {
           console.log(data.field);
           data.field.userId = _this.$store.state.userId;
+          sessionStorage.setItem("data",JSON.stringify(data.field))
           table.reload("serachData", {
             url: "/api/getDeviceModelList",
             where: data.field,
@@ -111,8 +117,21 @@ export default {
           ],
           done: function(res, curr, count){
             _this.getBtns()
+            if(count == 0){
+              sessionStorage.setItem("curr",1)
+            }else{
+              sessionStorage.setItem("curr",_this.$('.layui-laypage-skip').find(".layui-input").val())
+            }
           }
         });
+
+        setTimeout(()=>{
+          table.reload("serachData", {
+            url: "/api/getDeviceModelList",
+            where: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {userId: _this.$store.state.userId},
+            page: { curr: curr, limit: 10 },
+          });
+        })
 
         //监听行工具事件
         table.on("tool(equipmentTypeList)", function(obj) {

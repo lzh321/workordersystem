@@ -70,7 +70,7 @@
         </label>
         <input type="radio" name="orderUrgency" value="1" />紧急
         <input type="radio" name="orderUrgency" value="0" checked />一般
-        <input type="radio" class="Urgency" name="orderUrgency" />
+        <input type="radio" class="Urgency" name="orderUrgency" value="" />
       </div>
       <div>
         <label for="reportTime">
@@ -145,22 +145,10 @@
     </form>
     <div class="actionBtn">
       <ul>
-        <li>
-          <button :disabled="isDisabled" @click="bill">
-            <img src="../../assets/Images/operation_receipt.png" alt />
-            <span>发单</span>
-          </button>
-        </li>
-        <li>
-          <button @click="cancel">
-            <img src="../../assets/Images/operation_cancel.png" alt />
-            <span>取消</span>
-          </button>
-        </li>
-        <li>
-          <button @click="kuantan">
-            <img src="../../assets/Images/operation_kuantan.png" alt />
-            <span>关单</span>
+        <li v-for="(item,index) in btnList" :key="index">
+          <button lay-submit :lay-filter="item.btnName" :disabled="isDisabled">
+            <img v-for="(itemImg,index) in imgList" v-show="item.btnName == itemImg.title" :key="index" :src="itemImg.img" alt />
+            <span>{{item.btnName}}</span>
           </button>
         </li>
       </ul>
@@ -187,13 +175,22 @@ export default {
       DeviceNumber: {},
       isFirstEnter: false,
       isDisabled: false,
-      DomainName: this.$store.state.url
+      DomainName: this.$store.state.url,
+      orderStatus: "",
+      imgList: [
+        {title: '发单', img: require('../../assets/Images/operation_receipt.png')},
+        {title: '返回', img: require('../../assets/Images/operation_cancel.png')},
+        {title: '关单', img: require('../../assets/Images/operation_kuantan.png')},
+      ],
+      btnList: [],
     };
   },
   mounted() {
     var _this = this;
-    layui.use(["laydate", "upload"], function() {
+    layui.use(["form","jquery","laydate", "upload"], function() {
       var laydate = layui.laydate;
+      var form = layui.form;
+      var $ = layui.jquery;
       var upload = layui.upload;
       //执行一个laydate实例
       laydate.render({
@@ -202,6 +199,15 @@ export default {
         closeStop: "#reportTime",
         trigger: "click"
       });
+      form.on("submit(发单)", function(data) {
+        _this.bill()
+      })
+      form.on("submit(关单)", function(data) {
+        _this.kuantan()
+      })
+      form.on("submit(返回)", function(data) {
+        _this.cancel()
+      })
 
       //上传图片
       upload.render({
@@ -342,6 +348,67 @@ export default {
         this.DeviceNumber = JSON.parse(DeviceNumber);
       }
     },
+    getBtns() {
+      console.log(this.orderStatus)
+      var userId = this.$store.state.userId;
+      this.axios({
+        method: "post",
+        url: "/api/getAllRoleInfoByUserId",
+        data: {
+          userId: userId,
+          seleUserId: userId
+        }
+      })
+        .then(res => {
+          console.log(res);
+          // debugger
+          if (res.data.body.roleBtnList.length > 0) {
+            var arr = [];
+            for (var i = 0; i < res.data.body.roleBtnList.length; i++) {
+              if (res.data.body.roleBtnList[i].btnLimit) {
+                arr.push(JSON.parse(res.data.body.roleBtnList[i].btnLimit));
+              }
+            }
+            console.log(arr);
+            var url = location.pathname + location.search;
+            console.log(url);
+            var str = [];
+            for (var j = 0; j < arr.length; j++) {
+              for (var z = 0; z < arr[j].length; z++) {
+                if (arr[j][z].btns && arr[j][z].menuUrl == '/workOrderManagement?type=workOrderManagement' || arr[j][z].btns && arr[j][z].menuUrl == '/personOrder?type=personOrder') {
+                  console.log(arr[j][z].btns);
+                  str = arr[j][z].btns;
+                }
+              }
+            }
+            if (str.length == 0) {
+              return
+            } else {
+              var btns = str;
+              for (var h = 0; h < btns.length; h++) {
+                for (var k = h + 1; k < btns.length; k++) {
+                  if (btns[h].btnCode == btns[k].btnCode) {
+                    //第一个等同于第二个，splice方法删除第二个
+                    btns.splice(k, 1);
+                    k--;
+                  }
+                }
+              }
+              btns.forEach((item)=>{
+                // console.log(item)                   
+                //待发单
+                // 编辑 关单 发单 派单 受理 驳回  改派 预约 协同 更改预约 出发  到达  开始 完成
+                if(item.btnName == '发单' || item.btnName == '返回' || item.btnName == '关单'){
+                  this.btnList.push(item)
+                }
+              })
+            }
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
     bill() {
       // 发单
       this.getOrderInfoId();
@@ -438,6 +505,7 @@ export default {
     this.$("input[name='orderImg']").val("");
     this.$(".Urgency").attr("checked", true);
     this.$("textarea").val("");
+    this.getBtns()
     sessionStorage.clear();
   },
   beforeRouteEnter(to, from, next) {

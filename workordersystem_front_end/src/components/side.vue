@@ -45,6 +45,7 @@ export default {
     actives: function(title) {
       // console.log(title);
       this.$emit("titleFn", title);
+      sessionStorage.removeItem("data")
     },
     getData: function() {
       var data = {

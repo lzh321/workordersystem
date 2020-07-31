@@ -1,15 +1,15 @@
 <template>
   <div class="equipmentList">
-    <data-screening :type="type"></data-screening>
+    <data-screening ref="getData" :type="type"></data-screening>
     <div class="dataList">
       <div class="dataList_top">
         <h2>数据列表</h2>
         <p>
           <router-link to="/addEquipment" v-if="add" class="layui-btn layui-btn-normal layui-btn-sm" tag="button" type="button"><i class="layui-icon">&#xe608;</i> 新增</router-link>
-          <span id="leadIn" v-show="leadIn" class="layui-btn layui-btn-primary layui-btn-sm">
+          <button id="leadIn" v-show="leadIn" class="layui-btn layui-btn-primary layui-btn-sm">
             <i class="layui-icon">&#xe681;</i>
             导入
-          </span>
+          </button>
         </p>
       </div>
       <div class="dataList_table" >
@@ -35,16 +35,21 @@ export default {
     dataScreening
   },
   mounted(){
-
       var _this = this  // 改变this指向
       layui.use(['table', 'form', 'upload'], function() {
         var table = layui.table;
         var form = layui.form
         var upload = layui.upload
+        var curr = ''
+        setTimeout(()=>{
+          curr = sessionStorage.getItem("curr") ? sessionStorage.getItem("curr") : 1
+          _this.$refs.getData.serachData = sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {}
+        })
         form.render()
         form.on('submit(serach)', function(data){
           console.log(data.field)
           data.field.userId = _this.$store.state.userId
+          sessionStorage.setItem("data",JSON.stringify(data.field))
           table.reload('serachData',{
             url: "/api/getDeviceInfoList",
             where:data.field,
@@ -102,15 +107,20 @@ export default {
           ],
           done: function(res, curr, count){
             _this.getBtns()
+            if(count == 0){
+              sessionStorage.setItem("curr",1)
+            }else{
+              sessionStorage.setItem("curr",_this.$('.layui-laypage-skip').find(".layui-input").val())
+            }
           }
         });
 
-        table.reload('serachData',
-          {
-            url: "/api/getDeviceInfoList", //数据接口
-            where:{
-              userId: _this.$store.state.userId
-            }
+        setTimeout(()=>{
+          table.reload("serachData", {
+            url: "/api/getDeviceInfoList",
+            where: sessionStorage.getItem("data") ? JSON.parse(sessionStorage.getItem("data")) : {userId: _this.$store.state.userId},
+            page: { curr: curr, limit: 10 },
+          });
         })
         //头工具栏事件
         table.on('toolbar(equipmentList)', function(obj){
@@ -268,6 +278,7 @@ export default {
           if(btnList[z].btnName == '添加'){
             this.add = true
           }else if(btnList[z].btnName == '导入'){
+            console.log(btnList[z].btnName)
             this.leadIn = true
           }else{
             str += '<a class="'+btnList[z].btnCode+' layui-btn layui-btn-xs" lay-event="'+btnList[z].btnName+'" >'+btnList[z].btnName+'</a>'
