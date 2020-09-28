@@ -388,7 +388,16 @@ export default {
       this.imgData = this.imgDataArray.join(",");
       this.$axios.post("/api/deleImagesInfo",{userId: this.$store.state.userId,url:item}).then(res=>{
         console.log(res)
+        if (res.data.retCode == "000000") {
+          layer.msg(res.data.retMsg, { icon: 1 });
+        } else {
+          layer.msg(res.data.retMsg, { icon: 2 });
+        }
       })
+      console.log(this.imgData)
+      this.$axios.post("/api/alter", {userId: this.$store.state.userId,orderInfoId:this.orderInfoId,orderPhoto: this.imgData}).then(res => {
+        console.log(res);
+      });
     },
     send() {
       var userId = this.$store.state.userId;
@@ -454,8 +463,9 @@ export default {
               if (res.data.retCode == "000000") {
                 this.deviceInfoList = res.data.body.modelList;
                 for (var i = 0; i < res.data.body.modelList.length; i++) {
-                  this.deviceNumberList =
-                    res.data.body.modelList[i].deviceNumberList;
+                  if(this.orderInfo.modelId == res.data.body.modelList[i].modelId){
+                    this.deviceNumberList = res.data.body.modelList[i].deviceNumberList;
+                  }
                 }
               }
             });
@@ -525,12 +535,22 @@ export default {
   },
   mounted() {
     var _this = this;
-    layui.use(["form", "element", "upload", "jquery"], function() {
+    layui.use(["form", "element", "upload","laydate", "jquery"], function() {
       var element = layui.element;
       var form = layui.form;
       var $ = layui.jquery;
       var upload = layui.upload;
+      var laydate = layui.laydate;
       element.render();
+
+      laydate.render({
+        // 报障时间
+        elem: "#reportedBarrierTime",
+        type: "datetime",
+        closeStop: "#reportedBarrierTime",
+        trigger: "click"
+      });
+
       // select监听
       form.on("select(billCustomerName)", function(data) {
         for (var i = 0; i < _this.customerNameList.length; i++) {
@@ -585,11 +605,12 @@ export default {
         for (var i = 0; i < _this.deviceInfoList.length; i++) {
           // console.log(data.value)
           if (data.value == _this.deviceInfoList[i].modelId) {
-            _this.selectBank = true;
+            // _this.selectBank = true;
             _this.deviceNumberList = _this.deviceInfoList[i].deviceNumberList;
           }
         }
         if (data.value == "") {
+          _this.selectBank = true;
           _this.deviceNumber = "";
         }
       });

@@ -251,7 +251,7 @@ export default {
             layer.msg(res.retMsg, { icon: 2 });
           }
           _this.imgDataArray.push(res.body.url.split(",")[0]);
-          _this.imgData += _this.imgDataArray.join(",");
+          _this.imgData = _this.imgDataArray.join(",");
           console.log(_this.imgData);
           // _this.$("input[name='orderImg']").val(res.body.url);
         }

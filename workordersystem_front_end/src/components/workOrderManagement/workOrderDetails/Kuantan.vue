@@ -189,7 +189,7 @@
         </div>
         <div class="layui-upload">
           <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-            附件
+            预览
             <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="imgDataArray">
               <div v-for="(item,index) in imgDataArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
                 <img

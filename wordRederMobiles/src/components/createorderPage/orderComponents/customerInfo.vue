@@ -120,7 +120,7 @@
                    :layer-src="DomainName+ item"
                    alt
                   />
-                  <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a>
+                  <!-- <a href="javascript:;" @click="delImg(item,index)" class="delImg">X</a> -->
                 </div>
               </viewer>
             </blockquote>

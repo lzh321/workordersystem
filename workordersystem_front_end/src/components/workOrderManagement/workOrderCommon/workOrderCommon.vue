@@ -218,19 +218,18 @@
           </div>
           <div class="layui-upload">
             <blockquote class="layui-elem-quote layui-quote-nm" style="margin-top: 10px;">
-              附件
-              <div class="layui-upload-list" id="imgBox1">
-                <img
-                  v-for="(item,index) in imgDataArray"
-                  :key="index"
-                  class="layui-upload-img"
-                  style="width:100px;height:100px;margin-right:10px"
-                  :src="DomainName+ item "
-                  @click="previewImg()"
-                  :layer-src="DomainName+ item"
-                  alt
-                />
-              </div>
+              预览
+              <viewer class="layui-upload-list" style="display:flex;flex-wrap:wrap" :images="imgDataArray">
+                    <div v-for="(item,index) in imgDataArray" :key="index" style="flex: none;width:100px;height:100px;margin-right:10px;margin-bottom:10px;display:inline-block;">
+                      <img
+                      class="layui-upload-img"
+                      style="width:100%;height:100%"
+                      :src="DomainName+ item "
+                      :layer-src="DomainName+ item"
+                      alt
+                      />
+                    </div>
+                </viewer>
             </blockquote>
           </div>
 

@@ -482,7 +482,7 @@ export default {
               align: "center"
             },
             {
-              field: "createTime",
+              field: "finishTime",
               title: "完成时间",
               sort: false,
               align: "center"

@@ -26,12 +26,12 @@ export default {
         },
         {
           recordType: 2,
-          recordName: "辅助",
+          recordName: "其他",
          
         },
         {
           recordType: 3,
-          recordName: "其他",
+          recordName: "安装",
     
         }
       ]

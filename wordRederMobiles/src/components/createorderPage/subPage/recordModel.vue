@@ -110,7 +110,7 @@ export default {
         },
         {
           recordType: 2,
-          recordName: "辅助",
+          recordName: "其他",
           recordList: [
             { recordModel: "0", recordModelName: "移机" },
             { recordModel: "1", recordModelName: "网络" },
@@ -126,7 +126,7 @@ export default {
         },
         {
           recordType: 3,
-          recordName: "其他",
+          recordName: "安装",
           recordList: [
             { recordModel: "0", recordModelName: "安装机具" }
           ]

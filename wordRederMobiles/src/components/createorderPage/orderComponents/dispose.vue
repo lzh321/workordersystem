@@ -192,7 +192,18 @@ export default {
         })
         .then(res => {
           console.log(res);
+          if (res.data.retCode == "000000") {
+            layer.msg(res.data.retMsg, { icon: 1 });
+          } else {
+            layer.msg(res.data.retMsg, { icon: 2 });
+          }
         });
+      if (this.orderInfo.recordPhoto){
+        this.axios.post("/api/alter", {userId: this.$store.state.userId,orderInfoId:this.orderInfoId,recordPhoto: this.Afterimg}).then(res => {
+          console.log(res);
+        });
+      }
+      
     },
     getRecordContent() {
       console.log(this.recordContent);

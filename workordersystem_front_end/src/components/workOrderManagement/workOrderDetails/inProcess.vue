@@ -235,7 +235,7 @@ export default {
         },
         {
           recordType: 2,
-          recordName: "辅助",
+          recordName: "其他",
           recordList: [
             { recordModel: "0", recordModelName: "移机" },
             { recordModel: "1", recordModelName: "网络" },
@@ -251,7 +251,7 @@ export default {
         },
         {
           recordType: 3,
-          recordName: "其他",
+          recordName: "安装",
           recordList: [{ recordModel: "0", recordModelName: "安装机具" }],
         },
       ],
@@ -337,7 +337,17 @@ export default {
         })
         .then((res) => {
           console.log(res);
+          if (res.data.retCode == "000000") {
+            layer.msg(res.data.retMsg, { icon: 1 });
+          } else {
+            layer.msg(res.data.retMsg, { icon: 2 });
+          }
         });
+      if (this.workOrderInfo.recordPhoto){
+        this.$axios.post("/api/alter", {userId: this.$store.state.userId,orderInfoId:this.orderInfoId,recordPhoto: this.Afterimg}).then(res => {
+          console.log(res);
+        });
+      }
     },
     getImg() {
       if (this.workOrderInfo.recordPhoto) {
